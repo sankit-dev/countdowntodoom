@@ -103,9 +103,9 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
   // ── Sizes ────────────────────────────────────────────────────────────────
   // The tree grows upward: Doomsday at the top, each road climbing to it.
   const G = useMemo(() => {
-    const pad = vp.w < 720 ? 14 : 36;
-    const leafW = Math.max(88, Math.min(170, (vp.w - pad * 2) / T.rows));
-    const pw = Math.round(Math.min(96, leafW - 24));
+    // Fixed sizes: the canvas is zoomed to fit, the tree is not squeezed.
+    const leafW = 132;
+    const pw = 96;
     const ph = Math.round(pw * 1.5);
     const label = 34; // room for two lines of title under a poster
     const levelH = ph + label + 46;
@@ -117,7 +117,7 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
     // y is the top edge of a poster (for Doomsday, the centre of the circle).
     const y = (id: string) => (id === DOOM_ID ? doomR + 4 : top + (T.dist[id] - 1) * levelH);
     return { pw, ph, label, levelH, doomR, width, height, x, y, leafW };
-  }, [T, vp.w]);
+  }, [T]);
 
   // ── Highlight: a title's own road to Doomsday ────────────────────────────
   const active = hover ?? selected;
@@ -134,17 +134,101 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
     const t = BY_ID[focus.id];
     const need: Tier = !NEXT[t.id] && t.id !== DOOM_ID ? "all" : tierFor(t);
     if (MIN_IMP[need] < MIN_IMP[tier]) { setTier(need); return; }
-    const el = document.querySelector<HTMLElement>(`[data-title="${focus.id}"]`);
-    el?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+    const el = stage.current;
+    if (!el || !T.visible.has(t.id)) return;
+    const k = Math.max(viewRef.current.k, 0.7);
+    setView({ k, x: el.clientWidth / 2 - G.x(t.id) * k, y: el.clientHeight / 2 - (G.y(t.id) + G.ph / 2) * k });
+    el.scrollIntoView({ behavior: "smooth", block: "nearest" });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focus, tier]);
 
-  // A wide tree opens centred on Doomsday rather than on its left edge.
-  const scroller = useRef<HTMLDivElement>(null);
-  useLayoutEffect(() => {
-    const el = scroller.current;
-    if (el) el.scrollLeft = G.x(DOOM_ID) + parseFloat(getComputedStyle(el).paddingLeft) - el.clientWidth / 2;
-  }, [G]);
+  // ── Pan and zoom ─────────────────────────────────────────────────────────
+  // The tree sits on a canvas: drag to move it, pinch / Ctrl+scroll / the
+  // buttons to zoom. Plain scrolling is left alone so the page still scrolls.
+  const stage = useRef<HTMLDivElement>(null);
+  const [view, setView] = useState({ x: 0, y: 0, k: 1 });
+  const viewRef = useRef(view);
+  viewRef.current = view;
+  const dragged = useRef(false);
+  const MIN_K = 0.2, MAX_K = 2.2;
+  const PAD = 28;
+
+  const fit = (whole: boolean) => {
+    const el = stage.current;
+    if (!el) return;
+    const w = el.clientWidth, h = el.clientHeight;
+    const byW = (w - PAD * 2) / G.width, byH = (h - PAD * 2) / G.height;
+    const k = Math.max(MIN_K, Math.min(1, whole ? Math.min(byW, byH) : byW));
+    // Centre on Doomsday horizontally; start from the top unless showing it all.
+    setView({ k, x: w / 2 - G.x(DOOM_ID) * k, y: whole ? Math.max(PAD, (h - G.height * k) / 2) : PAD });
+  };
+  useLayoutEffect(() => fit(false), [G, vp.w, vp.h]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const zoomAt = (cx: number, cy: number, factor: number) =>
+    setView((v) => {
+      const k = Math.max(MIN_K, Math.min(MAX_K, v.k * factor));
+      return { k, x: cx - ((cx - v.x) * k) / v.k, y: cy - ((cy - v.y) * k) / v.k };
+    });
+  const zoomBy = (factor: number) => {
+    const el = stage.current!;
+    zoomAt(el.clientWidth / 2, el.clientHeight / 2, factor);
+  };
+
+  // Ctrl/⌘ + wheel (which is also what a trackpad pinch sends) zooms.
+  useEffect(() => {
+    const el = stage.current!;
+    const onWheel = (e: WheelEvent) => {
+      if (!e.ctrlKey && !e.metaKey) return;
+      e.preventDefault();
+      const r = el.getBoundingClientRect();
+      // A mouse wheel sends big steps, a trackpad pinch small ones; cap the big ones.
+      zoomAt(e.clientX - r.left, e.clientY - r.top, Math.exp(-Math.max(-30, Math.min(30, e.deltaY)) * 0.01));
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
+
+  // One pointer drags; two pointers pinch.
+  const pointers = useRef(new Map<number, { x: number; y: number }>());
+  const gesture = useRef<{ x: number; y: number; d: number } | null>(null);
+  const measure = () => {
+    const ps = [...pointers.current.values()];
+    const x = ps.reduce((n, p) => n + p.x, 0) / ps.length, y = ps.reduce((n, p) => n + p.y, 0) / ps.length;
+    return { x, y, d: ps.length > 1 ? Math.hypot(ps[0].x - ps[1].x, ps[0].y - ps[1].y) : 0 };
+  };
+  const onPointerDown = (e: React.PointerEvent) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    gesture.current = measure();
+    if (pointers.current.size === 1) dragged.current = false;
+  };
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!pointers.current.has(e.pointerId) || !gesture.current) return;
+    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const g0 = gesture.current, g1 = measure();
+    const dx = g1.x - g0.x, dy = g1.y - g0.y;
+    if (!dragged.current && pointers.current.size === 1 && Math.hypot(dx, dy) < 5) return;
+    if (!dragged.current) {
+      dragged.current = true;
+      leave();
+      stage.current!.classList.add("grabbing");
+      try { stage.current!.setPointerCapture(e.pointerId); } catch { /* pointer already gone */ }
+    }
+    gesture.current = g1;
+    setView((v) => ({ ...v, x: v.x + dx, y: v.y + dy }));
+    if (g0.d && g1.d) {
+      const r = stage.current!.getBoundingClientRect();
+      zoomAt(g1.x - r.left, g1.y - r.top, g1.d / g0.d);
+    }
+  };
+  const onPointerUp = (e: React.PointerEvent) => {
+    pointers.current.delete(e.pointerId);
+    gesture.current = pointers.current.size ? measure() : null;
+    if (!pointers.current.size) {
+      stage.current!.classList.remove("grabbing");
+      setTimeout(() => (dragged.current = false), 0); // let the click that follows a drag be ignored
+    }
+  };
 
   const count = (t: Tier) => TITLES.filter((x) => x.id !== DOOM_ID && x.imp >= MIN_IMP[t] && (t === "all" || NEXT[x.id])).length;
 
@@ -154,7 +238,7 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
       data-title={t.id}
       className={`tile${road?.has(t.id) ? " lit" : ""}${selected === t.id ? " sel" : ""}${watched.has(t.id) ? " seen" : ""}`}
       style={{ ...style, ["--pw" as string]: `${G.pw}px`, ["--ph" as string]: `${G.ph}px`, ["--tw" as string]: `${Math.round(G.leafW - 8)}px` }}
-      onMouseEnter={(e) => enter(t.id, e.currentTarget.querySelector(".art") as HTMLElement)}
+      onMouseEnter={(e) => { if (!dragged.current) enter(t.id, e.currentTarget.querySelector(".art") as HTMLElement); }}
       onMouseLeave={leave}
       onClick={() => onSelect(selected === t.id ? null : t.id)}
     >
@@ -184,9 +268,22 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
         </div>
       </header>
 
-      <div className="tree-scroll" ref={scroller}>
-        <div className={`tree${road ? " has-lit" : ""}`} style={{ width: G.width, height: G.height }}
-          onClick={(e) => { if (e.target === e.currentTarget) onSelect(null); }}>
+      <div
+        className="tree-stage"
+        ref={stage}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        onClickCapture={(e) => { if (dragged.current) { e.stopPropagation(); e.preventDefault(); } }}
+        onDoubleClick={(e) => {
+          if ((e.target as HTMLElement).closest("button")) return;
+          const r = e.currentTarget.getBoundingClientRect();
+          zoomAt(e.clientX - r.left, e.clientY - r.top, 1.6);
+        }}
+      >
+        <div className={`tree${road ? " has-lit" : ""}`}
+          style={{ width: G.width, height: G.height, transform: `translate3d(${view.x}px, ${view.y}px, 0) scale(${view.k})` }}>
           <svg className="edges" width={G.width} height={G.height} aria-hidden="true">
             {[...T.visible].filter((id) => id !== DOOM_ID).map((id) => {
               const p = T.parent[id];
@@ -217,6 +314,14 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
             <b>Doomsday</b>
             <span>18 · 12 · 2026</span>
           </button>
+        </div>
+
+        <span className="stage-hint">Drag to move · pinch or Ctrl + scroll to zoom</span>
+        <div className="stage-tools" onPointerDown={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
+          <button onClick={() => zoomBy(1.35)} aria-label="Zoom in">+</button>
+          <button onClick={() => zoomBy(1 / 1.35)} aria-label="Zoom out">−</button>
+          <button className="wide" onClick={() => fit(true)}>Fit all</button>
+          <button className="wide" onClick={() => fit(false)}>Reset</button>
         </div>
       </div>
 
