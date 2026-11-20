@@ -325,6 +325,8 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 24px; border: 0; bo
 .cd { position: relative; min-height: 100svh; overflow: hidden; display: grid; place-items: end center; padding: 24px 16px clamp(48px, 9vh, 110px); text-align: center; background: #000; isolation: isolate; }
 .cd-bg, .cd-shade { position: absolute; inset: 0; z-index: -1; }
 .cd-bg { background: center 30% / cover no-repeat; animation: bgIn 3s ease-out both, bgPush 30s cubic-bezier(0.2, 0.6, 0.2, 1) both; }
+.cd-blur { filter: blur(38px) brightness(0.5) saturate(1.2); inset: -60px; animation: bgIn 3s ease-out both; }
+.cd-poster { position: absolute; z-index: -1; left: 50%; top: 0; height: 100%; max-width: 100%; object-fit: contain; transform: translateX(-50%); animation: bgIn 2.4s ease-out both; -webkit-mask-image: linear-gradient(#000 45%, transparent 96%), linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent); mask-image: linear-gradient(#000 45%, transparent 96%), linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent); -webkit-mask-composite: source-in; mask-composite: intersect; }
 .cd-shade { background: linear-gradient(rgba(0, 0, 0, 0.35), transparent 30%, rgba(0, 0, 0, 0.55) 62%, rgba(0, 0, 0, 0.92)); }
 .cd-body { display: grid; justify-items: center; gap: clamp(14px, 2.4vh, 26px); animation: fadeUp 1.4s 0.8s ease-out both; }
 .cd-kicker, .cd-date { font: 600 clamp(12px, 1.5vw, 17px)/1 var(--cond); letter-spacing: 0.6em; margin-right: -0.6em; text-transform: uppercase; color: #e9e6da; }
