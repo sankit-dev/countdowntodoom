@@ -166,13 +166,16 @@ h1, h2, h3, h4, p { margin: 0; }
 .stage-tools button:hover { background: #1c2520; }
 @media (max-width: 720px) { .stage-hint { display: none; } }
 .edges { position: absolute; left: 0; top: 0; pointer-events: none; }
-.edge { fill: none; stroke: rgba(255, 255, 255, 0.28); stroke-width: 1; transition: stroke 0.25s, opacity 0.25s; }
-.has-lit .edge { opacity: 0.35; }
-.has-lit .edge.on { opacity: 1; stroke: #fff; stroke-width: 1.5; }
+.road-line { fill: none; stroke: rgba(255, 255, 255, 0.5); stroke-width: 2; }
+.road-arrow { fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.link { stroke: var(--doom); stroke-width: 1.5; stroke-dasharray: 5 5; opacity: 0.9; animation: edgeflow 0.8s linear infinite; }
+@keyframes edgeflow { to { stroke-dashoffset: -10; } }
+.has-lit .road-line, .has-lit .road-arrow { opacity: 0.3; }
 
 /* A title: a poster with its name set small underneath, as on a family tree. */
-.tile { width: var(--tw, 120px); display: grid; justify-items: center; gap: 7px; text-align: center; transition: opacity 0.25s; }
-.tree .tile { transform: translateX(-50%); }
+.tile { --pw: 96px; --ph: 144px; width: 128px; display: grid; justify-items: center; gap: 7px; text-align: center; transition: opacity 0.25s; }
+.tree .tile { position: absolute; transform: translateX(-50%); }
+.tree .tile b { background: #050706; padding: 0 4px; }
 .art {
   position: relative; width: var(--pw); height: var(--ph); overflow: hidden; display: grid; place-items: center;
   background: linear-gradient(160deg, #1c2320, #0c100e);
@@ -192,7 +195,8 @@ h1, h2, h3, h4, p { margin: 0; }
 .tile:hover, .tile.sel { z-index: 3; }
 .tile:hover .art, .tile.sel .art { transform: scale(1.08); box-shadow: 0 0 0 1px #fff, 0 14px 34px rgba(0, 0, 0, 0.7); }
 .tile:hover b, .tile.sel b, .tile.lit b { color: #fff; }
-.has-lit .tile:not(.lit) { opacity: 0.4; }
+.has-lit .tile:not(.lit) .art { filter: brightness(0.4) saturate(0.6); }
+.has-lit .tile:not(.lit) b { color: #4d5650; }
 
 .doom {
   position: absolute; transform: translate(-50%, -50%); border-radius: 50%;
@@ -219,11 +223,6 @@ h1, h2, h3, h4, p { margin: 0; }
 .trailer { display: inline-flex; align-items: center; gap: 10px; margin-top: 16px; padding: 10px 16px 10px 12px; border: 1px solid rgba(255, 255, 255, 0.25); font: 700 13px/1 var(--cond); letter-spacing: 0.18em; text-transform: uppercase; transition: background 0.2s, color 0.2s; }
 .trailer i { font-style: normal; font-size: 11px; }
 .trailer:hover { background: var(--ink); color: #08100b; }
-
-.side-roads { margin: 40px clamp(16px, 3vw, 40px) 0; padding-top: 30px; border-top: 1px solid var(--line); }
-.side-roads h3 { font: 400 24px/1 var(--display); text-transform: uppercase; letter-spacing: 0.04em; }
-.side-roads p { margin: 8px 0 24px; color: var(--dim); font-size: 14px; }
-.side-row { display: flex; flex-wrap: wrap; gap: 22px 10px; }
 
 /* ── Drawer ──────────────────────────────────────────────────────────────── */
 .drawer {

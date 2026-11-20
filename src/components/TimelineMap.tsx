@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { BY_ID, DOOM_ID, NEXT, TITLES, Title, fmtMin } from "../data";
+import { BY_ID, DOOM_ID, TITLES, Title, fmtMin, parentsOf } from "../data";
 import type { Tier } from "../App";
 import { Poster, usePosters } from "../posters";
 
@@ -18,22 +18,28 @@ const VIEWS: { tier: Tier; label: string }[] = [
   { tier: "recommended", label: "Recommended" },
   { tier: "all", label: "Everything" },
 ];
-const ORDER = Object.fromEntries(TITLES.map((t, i) => [t.id, i]));
 const tierFor = (t: Title): Tier => (t.imp >= 7 ? "essential" : t.imp >= 4 ? "recommended" : "all");
 
-function useViewport() {
-  const [v, setV] = useState({ w: window.innerWidth, h: window.innerHeight });
-  useEffect(() => {
-    const on = () => setV({ w: window.innerWidth, h: window.innerHeight });
-    window.addEventListener("resize", on);
-    return () => window.removeEventListener("resize", on);
-  }, []);
-  return v;
+const LEAF_W = 136, PW = 96, PH = 144, LABEL = 34;
+const ROW_H = PH + LABEL + 50;
+const SIDE = 46; // room at each edge for the road to turn around
+const DOOM_R = 70;
+
+function useStageWidth(ref: React.RefObject<HTMLDivElement>) {
+  const [w, setW] = useState(1200);
+  useLayoutEffect(() => {
+    const el = ref.current!;
+    const ro = new ResizeObserver(() => setW(el.clientWidth));
+    ro.observe(el);
+    setW(el.clientWidth);
+    return () => ro.disconnect();
+  }, [ref]);
+  return w;
 }
 
 type Pt = [number, number];
-/** A right-angled connector through `pts`, with softened corners. */
-function elbow(pts: Pt[], r = 8) {
+/** A path through `pts` with rounded corners. */
+function rounded(pts: Pt[], r: number) {
   let d = `M${pts[0][0]} ${pts[0][1]}`;
   for (let i = 1; i < pts.length - 1; i++) {
     const [px, py] = pts[i - 1], [cx, cy] = pts[i], [nx, ny] = pts[i + 1];
@@ -47,8 +53,9 @@ function elbow(pts: Pt[], r = 8) {
 }
 
 export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier }: Props) {
-  const vp = useViewport();
   const posters = usePosters();
+  const stage = useRef<HTMLDivElement>(null);
+  const stageW = useStageWidth(stage);
   const [hover, setHover] = useState<string | null>(null);
   const [card, setCard] = useState<{ id: string; x: number; y: number; flip: boolean } | null>(null);
   const enter = (id: string, el: HTMLElement) => {
@@ -63,89 +70,53 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
     return () => window.removeEventListener("scroll", leave);
   }, []);
 
-  // ── Build the tree for this view ─────────────────────────────────────────
-  // Doomsday is the root on the right. Each title hangs off the next title on
-  // its road to Doomsday that is visible in this view.
-  const T = useMemo(() => {
-    const visible = new Set(
-      TITLES.filter((t) => t.id === DOOM_ID || (t.imp >= MIN_IMP[tier] && NEXT[t.id])).map((t) => t.id)
-    );
-    const parent: Record<string, string> = {};
-    const kids: Record<string, string[]> = {};
-    for (const id of visible) {
-      if (id === DOOM_ID) continue;
-      let n = NEXT[id];
-      while (n && !visible.has(n)) n = NEXT[n];
-      parent[id] = n || DOOM_ID;
-      (kids[parent[id]] ||= []).push(id);
-    }
-    for (const k of Object.values(kids)) k.sort((a, b) => ORDER[a] - ORDER[b]);
-
-    // Depth-first: leaves take the next free row, parents sit between their children.
-    const row: Record<string, number> = {};
-    const dist: Record<string, number> = { [DOOM_ID]: 0 };
-    let rows = 0, maxDist = 0;
-    const place = (id: string) => {
-      const c = kids[id] || [];
-      for (const k of c) { dist[k] = dist[id] + 1; maxDist = Math.max(maxDist, dist[k]); place(k); }
-      row[id] = c.length ? (row[c[0]] + row[c[c.length - 1]]) / 2 : rows++;
-    };
-    place(DOOM_ID);
-
-    const side = tier === "all" ? TITLES.filter((t) => t.id !== DOOM_ID && !NEXT[t.id]) : [];
-    // Watch order: release order among the titles shown in this view.
-    const num: Record<string, number> = {};
-    let n = 0;
-    for (const t of TITLES) if (t.id !== DOOM_ID && visible.has(t.id)) num[t.id] = ++n;
-    return { visible, parent, row, dist, rows, cols: maxDist + 1, side, num };
-  }, [tier]);
-
-  // ── Sizes ────────────────────────────────────────────────────────────────
-  // The tree grows upward: Doomsday at the top, each road climbing to it.
+  // ── The road ─────────────────────────────────────────────────────────────
+  // One line, in watch order: 1 → 2 → 3 … → Doomsday. It runs left to right,
+  // turns at the edge, and comes back on the next row.
   const G = useMemo(() => {
-    // Fixed sizes: the canvas is zoomed to fit, the tree is not squeezed.
-    const leafW = 132;
-    const pw = 96;
-    const ph = Math.round(pw * 1.5);
-    const label = 34; // room for two lines of title under a poster
-    const levelH = ph + label + 46;
-    const doomR = 78;
-    const top = doomR * 2 + 50;
-    const width = leafW * T.rows;
-    const height = top + levelH * (T.cols - 1);
-    const x = (id: string) => T.row[id] * leafW + leafW / 2;
-    // y is the top edge of a poster (for Doomsday, the centre of the circle).
-    const y = (id: string) => (id === DOOM_ID ? doomR + 4 : top + (T.dist[id] - 1) * levelH);
-    return { pw, ph, label, levelH, doomR, width, height, x, y, leafW };
-  }, [T]);
+    const list = TITLES.filter((t) => t.id !== DOOM_ID && t.imp >= MIN_IMP[tier]);
+    const stops = [...list.map((t) => t.id), DOOM_ID];
+    const cols = Math.max(3, Math.min(9, Math.floor((stageW - 56 - SIDE * 2) / LEAF_W)));
+    const cell = (i: number) => {
+      const r = Math.floor(i / cols), c = i % cols;
+      return { r, c: r % 2 ? cols - 1 - c : c };
+    };
+    const cx = (i: number) => SIDE + cell(i).c * LEAF_W + LEAF_W / 2;
+    const cy = (i: number) => cell(i).r * ROW_H + PH / 2 + 10; // middle of the poster
+    const rows = cell(stops.length - 1).r + 1;
+    const width = SIDE * 2 + cols * LEAF_W;
+    const height = rows * ROW_H;
 
-  // ── Highlight: a title's own road to Doomsday ────────────────────────────
+    // The line through every stop, looping round the edge between rows.
+    const pts: Pt[] = [];
+    const arrows: { x: number; y: number; a: number }[] = [];
+    for (let i = 0; i < stops.length; i++) {
+      pts.push([cx(i), cy(i)]);
+      if (i === stops.length - 1) break;
+      if (cell(i + 1).r === cell(i).r) {
+        arrows.push({ x: (cx(i) + cx(i + 1)) / 2, y: cy(i), a: cell(i).r % 2 ? 180 : 0 });
+      } else {
+        const edge = cell(i).r % 2 ? 12 : width - 12;
+        pts.push([edge, cy(i)], [edge, cy(i + 1)]);
+        arrows.push({ x: edge, y: (cy(i) + cy(i + 1)) / 2, a: 90 });
+      }
+    }
+    const index = Object.fromEntries(stops.map((id, i) => [id, i]));
+    return { list, stops, index, cx, cy, width, height, d: rounded(pts, 26), arrows };
+  }, [tier, stageW]);
+
+  // ── Hover: what this title connects to in the story ──────────────────────
   const active = hover ?? selected;
-  const road = useMemo(() => {
-    if (!active || !T.visible.has(active)) return null;
-    const s = new Set<string>();
-    for (let n: string | undefined = active; n; n = T.parent[n]) s.add(n);
-    return s;
-  }, [active, T]);
-
-  // ── Being sent to a title from the drawer ────────────────────────────────
-  useEffect(() => {
-    if (!focus) return;
-    const t = BY_ID[focus.id];
-    const need: Tier = !NEXT[t.id] && t.id !== DOOM_ID ? "all" : tierFor(t);
-    if (MIN_IMP[need] < MIN_IMP[tier]) { setTier(need); return; }
-    const el = stage.current;
-    if (!el || !T.visible.has(t.id)) return;
-    const k = Math.max(viewRef.current.k, 0.7);
-    setView({ k, x: el.clientWidth / 2 - G.x(t.id) * k, y: el.clientHeight / 2 - (G.y(t.id) + G.ph / 2) * k });
-    el.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [focus, tier]);
+  const links = useMemo(() => {
+    if (!active || !(active in G.index)) return null;
+    const out = BY_ID[active].to.filter((n) => n in G.index);
+    const into = parentsOf(active).filter((n) => n in G.index);
+    return { set: new Set([active, ...out, ...into]), pairs: [...out.map((n) => [active, n]), ...into.map((n) => [n, active])] };
+  }, [active, G]);
 
   // ── Pan and zoom ─────────────────────────────────────────────────────────
   // The tree sits on a canvas: drag to move it, pinch / Ctrl+scroll / the
   // buttons to zoom. Plain scrolling is left alone so the page still scrolls.
-  const stage = useRef<HTMLDivElement>(null);
   const [view, setView] = useState({ x: 0, y: 0, k: 1 });
   const viewRef = useRef(view);
   viewRef.current = view;
@@ -159,10 +130,10 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
     const w = el.clientWidth, h = el.clientHeight;
     const byW = (w - PAD * 2) / G.width, byH = (h - PAD * 2) / G.height;
     const k = Math.max(MIN_K, Math.min(1, whole ? Math.min(byW, byH) : byW));
-    // Centre on Doomsday horizontally; start from the top unless showing it all.
-    setView({ k, x: w / 2 - G.x(DOOM_ID) * k, y: whole ? Math.max(PAD, (h - G.height * k) / 2) : PAD });
+    // Centred, starting from the top (number 1) unless showing it all.
+    setView({ k, x: (w - G.width * k) / 2, y: whole ? Math.max(PAD, (h - G.height * k) / 2) : PAD });
   };
-  useLayoutEffect(() => fit(false), [G, vp.w, vp.h]); // eslint-disable-line react-hooks/exhaustive-deps
+  useLayoutEffect(() => fit(false), [G]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const zoomAt = (cx: number, cy: number, factor: number) =>
     setView((v) => {
@@ -230,34 +201,30 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
     }
   };
 
-  const count = (t: Tier) => TITLES.filter((x) => x.id !== DOOM_ID && x.imp >= MIN_IMP[t] && (t === "all" || NEXT[x.id])).length;
+  // ── Being sent to a title from the drawer ────────────────────────────────
+  useEffect(() => {
+    if (!focus) return;
+    const t = BY_ID[focus.id];
+    const need = t.id === DOOM_ID ? tier : tierFor(t);
+    if (MIN_IMP[need] < MIN_IMP[tier]) { setTier(need); return; }
+    const el = stage.current;
+    const i = G.index[t.id];
+    if (!el || i === undefined) return;
+    const k = Math.max(viewRef.current.k, 0.7);
+    setView({ k, x: el.clientWidth / 2 - G.cx(i) * k, y: el.clientHeight / 2 - G.cy(i) * k });
+    el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focus, tier]);
 
-  const tile = (t: Title, style?: React.CSSProperties) => (
-    <button
-      key={t.id}
-      data-title={t.id}
-      className={`tile${road?.has(t.id) ? " lit" : ""}${selected === t.id ? " sel" : ""}${watched.has(t.id) ? " seen" : ""}`}
-      style={{ ...style, ["--pw" as string]: `${G.pw}px`, ["--ph" as string]: `${G.ph}px`, ["--tw" as string]: `${Math.round(G.leafW - 8)}px` }}
-      onMouseEnter={(e) => { if (!dragged.current) enter(t.id, e.currentTarget.querySelector(".art") as HTMLElement); }}
-      onMouseLeave={leave}
-      onClick={() => onSelect(selected === t.id ? null : t.id)}
-    >
-      <span className="art">
-        <i>{t.year}</i>
-        {T.num[t.id] && <em className="num" aria-label={`Watch number ${T.num[t.id]}`}>{T.num[t.id]}</em>}
-        <Poster src={t.poster || posters[t.id]} />
-        {watched.has(t.id) && <u aria-label="Watched">✓</u>}
-      </span>
-      <b>{t.title}</b>
-    </button>
-  );
+  const count = (t: Tier) => TITLES.filter((x) => x.id !== DOOM_ID && x.imp >= MIN_IMP[t]).length;
+  const doomI = G.stops.length - 1;
 
   return (
     <section id="timeline" className="tree-section">
       <header className="tree-head">
         <div>
           <h2>Every road leads to Doom</h2>
-          <p>Watch in number order, starting at 1. Every line climbs to Doomsday — hover a title for the short version, click for the full story.</p>
+          <p>Start at 1 and follow the line. Hover a title to see what it connects to, click for the full story.</p>
         </div>
         <div className="seg" role="group" aria-label="How much to show">
           {VIEWS.map((v) => (
@@ -282,30 +249,42 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
           zoomAt(e.clientX - r.left, e.clientY - r.top, 1.6);
         }}
       >
-        <div className={`tree${road ? " has-lit" : ""}`}
+        <div className={`tree${links ? " has-lit" : ""}`}
           style={{ width: G.width, height: G.height, transform: `translate3d(${view.x}px, ${view.y}px, 0) scale(${view.k})` }}>
           <svg className="edges" width={G.width} height={G.height} aria-hidden="true">
-            {[...T.visible].filter((id) => id !== DOOM_ID).map((id) => {
-              const p = T.parent[id];
-              // Up out of this poster, across, and up into the foot of the next one.
-              const sx = G.x(id), sy = G.y(id);
-              const ex = G.x(p), ey = p === DOOM_ID ? G.y(p) + G.doomR : G.y(p) + G.ph + G.label;
-              const my = sy - 22;
-              return (
-                <path key={id} className={`edge${road?.has(id) ? " on" : ""}`}
-                  d={elbow([[sx, sy], [sx, my], [ex, my], [ex, ey]])} />
-              );
-            })}
+            <path className="road-line" d={G.d} />
+            {G.arrows.map((a, i) => (
+              <path key={i} className="road-arrow" d="M-5 -6L5 0L-5 6" transform={`translate(${a.x} ${a.y}) rotate(${a.a})`} />
+            ))}
+            {links?.pairs.map(([from, to]) => (
+              <line key={`${from}>${to}`} className="link" x1={G.cx(G.index[from])} y1={G.cy(G.index[from])} x2={G.cx(G.index[to])} y2={G.cy(G.index[to])} />
+            ))}
           </svg>
 
-          {TITLES.filter((t) => T.visible.has(t.id) && t.id !== DOOM_ID).map((t) =>
-            tile(t, { position: "absolute", left: G.x(t.id), top: G.y(t.id) })
-          )}
+          {G.list.map((t, i) => (
+            <button
+              key={t.id}
+              data-title={t.id}
+              className={`tile${links?.set.has(t.id) ? " lit" : ""}${selected === t.id ? " sel" : ""}${watched.has(t.id) ? " seen" : ""}`}
+              style={{ left: G.cx(i), top: G.cy(i) - PH / 2 }}
+              onMouseEnter={(e) => { if (!dragged.current) enter(t.id, e.currentTarget.querySelector(".art") as HTMLElement); }}
+              onMouseLeave={leave}
+              onClick={() => onSelect(selected === t.id ? null : t.id)}
+            >
+              <span className="art">
+                <i>{t.year}</i>
+                <em className="num" aria-label={`Watch number ${i + 1}`}>{i + 1}</em>
+                <Poster src={t.poster || posters[t.id]} />
+                {watched.has(t.id) && <u aria-label="Watched">✓</u>}
+              </span>
+              <b>{t.title}</b>
+            </button>
+          ))}
 
           <button
             data-title={DOOM_ID}
-            className={`doom${road ? " lit" : ""}${selected === DOOM_ID ? " sel" : ""}`}
-            style={{ left: G.x(DOOM_ID), top: G.y(DOOM_ID), width: G.doomR * 2, height: G.doomR * 2 }}
+            className={`doom${links?.set.has(DOOM_ID) ? " lit" : ""}${selected === DOOM_ID ? " sel" : ""}`}
+            style={{ left: G.cx(doomI), top: G.cy(doomI), width: DOOM_R * 2, height: DOOM_R * 2 }}
             onMouseEnter={() => setHover(DOOM_ID)}
             onMouseLeave={leave}
             onClick={() => onSelect(selected === DOOM_ID ? null : DOOM_ID)}
@@ -327,18 +306,10 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
 
       {card && !selected && (
         <aside className={`hover-card${card.flip ? " flip" : ""}`} style={{ left: card.x, top: card.y }} aria-hidden="true">
-          <b>{T.num[card.id] ? `${T.num[card.id]}. ` : ""}{BY_ID[card.id].title}</b>
+          <b>{G.index[card.id] + 1}. {BY_ID[card.id].title}</b>
           <span>{BY_ID[card.id].year} · {BY_ID[card.id].kind === "film" ? "Film" : BY_ID[card.id].kind === "series" ? "Series" : "Special"} · {fmtMin(BY_ID[card.id].min)}</span>
           <p>{BY_ID[card.id].why}</p>
         </aside>
-      )}
-
-      {T.side.length > 0 && (
-        <div className="side-roads">
-          <h3>Side roads</h3>
-          <p>Worth watching, but they don't feed into Doomsday.</p>
-          <div className="side-row">{T.side.map((t) => tile(t))}</div>
-        </div>
       )}
     </section>
   );
