@@ -51,10 +51,9 @@ checkout, and crypto is a plain address with a QR code.
 
 - **Vercel Analytics** is built in. Turn it on in the Vercel project's
   Analytics tab; page views then show up there.
-- **Google Analytics**: set `VITE_GA_ID` (your `G-...` Measurement ID) as an
-  environment variable in Vercel and redeploy, or paste it into
-  `src/analytics.tsx`. Events recorded: `mark_watched`, `support_open`,
-  `trailer_play`, `map_view`.
+- **Google**: the Google tag for container `GTM-NS78CJ3F` is at the top of
+  `<head>` in `index.html` and `countdown/index.html`. Events sent with it:
+  `mark_watched`, `support_open`, `trailer_play`, `map_view`.
 
 ## Notes
 
