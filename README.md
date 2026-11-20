@@ -63,6 +63,9 @@ structured data (the watch order as a list), and a plain-HTML copy of the
 watch order inside the page so it is readable before JavaScript runs. It also
 writes `robots.txt` and `sitemap.xml`.
 
+- `pages.ts` generates plain-HTML guide pages from the same data: `/watch-order/`,
+  `/essentials/`, `/story/` and one page per title at `/title/<name>/`. All of
+  them go into `sitemap.xml`.
 - The site address lives in `seo.ts` (`SITE`). Change it if you add a custom domain.
 - `llms.ts` writes `/llms.txt` (a short summary for AI assistants, per
   llmstxt.org) and `/llms-full.txt` (the complete watch order, plots, story

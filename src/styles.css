@@ -512,6 +512,10 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 24px; border: 0; bo
 /* ── Footer ──────────────────────────────────────────────────────────────── */
 .foot { display: grid; justify-items: center; gap: 12px; padding: 50px 24px 60px; border-top: 1px solid var(--line); text-align: center; font-size: 13px; color: #a9b4ac; }
 .foot p { max-width: 62ch; }
+.foot-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; }
+.foot-links a { font: 600 13px/1 var(--cond); letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink); }
+.foot-links a:hover { color: var(--doom); }
+.drawer-more { display: inline-block; margin-top: 10px; font: 600 13px/1 var(--cond); letter-spacing: 0.16em; text-transform: uppercase; color: var(--doom); }
 .foot .sigil { color: var(--doom); }
 
 /* ── /countdown ──────────────────────────────────────────────────────────── */

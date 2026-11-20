@@ -291,3 +291,11 @@ export const NEXT: Record<string, string | null> = Object.fromEntries(
     x.id === DOOM_ID ? null : NEXT_OVERRIDE[x.id] ?? x.to.find((n) => roadToDoom(n)) ?? null,
   ])
 );
+
+/** URL-friendly name for a title's own page, e.g. "loki-season-1". */
+export const slugOf = (x: Title) =>
+  x.title
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");

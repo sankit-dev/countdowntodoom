@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { track } from "../analytics";
 import {
-  BY_ID, DOOM_ID, LANE_BY_ID, PHASES, TIER_LABEL, fmtMin, parentsOf, roadToDoom, tierOf,
+  BY_ID, DOOM_ID, LANE_BY_ID, PHASES, TIER_LABEL, fmtMin, parentsOf, roadToDoom, tierOf, slugOf,
 } from "../data";
 import { PLOT } from "../story";
 import { embedUrl, hasTrailers, searchUrl, useTrailer } from "../tmdb";
@@ -81,6 +81,7 @@ export function Drawer({ id, watched, toggleWatched, onSelect, onClose }: Props)
 
         <h4>{isDoom ? "What this is" : "Why it matters for Doomsday"}</h4>
         <p className="drawer-why">{t.why}</p>
+        {!isDoom && <a className="drawer-more" href={`./title/${slugOf(t)}/`}>Read the full page →</a>}
 
         {!isDoom && (
           <>

@@ -4,6 +4,7 @@
 import type { Plugin } from "vite";
 import { DOOM_ID, TITLES } from "./src/data";
 import { llmsFullTxt, llmsTxt } from "./llms";
+import { GUIDE_CSS, staticPages, titleHref } from "./pages";
 
 // The public address of the site. Change it here (or set SITE_URL) if you add a custom domain.
 export const SITE = (process.env.SITE_URL || "https://countdowntodoom.vercel.app").replace(/\/$/, "");
@@ -22,9 +23,10 @@ const PAGES: Record<string, Page> = {
     path: "/",
     body: `<main style="max-width:760px;margin:0 auto;padding:96px 20px;color:#eef3ee;background:#060807;font-family:system-ui,sans-serif">
 <h1>Avengers: Doomsday watch order</h1>
-<p>Every film and series that leads to <strong>Avengers: Doomsday</strong> (in cinemas 18 December 2026), in release order, with why each one matters.</p>
+<p>Every film and series that leads to <strong>Avengers: Doomsday</strong> (in cinemas 18 December 2026), in order, with why each one matters.</p>
+<p><a href="/watch-order/" style="color:#8dff6a">Full watch order</a> · <a href="/essentials/" style="color:#8dff6a">The essentials</a> · <a href="/story/" style="color:#8dff6a">The story so far</a> · <a href="/countdown/" style="color:#8dff6a">Countdown</a></p>
 <ol>
-${list.map((t) => `<li><strong>${esc(t.title)}</strong> (${t.year}, ${kind(t.kind)}) — ${esc(t.why)}</li>`).join("\n")}
+${list.map((t) => `<li><a href="${titleHref(t)}" style="color:#8dff6a"><strong>${esc(t.title)}</strong></a> (${t.year}, ${kind(t.kind)}) — ${esc(t.why)}</li>`).join("\n")}
 <li><strong>Avengers: Doomsday</strong> (18 December 2026)</li>
 </ol>
 </main>`,
@@ -44,7 +46,7 @@ ${list.map((t) => `<li><strong>${esc(t.title)}</strong> (${t.year}, ${kind(t.kin
     body: `<main style="padding:96px 20px;text-align:center;color:#eef3ee;background:#000;font-family:system-ui,sans-serif">
 <h1>Avengers: Doomsday countdown</h1>
 <p>Avengers: Doomsday is released in cinemas on 18 December 2026.</p>
-<p><a href="${SITE}/" style="color:#8dff6a">See the full watch order</a></p>
+<p><a href="/watch-order/" style="color:#8dff6a">See the full watch order</a> · <a href="/essentials/" style="color:#8dff6a">The essentials</a></p>
 </main>`,
     jsonld: [],
   },
@@ -87,6 +89,9 @@ export function seo(): Plugin {
         .replace('<div id="root"></div>', `<div id="root">${page.body}</div>`);
     },
     generateBundle() {
+      const pages = staticPages(SITE);
+      for (const pg of pages) this.emitFile({ type: "asset", fileName: pg.path.slice(1) + "index.html", source: pg.html });
+      this.emitFile({ type: "asset", fileName: "guide.css", source: GUIDE_CSS });
       this.emitFile({ type: "asset", fileName: "llms.txt", source: llmsTxt(SITE) });
       this.emitFile({ type: "asset", fileName: "llms-full.txt", source: llmsFullTxt(SITE) });
       const today = new Date().toISOString().slice(0, 10);
@@ -97,6 +102,7 @@ export function seo(): Plugin {
         source: `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${Object.values(PAGES).map((p) => `  <url><loc>${SITE}${p.path}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>${p.path === "/" ? "1.0" : "0.8"}</priority></url>`).join("\n")}
+${pages.map((pg) => `  <url><loc>${SITE}${pg.path}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>${pg.path.startsWith("/title/") ? "0.6" : "0.9"}</priority></url>`).join("\n")}
 </urlset>
 `,
       });

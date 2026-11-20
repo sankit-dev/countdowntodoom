@@ -18,6 +18,7 @@
     "src",
     "seo.ts",
     "llms.ts",
+    "pages.ts",
     "vite.config.ts"
   ]
 }

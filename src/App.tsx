@@ -113,6 +113,12 @@ export default function App() {
 
       <footer className="foot">
         <Sigil />
+        <nav className="foot-links" aria-label="Guides">
+          <a href="./watch-order/">Full watch order</a>
+          <a href="./essentials/">The essentials</a>
+          <a href="./story/">The story so far</a>
+          <a href="./countdown/">Countdown</a>
+        </nav>
         <button className="btn" onClick={() => { setSupport(true); track("support_open", { from: "footer" }); }}>♥ Support this project</button>
         <p>
           An unofficial fan project. Not affiliated with, endorsed by or sponsored by Marvel or

@@ -26,6 +26,10 @@ Key facts:
 
 - [Watch order, timeline and planner](${site}/): the interactive guide, the story-so-far explainer and the marathon planner
 - [Countdown](${site}/countdown/): a live countdown to 18 December 2026
+- [Full watch order](${site}/watch-order/): all titles in order with why each matters, plus story (chronological) order
+- [The essentials](${site}/essentials/): the shortest list to watch before Doomsday
+- [The story so far](${site}/story/): the saga explained, including what an incursion is
+- Every title has its own page at ${site}/title/<name>/, e.g. [Loki — Season 2](${site}/title/loki-season-2/)
 
 ## Full content
 
