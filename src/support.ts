@@ -8,7 +8,7 @@
 // WALLETS: paste each address exactly. Double-check them — crypto sent to a
 // wrong address, or on a different network than the one named, is gone.
 
-export const DODO_LINK = "";
+export const DODO_LINK = "https://dodo.pe/doomsday";
 
 export interface Wallet {
   coin: string;
