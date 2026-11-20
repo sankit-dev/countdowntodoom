@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import { useCountdown } from "./components/Hero";
 import { useBackdrop } from "./backdrop";
+import { LoopVideo } from "./components/LoopVideo";
 import "./styles.css";
 
 // The /countdown page: the clock and nothing else.
@@ -16,6 +17,7 @@ function Countdown() {
       {bg && <div className={`cd-bg${bg.own ? "" : " cd-blur"}`} style={{ backgroundImage: `url("${bg.src}")` }} aria-hidden="true" />}
       {/* A poster is tall and the screen is wide: show it whole over a blurred copy of itself. */}
       {bg && !bg.own && <img className="cd-poster" src={bg.src} alt="" />}
+      <LoopVideo base="../" className="cd-video" />
       <div className="cd-shade" aria-hidden="true" />
       <div className="cd-body">
         <p className="cd-kicker">Avengers: Doomsday</p>

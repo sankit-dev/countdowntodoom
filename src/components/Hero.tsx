@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { DOOM_DATE, TITLES } from "../data";
 import { useBackdrop } from "../backdrop";
+import { LoopVideo } from "./LoopVideo";
 
 // The opening is the hero itself: the background image comes up out of black
 // with a slow push-in, the wordmark arrives letter by letter, then the rest.
@@ -38,6 +39,7 @@ export function Hero() {
     <section className="hero" onPointerMove={glow}>
       {bg && <div className={`hero-bg${bg.own ? "" : " hero-blur"}`} style={{ backgroundImage: `url("${bg.src}")` }} aria-hidden="true" />}
       {bg && !bg.own && <img className="hero-poster" src={bg.src} alt="" />}
+      <LoopVideo base={import.meta.env.BASE_URL} className="hero-video" />
       <div className="hero-glow" aria-hidden="true" />
       <div className="hero-vignette" />
       <div className="hero-body">

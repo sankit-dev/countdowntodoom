@@ -108,6 +108,11 @@ h1, h2, h3, h4, p { margin: 0; }
   text-align: center; isolation: isolate; background: #000;
 }
 .hero-bg, .hero-vignette, .hero-glow { position: absolute; inset: 0; z-index: -1; }
+/* The looping video sits over the still and fades in once it is actually playing. */
+.hero-video, .cd-video { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; object-fit: cover; object-position: center 35%; opacity: 0; transition: opacity 1.4s ease; }
+.hero-video { filter: brightness(0.58) contrast(1.05); }
+.cd-video { filter: brightness(0.8); }
+.hero-video.ready, .cd-video.ready { opacity: 1; }
 .hero-blur { filter: blur(40px) brightness(0.45) saturate(1.2) !important; inset: -60px; animation: bgIn 3.2s ease-out both !important; }
 .hero-poster { position: absolute; z-index: -1; left: 50%; top: 0; height: 100%; max-width: 100%; object-fit: contain; transform: translateX(-50%); filter: brightness(0.55); animation: bgIn 3s ease-out both; -webkit-mask-image: linear-gradient(#000 40%, transparent 94%), linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent); mask-image: linear-gradient(#000 40%, transparent 94%), linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent); -webkit-mask-composite: source-in; mask-composite: intersect; }
 /* Doom-green light that trails the pointer */

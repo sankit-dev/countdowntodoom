@@ -25,6 +25,8 @@ npm run build    # static site in dist/ — host anywhere
 
 ## Images
 
+- **Background video**: `public/doom-loop.webm` and `.mp4` loop silently behind the hero and the countdown on screens 900px and wider. Phones get the still `public/hero.jpg` instead.
+
 - **Hero background**: put an image at `public/hero.jpg`. Without it the hero is plain black.
 - **Countdown page background** (`/countdown/`): uses `public/doom-throne.jpg` if present; otherwise it loads the lead image of the film's Wikipedia article in the browser.
 - **Posters** are looked up in the visitor's browser from each title's Wikipedia
