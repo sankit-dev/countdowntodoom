@@ -55,6 +55,17 @@ checkout, and crypto is a plain address with a QR code.
   `<head>` in `index.html` and `countdown/index.html`. Events sent with it:
   `mark_watched`, `support_open`, `trailer_play`, `map_view`.
 
+## SEO
+
+`seo.ts` runs at build time and adds, for both pages: the search title and
+description, canonical URL, link-preview tags for X/Facebook/WhatsApp,
+structured data (the watch order as a list), and a plain-HTML copy of the
+watch order inside the page so it is readable before JavaScript runs. It also
+writes `robots.txt` and `sitemap.xml`.
+
+- The site address lives in `seo.ts` (`SITE`). Change it if you add a custom domain.
+- The preview image is `public/og.jpg`; regenerate it with `node promo/render-og.cjs`.
+
 ## Notes
 
 - Runtimes are approximate (series = whole season) and importance scores are
