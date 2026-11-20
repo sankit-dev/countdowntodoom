@@ -64,6 +64,9 @@ watch order inside the page so it is readable before JavaScript runs. It also
 writes `robots.txt` and `sitemap.xml`.
 
 - The site address lives in `seo.ts` (`SITE`). Change it if you add a custom domain.
+- `llms.ts` writes `/llms.txt` (a short summary for AI assistants, per
+  llmstxt.org) and `/llms-full.txt` (the complete watch order, plots, story
+  and story order), generated from the same data as the site.
 - The preview image is `public/og.jpg`; regenerate it with `node promo/render-og.cjs`.
 
 ## Notes

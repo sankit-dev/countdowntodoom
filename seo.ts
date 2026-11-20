@@ -3,6 +3,7 @@
 // React replaces it on load), plus robots.txt and sitemap.xml.
 import type { Plugin } from "vite";
 import { DOOM_ID, TITLES } from "./src/data";
+import { llmsFullTxt, llmsTxt } from "./llms";
 
 // The public address of the site. Change it here (or set SITE_URL) if you add a custom domain.
 export const SITE = (process.env.SITE_URL || "https://countdowntodoom.vercel.app").replace(/\/$/, "");
@@ -56,6 +57,7 @@ function head(p: Page) {
     `<title>${esc(p.title)}</title>`,
     `<meta name="description" content="${esc(p.description)}" />`,
     `<link rel="canonical" href="${url}" />`,
+    `<link rel="alternate" type="text/plain" title="LLM-friendly summary" href="${SITE}/llms.txt" />`,
     `<meta name="robots" content="index, follow, max-image-preview:large" />`,
     `<meta property="og:type" content="website" />`,
     `<meta property="og:site_name" content="Road to Doomsday" />`,
@@ -85,6 +87,8 @@ export function seo(): Plugin {
         .replace('<div id="root"></div>', `<div id="root">${page.body}</div>`);
     },
     generateBundle() {
+      this.emitFile({ type: "asset", fileName: "llms.txt", source: llmsTxt(SITE) });
+      this.emitFile({ type: "asset", fileName: "llms-full.txt", source: llmsFullTxt(SITE) });
       const today = new Date().toISOString().slice(0, 10);
       this.emitFile({ type: "asset", fileName: "robots.txt", source: `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n` });
       this.emitFile({

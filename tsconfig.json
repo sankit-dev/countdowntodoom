@@ -17,6 +17,7 @@
   "include": [
     "src",
     "seo.ts",
+    "llms.ts",
     "vite.config.ts"
   ]
 }
