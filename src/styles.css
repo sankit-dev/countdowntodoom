@@ -155,6 +155,122 @@ h1, h2, h3, h4, p { margin: 0; }
 .scroll-cue i { position: absolute; left: 50%; top: 7px; width: 2px; height: 7px; margin-left: -1px; background: var(--doom); animation: cue 1.8s ease-in-out infinite; }
 @keyframes cue { 50% { transform: translateY(11px); opacity: 0.2; } }
 
+/* ── The story so far ────────────────────────────────────────────────────── */
+.story { padding: clamp(70px, 9vw, 120px) 0 30px; }
+.story-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px; padding: 0 clamp(16px, 3vw, 40px); margin-bottom: 34px; }
+.story-head h2 { margin-top: 12px; font: 800 clamp(26px, 4.4vw, 56px)/1.05 var(--display); }
+.story-warn { font: 600 12px/1 var(--cond); letter-spacing: 0.22em; text-transform: uppercase; color: var(--dim); }
+.deck { display: flex; gap: 22px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px max(16px, calc((100vw - 1100px) / 2)) 26px; scrollbar-width: none; }
+.deck::-webkit-scrollbar { display: none; }
+.card {
+  flex: none; width: min(1100px, 88vw); scroll-snap-align: center;
+  display: grid; grid-template-columns: 1fr 1fr; min-height: min(520px, 70svh);
+  background: linear-gradient(140deg, #111814, #090c0a); border: 1px solid var(--line);
+  opacity: 0.35; transform: scale(0.96); transition: opacity 0.5s, transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.5s;
+}
+.card.on { opacity: 1; transform: none; border-color: rgba(141, 255, 106, 0.35); }
+.card-viz { display: grid; place-items: center; padding: 24px; background: radial-gradient(circle at 50% 50%, rgba(141, 255, 106, 0.07), transparent 65%); border-right: 1px solid var(--line); }
+.card-text { display: grid; align-content: center; gap: 16px; padding: clamp(22px, 4vw, 54px); }
+.card-n { font: 400 44px/0.9 var(--num); color: var(--gold); letter-spacing: 0.04em; }
+.card-n small { font-size: 18px; color: var(--dim); }
+.card h3 { font: 800 clamp(22px, 2.8vw, 36px)/1.12 var(--display); text-wrap: balance; }
+.card p { color: #c0cac3; font-size: clamp(15px, 1.25vw, 17px); line-height: 1.6; text-wrap: pretty; }
+.card-watch { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; }
+.card-watch > span { font: 600 11px/1 var(--cond); letter-spacing: 0.26em; text-transform: uppercase; color: var(--dim); margin-right: 4px; }
+.card-watch .chip { --c: var(--doom); }
+.card.on .card-text > * { animation: fadeUp 0.7s both; }
+.card.on .card-text > :nth-child(2) { animation-delay: 0.08s; }
+.card.on .card-text > :nth-child(3) { animation-delay: 0.18s; }
+.card.on .card-text > :nth-child(4) { animation-delay: 0.28s; }
+.card.on .card-text > :nth-child(5) { animation-delay: 0.38s; }
+.deck-nav { display: flex; align-items: center; justify-content: center; gap: 22px; }
+.deck-nav > button { width: 46px; height: 46px; border: 1px solid rgba(255, 255, 255, 0.25); font-size: 20px; transition: background 0.2s, color 0.2s, opacity 0.2s; }
+.deck-nav > button:hover:not(:disabled) { background: var(--ink); color: #08100b; }
+.deck-nav > button:disabled { opacity: 0.25; cursor: default; }
+.dots { display: flex; gap: 8px; }
+.dots button { width: 22px; height: 14px; position: relative; }
+.dots button::after { content: ""; position: absolute; left: 0; right: 0; top: 6px; height: 2px; background: rgba(255, 255, 255, 0.22); transition: background 0.3s; }
+.dots button.on::after { background: var(--doom); box-shadow: 0 0 8px var(--doom); }
+
+/* The diagrams. Everything is still until its card is the active one. */
+.viz { width: 100%; max-width: 440px; height: auto; overflow: visible; }
+.viz .line { fill: none; stroke: rgba(255, 255, 255, 0.75); stroke-width: 2; stroke-linecap: round; }
+.viz .main { stroke: #fff; stroke-width: 3; }
+.viz .grow { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.card.on .viz .grow { animation: draw 1.6s ease-out forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes pulse { 50% { transform: scale(1.35); } }
+.viz circle, .viz g { transform-box: fill-box; transform-origin: center; }
+
+.stone { filter: drop-shadow(0 0 8px currentColor); }
+.card.on .stone { animation: pulse 2.4s ease-in-out infinite; }
+.soul { fill: #fff; }
+.card.on .soul.gone { animation: dust 6s ease-in-out infinite; }
+@keyframes dust { 0%, 25% { opacity: 1; transform: none; } 40%, 70% { opacity: 0; transform: translate(10px, -8px) scale(0.3); } 90%, 100% { opacity: 1; transform: none; } }
+
+.prune { opacity: 0; }
+.prune .cut { fill: none; stroke: #ff5a5a; stroke-width: 3; stroke-linecap: round; }
+.card.on .prune { animation: prune 3.6s ease-in-out infinite; }
+@keyframes prune { 0% { opacity: 0; } 20%, 55% { opacity: 1; } 75%, 100% { opacity: 0; } }
+
+.spark { fill: var(--doom); }
+.card.on .spark { animation: pulse 1.2s ease-in-out infinite; }
+
+.card.on .drift { animation: drift 5s linear infinite; }
+@keyframes drift { to { transform: translateX(-110px); } }
+.variant { fill: #9aa59d; }
+.variant.ours { fill: var(--doom); }
+.card.on .variant { animation: pulse 2s ease-in-out infinite; }
+
+.world { fill: rgba(255, 255, 255, 0.06); stroke: #fff; stroke-width: 2; }
+.world.b { stroke: var(--gold); fill: rgba(216, 181, 106, 0.08); }
+.blast { fill: none; stroke: #fff; stroke-width: 3; opacity: 0; }
+.card.on .world.a { animation: collideA 5s ease-in infinite; }
+.card.on .world.b { animation: collideB 5s ease-in infinite; }
+.card.on .blast { animation: blast 5s ease-out infinite; }
+@keyframes collideA { 0%, 10% { transform: none; opacity: 1; } 55% { transform: translateX(62px); opacity: 1; } 62%, 92% { transform: translateX(62px); opacity: 0; } 100% { transform: none; opacity: 1; } }
+@keyframes collideB { 0%, 10% { transform: none; opacity: 1; } 55% { transform: translateX(-62px); opacity: 1; } 62%, 92% { transform: translateX(-62px); opacity: 0; } 100% { transform: none; opacity: 1; } }
+@keyframes blast { 0%, 54% { opacity: 0; transform: scale(0.4); } 58% { opacity: 1; transform: scale(1); } 85%, 100% { opacity: 0; transform: scale(9); } }
+
+.keeper, .doom-orb { fill: var(--doom); filter: drop-shadow(0 0 14px var(--doom)); }
+.card.on .keeper, .card.on .doom-orb { animation: pulse 2.6s ease-in-out infinite; }
+
+.kang { fill: none; stroke: #b9a3ff; stroke-width: 2; }
+.card.on .kang { animation: fadeKang 5s ease-in-out infinite; }
+@keyframes fadeKang { 0%, 45% { opacity: 1; } 65%, 90% { opacity: 0.12; } 100% { opacity: 1; } }
+.strike { fill: none; stroke: #ff5a5a; stroke-width: 4; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.card.on .strike { animation: strike 5s ease-in-out infinite; }
+@keyframes strike { 0%, 40% { stroke-dashoffset: 1; } 60%, 90% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 1; } }
+
+.anchor { fill: #fff; }
+.card.on .anchor.lost { animation: lost 5s ease-in-out infinite; }
+.card.on .wither { animation: wither 5s ease-in-out infinite; }
+@keyframes lost { 0%, 20% { opacity: 1; } 35%, 85% { opacity: 0; } 100% { opacity: 1; } }
+@keyframes wither { 0%, 30% { opacity: 1; stroke-dasharray: none; } 55%, 85% { opacity: 0.18; stroke-dasharray: 3 12; } 100% { opacity: 1; } }
+
+.member { fill: #fff; transform-box: view-box !important; transform-origin: 0 0 !important; transform: translate(var(--x0), 60px); }
+.card.on .member { animation: gather 5s ease-in-out infinite; }
+@keyframes gather { 0%, 10% { transform: translate(var(--x0), 60px); } 40%, 90% { transform: translate(var(--x), var(--y)); } 100% { transform: translate(var(--x0), 60px); } }
+.ship { transform-box: view-box !important; transform-origin: 0 0 !important; transform: translate(200px, -30px); opacity: 0; }
+.ship path { fill: none; stroke: #6fb6ff; stroke-width: 2; }
+.ship text { fill: #6fb6ff; font: 400 13px var(--num); }
+.card.on .ship { animation: land 5s ease-in-out infinite; }
+@keyframes land { 0%, 45% { transform: translate(200px, -30px); opacity: 0; } 55% { opacity: 1; } 85%, 92% { transform: translate(200px, 178px); opacity: 1; } 100% { transform: translate(200px, 178px); opacity: 0; } }
+
+.one { fill: none; stroke: #6fb6ff; stroke-width: 3; }
+.child { fill: #fff; }
+.doom-ring { fill: none; stroke: var(--doom); stroke-width: 2; opacity: 0; }
+.card.on .family { animation: spin 14s linear infinite; }
+.card.on .doom-ring { animation: close 6s ease-in infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes close { 0%, 20% { opacity: 0; transform: scale(1); } 40% { opacity: 0.9; } 85% { opacity: 1; transform: scale(0.12); } 100% { opacity: 0; transform: scale(0.12); } }
+
+@media (max-width: 820px) {
+  .card { grid-template-columns: 1fr; min-height: 0; }
+  .card-viz { border-right: 0; border-bottom: 1px solid var(--line); padding: 14px; }
+  .viz { max-width: 300px; }
+}
+
 /* ── The tree ────────────────────────────────────────────────────────────── */
 .tree-section { position: relative; padding: clamp(70px, 9vw, 110px) 0 60px; }
 .tree-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 18px; padding: 0 clamp(16px, 3vw, 40px); margin-bottom: 46px; }
@@ -259,6 +375,7 @@ h1, h2, h3, h4, p { margin: 0; }
 .pips i { width: 14px; height: 6px; background: rgba(255, 255, 255, 0.1); transform: skewX(-20deg); }
 .pips i.on { background: var(--c); box-shadow: 0 0 8px var(--c); }
 .drawer h4 { margin: 26px 0 10px; font: 700 11px/1 var(--cond); letter-spacing: 0.3em; text-transform: uppercase; color: var(--dim); }
+.drawer-plot { font-size: 15px; line-height: 1.55; color: #b6c0b9; text-wrap: pretty; }
 .drawer-why { font-size: 17px; line-height: 1.5; color: #dde5df; text-wrap: pretty; }
 .road { list-style: none; margin: 0; padding: 0 0 0 6px; }
 .road li { position: relative; padding: 0 0 14px 22px; }

@@ -4,6 +4,7 @@ import { Hero } from "./components/Hero";
 import { TimelineMap } from "./components/TimelineMap";
 import { Drawer } from "./components/Drawer";
 import { Planner } from "./components/Planner";
+import { Story } from "./components/Story";
 import { Sigil } from "./components/Sigil";
 import { PosterProvider } from "./posters";
 
@@ -68,6 +69,7 @@ export default function App() {
           </span>
         </a>
         <nav>
+          <a href="#story">Story</a>
           <a href="#timeline">Timeline</a>
           <a href="#planner">Planner</a>
           <a href="./countdown/">Countdown</a>
@@ -85,6 +87,7 @@ export default function App() {
 
       <main id="top">
         <Hero />
+        <Story onSelect={select} />
         <TimelineMap
           selected={selected}
           focus={focus}

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   BY_ID, DOOM_ID, LANE_BY_ID, PHASES, TIER_LABEL, fmtMin, parentsOf, roadToDoom, tierOf,
 } from "../data";
+import { PLOT } from "../story";
 import { Poster, usePosters } from "../posters";
 
 interface Props {
@@ -57,6 +58,8 @@ export function Drawer({ id, watched, toggleWatched, onSelect, onClose }: Props)
             <span>{TIER_LABEL[tierOf(t)]}</span>
           </div>
         )}
+
+        {PLOT[t.id] && (<><h4>What happens</h4><p className="drawer-plot">{PLOT[t.id]}</p></>)}
 
         <h4>{isDoom ? "What this is" : "Why it matters for Doomsday"}</h4>
         <p className="drawer-why">{t.why}</p>
