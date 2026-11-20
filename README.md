@@ -76,18 +76,16 @@ writes `robots.txt` and `sitemap.xml`.
 
 - Runtimes are approximate (series = whole season) and importance scores are
   editorial judgement. Both live in `src/data.ts` and should be reviewed.
-- The branding is original. This project is not affiliated with or endorsed by
-  Marvel or Disney, and uses no official logos, posters or stills.
+- The site's own branding (wordmark, sigil) is original. It also shows official
+  Marvel imagery: poster thumbnails from Wikipedia, the background video and the
+  phone posters. This project is not affiliated with or endorsed by Marvel or Disney.
 - "Watched" marks are stored in the browser only.
 
 ## Deploying
 
-`.github/workflows/pages.yml` builds and publishes the site to GitHub Pages on
-every push to `main`. One-time setup: in the repository's **Settings → Pages**,
-set **Source** to **GitHub Actions**. The site then lives at
-`https://<user>.github.io/<repo>/` — name the repo `countdowntodoom` to get
-`…github.io/countdowntodoom/`.
+The live site is on Vercel (https://countdowntodoom.vercel.app), deployed
+automatically from `main`. Vercel runs `npm run build` and serves `dist/`,
+plus the server functions in `api/`.
 
-For a custom domain (for example `countdowntodoom.com`), buy the domain, add a
-`public/CNAME` file containing just the domain, and point its DNS at GitHub
-Pages as described in GitHub's custom-domain docs.
+For a custom domain, add it in the Vercel project's **Settings → Domains**,
+then update `SITE` in `seo.ts`.
