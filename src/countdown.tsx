@@ -1,6 +1,6 @@
 import { createRoot } from "react-dom/client";
 import { useCountdown } from "./components/Hero";
-import { useBackdrop } from "./backdrop";
+import { isPhone, useBackdrop } from "./backdrop";
 import { LoopVideo } from "./components/LoopVideo";
 import "./styles.css";
 
@@ -10,11 +10,11 @@ import "./styles.css";
 // image of the film's Wikipedia article is loaded in the visitor's browser.
 function Countdown() {
   const c = useCountdown();
-  const bg = useBackdrop("../doom-throne.jpg");
+  const bg = useBackdrop(isPhone() ? "../phone-glass.jpg" : "../doom-throne.jpg");
   const pad = (n: number) => String(n).padStart(2, "0");
   return (
-    <main className="cd">
-      {bg && <div className={`cd-bg${bg.own ? "" : " cd-blur"}`} style={{ backgroundImage: `url("${bg.src}")` }} aria-hidden="true" />}
+    <main className={`cd${isPhone() ? " cd-phone" : ""}`}>
+      {bg && <div className={`cd-bg${bg.own ? "" : " cd-blur"}${isPhone() ? " phone" : ""}`} style={{ backgroundImage: `url("${bg.src}")` }} aria-hidden="true" />}
       {/* A poster is tall and the screen is wide: show it whole over a blurred copy of itself. */}
       {bg && !bg.own && <img className="cd-poster" src={bg.src} alt="" />}
       <LoopVideo base="../" className="cd-video" />

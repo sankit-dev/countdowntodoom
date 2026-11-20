@@ -27,6 +27,9 @@ const wikiImage = () =>
     }));
 
 /** `own` is true when the image is your own file (shown full-bleed, not as a poster). */
+/** Phones get a portrait poster instead of the wide still. */
+export const isPhone = () => typeof window !== "undefined" && window.matchMedia("(max-width: 899px)").matches;
+
 export function useBackdrop(local: string) {
   const [bg, setBg] = useState<{ src: string; own: boolean } | null>(null);
   useEffect(() => {

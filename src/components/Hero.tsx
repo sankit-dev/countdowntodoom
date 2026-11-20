@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { DOOM_DATE, TITLES } from "../data";
-import { useBackdrop } from "../backdrop";
+import { isPhone, useBackdrop } from "../backdrop";
 import { LoopVideo } from "./LoopVideo";
 
 // The opening is the hero itself: the background image comes up out of black
 // with a slow push-in, the wordmark arrives letter by letter, then the rest.
 // Background: public/hero.jpg if present, otherwise the film's image from Wikipedia.
-const HERO_IMAGE = `${import.meta.env.BASE_URL}hero.jpg`;
+const BASE = import.meta.env.BASE_URL;
 
 export function useCountdown() {
   const [now, setNow] = useState(Date.now());
@@ -28,7 +28,7 @@ export function Hero() {
   const c = useCountdown();
   const count = TITLES.length - 1;
   const pad = (n: number) => String(n).padStart(2, "0");
-  const bg = useBackdrop(HERO_IMAGE);
+  const bg = useBackdrop(isPhone() ? `${BASE}phone-tapestry.jpg` : `${BASE}hero.jpg`);
   // The green glow behind the wordmark follows the pointer.
   const glow = (e: React.PointerEvent<HTMLElement>) => {
     const r = e.currentTarget.getBoundingClientRect();
@@ -37,7 +37,7 @@ export function Hero() {
   };
   return (
     <section className="hero" onPointerMove={glow}>
-      {bg && <div className={`hero-bg${bg.own ? "" : " hero-blur"}`} style={{ backgroundImage: `url("${bg.src}")` }} aria-hidden="true" />}
+      {bg && <div className={`hero-bg${bg.own ? "" : " hero-blur"}${isPhone() ? " phone" : ""}`} style={{ backgroundImage: `url("${bg.src}")` }} aria-hidden="true" />}
       {bg && !bg.own && <img className="hero-poster" src={bg.src} alt="" />}
       <LoopVideo base={import.meta.env.BASE_URL} className="hero-video" />
       <div className="hero-glow" aria-hidden="true" />
