@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   BY_ID, DOOM_ID, LANE_BY_ID, PHASES, TIER_LABEL, fmtMin, parentsOf, roadToDoom, tierOf,
 } from "../data";
+import { Poster, usePosters } from "../posters";
 
 interface Props {
   id: string | null;
@@ -13,6 +14,7 @@ interface Props {
 
 export function Drawer({ id, watched, toggleWatched, onSelect, onClose }: Props) {
   // Keep the last title mounted while the drawer slides shut.
+  const posters = usePosters();
   const [shown, setShown] = useState(id);
   useEffect(() => { if (id) setShown(id); }, [id]);
   const t = shown ? BY_ID[shown] : null;
@@ -32,6 +34,7 @@ export function Drawer({ id, watched, toggleWatched, onSelect, onClose }: Props)
     <aside className={`drawer${id ? " open" : ""}`} style={{ ["--c" as string]: isDoom ? "var(--doom)" : lane.color }} aria-hidden={!id}>
       <button className="drawer-x" onClick={onClose} aria-label="Close">×</button>
       <div className="drawer-scroll" key={t.id}>
+        <Poster className="drawer-poster" src={t.poster || posters[t.id]} />
         <p className="drawer-lane">{isDoom ? "The destination" : lane.name}</p>
         <h3>{t.title}</h3>
         <p className="drawer-meta">
@@ -40,6 +43,11 @@ export function Drawer({ id, watched, toggleWatched, onSelect, onClose }: Props)
           {!isDoom && <span>{fmtMin(t.min)}</span>}
           <span>{t.phase ? PHASES[t.phase].name : "Legacy universe"}</span>
         </p>
+
+        <a className="trailer" target="_blank" rel="noopener noreferrer"
+          href={`https://www.youtube.com/results?search_query=${encodeURIComponent(t.title.replace(" — ", " ") + " official trailer")}`}>
+          <i aria-hidden="true">▶</i> Watch the trailer
+        </a>
 
         {!isDoom && (
           <div className="weight">

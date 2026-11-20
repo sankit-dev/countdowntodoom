@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { DOOM_DATE } from "./data";
-import { Intro } from "./components/Intro";
 import { Hero } from "./components/Hero";
 import { TimelineMap } from "./components/TimelineMap";
 import { Drawer } from "./components/Drawer";
 import { Planner } from "./components/Planner";
 import { Sigil } from "./components/Sigil";
+import { PosterProvider } from "./posters";
 
 export type Tier = "all" | "recommended" | "essential";
 
@@ -25,7 +25,7 @@ export default function App() {
   const [selected, setSelected] = useState<string | null>(null);
   const [focus, setFocus] = useState<{ id: string; n: number } | null>(null);
   const [watched, setWatched] = useState<Set<string>>(loadWatched);
-  const [tier, setTier] = useState<Tier>("all");
+  const [tier, setTier] = useState<Tier>("essential");
 
   useEffect(() => {
     try {
@@ -58,8 +58,7 @@ export default function App() {
   const d = daysToDoom();
 
   return (
-    <>
-      <Intro />
+    <PosterProvider>
       <header className="nav">
         <a className="brand" href="#top" aria-label="Road to Doomsday — home">
           <Sigil />
@@ -102,7 +101,7 @@ export default function App() {
           An unofficial fan project. Not affiliated with, endorsed by or sponsored by Marvel or
           The Walt Disney Company. All film and series titles belong to their respective owners.
         </p>
-        <p className="dim">Runtimes are approximate. Series runtimes cover the whole season.</p>
+        <p className="dim">Runtimes are approximate. Series runtimes cover the whole season. Poster images are loaded from Wikipedia and belong to their respective rights holders.</p>
       </footer>
 
       <Drawer
@@ -112,6 +111,6 @@ export default function App() {
         onSelect={select}
         onClose={() => setSelected(null)}
       />
-    </>
+    </PosterProvider>
   );
 }

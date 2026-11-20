@@ -23,6 +23,13 @@ npm run build    # static site in dist/ — host anywhere
 | `src/components/Planner.tsx` | The marathon planner UI. |
 | `src/components/Hero.tsx`, `Intro.tsx` | Opening sequence, countdown. |
 
+## Images
+
+- **Hero background**: put an image at `public/hero.jpg`. Without it the hero is plain black.
+- **Posters** are looked up in the visitor's browser from each title's Wikipedia
+  article (`src/posters.tsx`). To pin one yourself, set `poster` on the title in
+  `src/data.ts`.
+
 ## Notes
 
 - Runtimes are approximate (series = whole season) and importance scores are

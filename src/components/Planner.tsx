@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { daysToDoom } from "../App";
 import { BY_ID, LANE_BY_ID, fmtMin } from "../data";
 import { buildPlan } from "../planner";
+import { Poster, usePosters } from "../posters";
 
 interface Props {
   watched: Set<string>;
@@ -12,6 +13,7 @@ const PART = { whole: "", start: "start", middle: "continue", end: "finish" } as
 const dayFmt = new Intl.DateTimeFormat(undefined, { weekday: "short", day: "numeric", month: "short" });
 
 export function Planner({ watched, onSelect }: Props) {
+  const posters = usePosters();
   const left = daysToDoom();
   const [days, setDays] = useState(left > 0 ? Math.min(left, 120) : 14);
   const [hours, setHours] = useState(2.5);
@@ -100,10 +102,16 @@ export function Planner({ watched, onSelect }: Props) {
                     const t = BY_ID[s.id];
                     return (
                       <button key={k} className="slot" style={{ ["--c" as string]: LANE_BY_ID[t.lane].color }} onClick={() => onSelect(t.id)}>
-                        <span className="slot-title">{t.title}</span>
-                        <span className="slot-meta">
-                          {PART[s.part] && <i>{PART[s.part]}</i>}
-                          {fmtMin(s.minutes)}
+                        <span className="slot-art">
+                          <Poster src={t.poster || posters[t.id]} />
+                        </span>
+                        <span className="slot-text">
+                          <span className="slot-title">{t.title}</span>
+                          <span className="slot-meta">
+                            {PART[s.part] && <i>{PART[s.part]}</i>}
+                            {fmtMin(s.minutes)}
+                            {s.part !== "whole" && <> of {fmtMin(t.min)}</>}
+                          </span>
                         </span>
                       </button>
                     );
@@ -114,7 +122,10 @@ export function Planner({ watched, onSelect }: Props) {
             {plan.picked.length > 0 && (
               <li className="day day-doom">
                 <header><b>Then</b><span>18 December 2026</span></header>
-                <p>Avengers: Doomsday</p>
+                <div className="slot slot-static">
+                  <span className="slot-art"><Poster src={posters.doomsday} /></span>
+                  <p>Avengers: Doomsday</p>
+                </div>
               </li>
             )}
           </ol>

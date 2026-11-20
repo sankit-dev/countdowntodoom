@@ -265,3 +265,29 @@ export const roadToDoom = (id: string): string[] | null => {
   }
   return null;
 };
+
+// ── The tree ───────────────────────────────────────────────────────────────
+// The map draws a tree, so every title gets exactly one "next step" towards
+// Doomsday. By default that is the first entry in `to` that can reach it;
+// these overrides pick a better one where the first entry is not the main line.
+const NEXT_OVERRIDE: Record<string, string> = {
+  "first-avenger": "winter-soldier",
+  "avengers": "age-of-ultron",
+  "winter-soldier": "civil-war",
+  "ant-man": "ant-man-wasp",
+  "civil-war": "infinity-war",
+  "homecoming": "far-from-home",
+  "black-panther": "wakanda-forever",
+  "endgame": "loki-1",
+  "black-widow": "thunderbolts",
+  "hawkeye": "born-again-1",
+  "no-way-home": "brand-new-day",
+};
+
+/** The single next step from a title towards Doomsday, or null for a side story. */
+export const NEXT: Record<string, string | null> = Object.fromEntries(
+  TITLES.map((x) => [
+    x.id,
+    x.id === DOOM_ID ? null : NEXT_OVERRIDE[x.id] ?? x.to.find((n) => roadToDoom(n)) ?? null,
+  ])
+);
