@@ -55,6 +55,18 @@ checkout, and crypto is a plain address with a QR code.
   `<head>` in `index.html` and `countdown/index.html`. Events sent with it:
   `mark_watched`, `support_open`, `trailer_play`, `map_view`.
 
+## Sharing (server functions in `api/`)
+
+- **Doom-ready %** (`src/doomReady.ts`): share of what matters you've actually
+  watched — ticked titles only, weighted by importance². Different from the
+  planner's "Ready by release", which also counts what your plan will cover.
+- `GET /api/card?ready=82&e=12` → the 1200×630 share card (JPEG). Drawn with
+  `@vercel/og` in `api/_card.ts`, converted to JPEG with `sharp` to stay small
+  enough for WhatsApp previews. Fonts are the site's own, served from `public/fonts/`.
+- `/?ready=82&e=12` is rewritten (see `vercel.json`) to `api/share.ts`, which
+  returns the normal homepage with its preview tags pointing at that card.
+- `npm run dev` runs these functions locally too (see `vite.config.ts`).
+
 ## SEO
 
 `seo.ts` runs at build time and adds, for both pages: the search title and

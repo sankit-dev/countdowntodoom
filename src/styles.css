@@ -459,6 +459,36 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 24px; border: 0; bo
 .stat-ring { position: relative; }
 .stat-ring b { color: var(--doom); }
 .stat-ring::after { content: ""; position: absolute; left: 0; bottom: 0; height: 3px; width: calc(var(--p) * 1%); background: var(--doom); box-shadow: 0 0 12px var(--doom); transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+/* Doom-ready: what you've actually watched, with the share button */
+.doom-ready { display: grid; grid-template-columns: auto 1fr; gap: 14px 22px; align-items: center; margin-bottom: 14px; padding: 20px; background: linear-gradient(120deg, rgba(141, 255, 106, 0.08), transparent 60%), var(--bg-2); border: 1px solid rgba(141, 255, 106, 0.35); }
+.doom-ready-num { display: grid; gap: 8px; }
+.doom-ready-num b { font: 400 clamp(52px, 7vw, 76px)/0.9 var(--num); color: var(--doom); }
+.doom-ready-num b small { font-size: 0.5em; margin-left: 2px; }
+.doom-ready-num span { font: 600 11px/1 var(--cond); letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink); }
+.doom-ready-body { display: grid; gap: 12px; min-width: 0; }
+.doom-ready-body p { color: #c0cac3; font-size: 15px; line-height: 1.45; }
+.doom-ready-body strong { color: var(--ink); }
+.doom-ready-bar { display: block; height: 6px; background: rgba(255, 255, 255, 0.08); }
+.doom-ready-bar i { display: block; height: 100%; width: calc(var(--p) * 1%); background: linear-gradient(90deg, var(--gold), var(--doom)); box-shadow: 0 0 10px var(--doom); transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.doom-ready-share { grid-column: 1 / -1; width: 100%; }
+@media (min-width: 760px) {
+  .doom-ready { grid-template-columns: auto 1fr auto; }
+  .doom-ready-share { grid-column: auto; width: auto; }
+}
+
+/* Share dialog */
+.share-box { width: min(680px, 100%); }
+.share-preview { position: relative; aspect-ratio: 1200 / 630; background: linear-gradient(110deg, #0c110e 30%, #17201b 50%, #0c110e 70%) 0 0 / 200% 100%; border: 1px solid var(--line); animation: shimmer 1.4s linear infinite; display: grid; place-items: center; text-align: center; padding: 0; overflow: hidden; }
+.share-preview.loaded { animation: none; }
+.share-preview img { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.4s; }
+.share-preview.loaded img { opacity: 1; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+.share-actions { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.share-actions .btn { width: 100%; height: 48px; padding: 0 16px; font-size: 14px; }
+.share-actions .btn:disabled { opacity: 0.5; cursor: default; }
+@media (min-width: 560px) { .share-actions { grid-template-columns: 1fr 1fr 1fr; } }
+.share-link { text-align: center; word-break: break-all; }
+
 .verdict { margin: 20px 0 26px; font: 600 clamp(18px, 2vw, 22px)/1.3 var(--cond); letter-spacing: 0.03em; color: var(--gold); }
 
 /* The plan, as a listing: poster, then what it is and why it is on the list. */

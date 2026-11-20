@@ -19,6 +19,7 @@
     "seo.ts",
     "llms.ts",
     "pages.ts",
+    "api",
     "vite.config.ts"
   ]
 }
