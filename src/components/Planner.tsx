@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { daysToDoom } from "../App";
-import { BY_ID, LANE_BY_ID, fmtMin } from "../data";
+import { BY_ID, LANE_BY_ID, TIER_LABEL, fmtMin, tierOf } from "../data";
 import { buildPlan } from "../planner";
 import { Poster, usePosters } from "../posters";
 
@@ -89,42 +89,44 @@ export function Planner({ watched, onSelect }: Props) {
           </div>
           <p className="verdict">{verdict}</p>
 
-          <ol className="days">
-            {plan.days.map((slots, i) =>
-              slots.length ? (
-                <li key={i} className="day">
-                  <header>
-                    <b>Day {String(i + 1).padStart(2, "0")}</b>
-                    <span>{dateOf(i)}</span>
-                    <em>{fmtMin(slots.reduce((n, s) => n + s.minutes, 0))}</em>
-                  </header>
-                  {slots.map((s, k) => {
-                    const t = BY_ID[s.id];
-                    return (
-                      <button key={k} className="slot" style={{ ["--c" as string]: LANE_BY_ID[t.lane].color }} onClick={() => onSelect(t.id)}>
-                        <span className="slot-art">
-                          <Poster src={t.poster || posters[t.id]} />
+          <ol className="listing">
+            {plan.days.flatMap((slots, i) =>
+              slots.map((s, k) => {
+                const t = BY_ID[s.id];
+                const lane = LANE_BY_ID[t.lane];
+                return (
+                  <li key={`${i}-${k}`} className="item" style={{ ["--c" as string]: lane.color }}>
+                    <button onClick={() => onSelect(t.id)}>
+                      <span className="item-art"><Poster src={t.poster || posters[t.id]} /></span>
+                      <span className="item-body">
+                        <span className="item-day"><b>Day {String(i + 1).padStart(2, "0")}</b>{dateOf(i)}</span>
+                        <span className="item-title">{t.title}</span>
+                        <span className="item-meta">
+                          <span>{t.year}</span>
+                          <span>{t.kind === "film" ? "Film" : t.kind === "series" ? "Series" : "Special"}</span>
+                          {s.part === "whole" ? (
+                            <span>{fmtMin(t.min)}</span>
+                          ) : (
+                            <span className="part">{PART[s.part]} · {fmtMin(s.minutes)} of {fmtMin(t.min)}</span>
+                          )}
+                          <i>{TIER_LABEL[tierOf(t)]}</i>
                         </span>
-                        <span className="slot-text">
-                          <span className="slot-title">{t.title}</span>
-                          <span className="slot-meta">
-                            {PART[s.part] && <i>{PART[s.part]}</i>}
-                            {fmtMin(s.minutes)}
-                            {s.part !== "whole" && <> of {fmtMin(t.min)}</>}
-                          </span>
-                        </span>
-                      </button>
-                    );
-                  })}
-                </li>
-              ) : null
+                        <span className="item-why">{t.why}</span>
+                      </span>
+                    </button>
+                  </li>
+                );
+              })
             )}
             {plan.picked.length > 0 && (
-              <li className="day day-doom">
-                <header><b>Then</b><span>18 December 2026</span></header>
-                <div className="slot slot-static">
-                  <span className="slot-art"><Poster src={posters.doomsday} /></span>
-                  <p>Avengers: Doomsday</p>
+              <li className="item item-doom" style={{ ["--c" as string]: "var(--doom)" }}>
+                <div>
+                  <span className="item-art"><Poster src={posters.doomsday} /></span>
+                  <span className="item-body">
+                    <span className="item-day"><b>Then</b>18 December 2026</span>
+                    <span className="item-title">Avengers: Doomsday</span>
+                    <span className="item-why">You made it. Every road you just watched ends here.</span>
+                  </span>
                 </div>
               </li>
             )}
