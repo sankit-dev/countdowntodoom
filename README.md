@@ -39,6 +39,12 @@ Embedded trailers come from TMDB and need a free API key
 it, trailer buttons link to a YouTube search instead. For local development,
 put `VITE_TMDB_KEY=...` in a `.env.local` file.
 
+## Support button
+
+Edit `src/support.ts`: paste your Dodo Payments payment link and your wallet
+addresses. Empty entries are hidden. No server is involved — Dodo hosts the
+checkout, and crypto is a plain address with a QR code.
+
 ## Notes
 
 - Runtimes are approximate (series = whole season) and importance scores are

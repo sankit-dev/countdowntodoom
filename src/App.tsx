@@ -5,6 +5,7 @@ import { TimelineMap } from "./components/TimelineMap";
 import { Drawer } from "./components/Drawer";
 import { Planner } from "./components/Planner";
 import { Story } from "./components/Story";
+import { Support } from "./components/Support";
 import { Sigil } from "./components/Sigil";
 import { PosterProvider } from "./posters";
 
@@ -27,6 +28,7 @@ export default function App() {
   const [focus, setFocus] = useState<{ id: string; n: number } | null>(null);
   const [watched, setWatched] = useState<Set<string>>(loadWatched);
   const [tier, setTier] = useState<Tier>("essential");
+  const [support, setSupport] = useState(false);
 
   useEffect(() => {
     try {
@@ -74,6 +76,7 @@ export default function App() {
           <a href="#planner">Planner</a>
           <a href="./countdown/">Countdown</a>
         </nav>
+        <button className="nav-support" onClick={() => setSupport(true)}>♥ Support</button>
         <span className="nav-count">
           {d > 0 ? (
             <>
@@ -101,6 +104,7 @@ export default function App() {
 
       <footer className="foot">
         <Sigil />
+        <button className="btn" onClick={() => setSupport(true)}>♥ Support this project</button>
         <p>
           An unofficial fan project. Not affiliated with, endorsed by or sponsored by Marvel or
           The Walt Disney Company. All film and series titles belong to their respective owners.
@@ -115,6 +119,7 @@ export default function App() {
         onSelect={select}
         onClose={() => setSelected(null)}
       />
+      <Support open={support} onClose={() => setSupport(false)} />
     </PosterProvider>
   );
 }
