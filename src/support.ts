@@ -18,7 +18,7 @@ export interface Wallet {
 
 export const WALLETS: Wallet[] = [
   { coin: "Bitcoin (BTC)", network: "Bitcoin network", address: "" },
-  { coin: "Ethereum (ETH)", network: "Ethereum mainnet (ERC-20)", address: "" },
+  { coin: "Ethereum (ETH)", network: "Ethereum mainnet (ERC-20)", address: "0x802389e8e8f487560e6253d2efc5889b19a41784" },
   { coin: "USDT", network: "Tron (TRC-20)", address: "" },
   { coin: "Solana (SOL)", network: "Solana network", address: "GpUe56V3QJZyK3WZaCwQe2Ze3Be3pgw14vQorR59b15A" },
 ];
