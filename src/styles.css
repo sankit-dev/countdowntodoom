@@ -170,6 +170,18 @@ h1, h2, h3, h4, p { margin: 0; }
 }
 .card.on { opacity: 1; transform: none; border-color: rgba(141, 255, 106, 0.35); }
 .card-viz { display: grid; place-items: center; padding: 24px; background: radial-gradient(circle at 50% 50%, rgba(141, 255, 106, 0.07), transparent 65%); border-right: 1px solid var(--line); }
+.card-viz { position: relative; }
+.card-video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }
+.play { position: absolute; left: 16px; bottom: 16px; z-index: 1; padding: 10px 14px; font: 700 12px/1 var(--cond); letter-spacing: 0.2em; text-transform: uppercase; background: rgba(6, 8, 7, 0.85); border: 1px solid rgba(255, 255, 255, 0.3); transition: background 0.2s, color 0.2s; }
+.play:hover { background: var(--ink); color: #08100b; }
+.card-posters { display: flex; flex-wrap: wrap; gap: 12px; width: 100%; margin-top: 6px; }
+.card-posters button { width: 92px; display: grid; gap: 7px; text-align: left; }
+.card-posters span { position: relative; aspect-ratio: 2 / 3; overflow: hidden; background: linear-gradient(160deg, #1c2320, #0c100e); outline: 1px solid rgba(255, 255, 255, 0.16); outline-offset: -1px; transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s; }
+.card-posters img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; animation: fadeIn 0.5s both; }
+.card-posters b { font: 600 10px/1.25 var(--cond); letter-spacing: 0.12em; text-transform: uppercase; color: #9aa59d; }
+.card-posters button:hover span { transform: translateY(-4px); box-shadow: 0 0 0 1px #fff, 0 14px 30px rgba(0, 0, 0, 0.7); }
+.card-posters button:hover b { color: #fff; }
+.drawer-video { display: block; width: 100%; aspect-ratio: 16 / 9; margin-top: 16px; border: 0; background: #000; }
 .card-text { display: grid; align-content: center; gap: 16px; padding: clamp(22px, 4vw, 54px); }
 .card-n { font: 400 44px/0.9 var(--num); color: var(--gold); letter-spacing: 0.04em; }
 .card-n small { font-size: 18px; color: var(--dim); }
@@ -267,7 +279,7 @@ h1, h2, h3, h4, p { margin: 0; }
 
 @media (max-width: 820px) {
   .card { grid-template-columns: 1fr; min-height: 0; }
-  .card-viz { border-right: 0; border-bottom: 1px solid var(--line); padding: 14px; }
+  .card-viz { border-right: 0; border-bottom: 1px solid var(--line); padding: 14px 14px 54px; min-height: 240px; }
   .viz { max-width: 300px; }
 }
 

@@ -3,6 +3,7 @@ import {
   BY_ID, DOOM_ID, LANE_BY_ID, PHASES, TIER_LABEL, fmtMin, parentsOf, roadToDoom, tierOf,
 } from "../data";
 import { PLOT } from "../story";
+import { embedUrl, hasTrailers, searchUrl, useTrailer } from "../tmdb";
 import { Poster, usePosters } from "../posters";
 
 interface Props {
@@ -11,6 +12,25 @@ interface Props {
   toggleWatched: (id: string) => void;
   onSelect: (id: string | null, travel?: boolean) => void;
   onClose: () => void;
+}
+
+/** An embedded trailer when TMDB is set up; otherwise a link out to YouTube. */
+function Trailer({ id }: { id: string }) {
+  const key = useTrailer(id);
+  const [playing, setPlaying] = useState(false);
+  useEffect(() => setPlaying(false), [id]);
+  if (hasTrailers && key)
+    return playing ? (
+      <iframe className="drawer-video" src={embedUrl(key)} title="Trailer" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
+    ) : (
+      <button className="trailer" onClick={() => setPlaying(true)}><i aria-hidden="true">▶</i> Play the trailer</button>
+    );
+  if (id === "doomsday" && !hasTrailers) return null;
+  return (
+    <a className="trailer" target="_blank" rel="noopener noreferrer" href={searchUrl(id)}>
+      <i aria-hidden="true">▶</i> Trailer on YouTube
+    </a>
+  );
 }
 
 export function Drawer({ id, watched, toggleWatched, onSelect, onClose }: Props) {
@@ -45,10 +65,7 @@ export function Drawer({ id, watched, toggleWatched, onSelect, onClose }: Props)
           <span>{t.phase ? PHASES[t.phase].name : "Legacy universe"}</span>
         </p>
 
-        <a className="trailer" target="_blank" rel="noopener noreferrer"
-          href={`https://www.youtube.com/results?search_query=${encodeURIComponent(t.title.replace(" — ", " ") + " official trailer")}`}>
-          <i aria-hidden="true">▶</i> Watch the trailer
-        </a>
+        <Trailer id={t.id} />
 
         {!isDoom && (
           <div className="weight">

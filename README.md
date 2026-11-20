@@ -31,6 +31,14 @@ npm run build    # static site in dist/ — host anywhere
   article (`src/posters.tsx`). To pin one yourself, set `poster` on the title in
   `src/data.ts`.
 
+## Trailers
+
+Embedded trailers come from TMDB and need a free API key
+(themoviedb.org → Settings → API). Add it as a repository secret named
+`TMDB_KEY` (Settings → Secrets and variables → Actions) and redeploy. Without
+it, trailer buttons link to a YouTube search instead. For local development,
+put `VITE_TMDB_KEY=...` in a `.env.local` file.
+
 ## Notes
 
 - Runtimes are approximate (series = whole season) and importance scores are

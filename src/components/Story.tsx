@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { BY_ID } from "../data";
 import { CHAPTERS } from "../story";
+import { Poster, usePosters } from "../posters";
+import { embedUrl, hasTrailers, searchUrl, useTrailer } from "../tmdb";
 
 // The "story so far" deck: one card per idea, each with a small looping
 // diagram that plays while its card is the one in view.
@@ -132,9 +134,33 @@ function Visual({ kind }: { kind: string }) {
   }
 }
 
+/** The left half of a card: the diagram, with the film's trailer one click away. */
+function Stage({ kind, film, on }: { kind: string; film: string; on: boolean }) {
+  const key = useTrailer(on ? film : null);
+  const [playing, setPlaying] = useState(false);
+  useEffect(() => { if (!on) setPlaying(false); }, [on]);
+  return (
+    <div className="card-viz">
+      {playing && key ? (
+        <iframe className="card-video" src={embedUrl(key)} title="Trailer" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
+      ) : (
+        <Visual kind={kind} />
+      )}
+      {playing ? (
+        <button className="play" onClick={() => setPlaying(false)}>✕ Close trailer</button>
+      ) : hasTrailers && key ? (
+        <button className="play" onClick={() => setPlaying(true)}>▶ Play trailer</button>
+      ) : !hasTrailers && film !== "doomsday" ? (
+        <a className="play" href={searchUrl(film)} target="_blank" rel="noopener noreferrer">▶ Trailer on YouTube</a>
+      ) : null}
+    </div>
+  );
+}
+
 export function Story({ onSelect }: { onSelect: (id: string | null, travel?: boolean) => void }) {
   const scroller = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
+  const posters = usePosters();
 
   // Whichever card is mostly in view is the active one; only it animates.
   useEffect(() => {
@@ -177,16 +203,21 @@ export function Story({ onSelect }: { onSelect: (id: string | null, travel?: boo
       >
         {CHAPTERS.map((c, i) => (
           <article key={c.kind} data-i={i} className={`card${i === active ? " on" : ""}`}>
-            <div className="card-viz"><Visual kind={c.kind} /></div>
+            <Stage kind={c.kind} film={c.watch[c.watch.length - 1]} on={i === active} />
             <div className="card-text">
               <span className="card-n">{String(i + 1).padStart(2, "0")}<small> / {CHAPTERS.length}</small></span>
               <h3>{c.title}</h3>
               {c.body.map((p, k) => <p key={k}>{p}</p>)}
               <div className="card-watch">
                 <span>See it in</span>
-                {c.watch.map((id) => (
-                  <button key={id} className="chip" onClick={() => onSelect(id)}>{BY_ID[id].title}</button>
-                ))}
+                <div className="card-posters">
+                  {c.watch.map((id) => (
+                    <button key={id} onClick={() => onSelect(id)} title={BY_ID[id].title}>
+                      <span><Poster src={BY_ID[id].poster || posters[id]} /></span>
+                      <b>{BY_ID[id].title}</b>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </article>
