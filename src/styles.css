@@ -105,7 +105,17 @@ h1, h2, h3, h4, p { margin: 0; }
   display: grid; place-items: center; padding: calc(var(--nav-h) + 24px) 20px 80px;
   text-align: center; isolation: isolate; background: #000;
 }
-.hero-bg, .hero-vignette { position: absolute; inset: 0; z-index: -1; }
+.hero-bg, .hero-vignette, .hero-glow { position: absolute; inset: 0; z-index: -1; }
+.hero-blur { filter: blur(40px) brightness(0.45) saturate(1.2) !important; inset: -60px; animation: bgIn 3.2s ease-out both !important; }
+.hero-poster { position: absolute; z-index: -1; left: 50%; top: 0; height: 100%; max-width: 100%; object-fit: contain; transform: translateX(-50%); filter: brightness(0.55); animation: bgIn 3s ease-out both; -webkit-mask-image: linear-gradient(#000 40%, transparent 94%), linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent); mask-image: linear-gradient(#000 40%, transparent 94%), linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent); -webkit-mask-composite: source-in; mask-composite: intersect; }
+/* Doom-green light that trails the pointer */
+.hero { --mx: 50%; --my: 42%; }
+.hero-glow {
+  background:
+    radial-gradient(520px circle at var(--mx) var(--my), rgba(141, 255, 106, 0.2), rgba(60, 140, 50, 0.08) 45%, transparent 70%),
+    radial-gradient(160px circle at var(--mx) var(--my), rgba(190, 255, 170, 0.14), transparent 70%);
+  mix-blend-mode: screen; animation: bgIn 2s 1.5s ease-out both;
+}
 .hero-bg {
   background: #0a0b0a center 30% / cover no-repeat;
   filter: brightness(0.62) contrast(1.05);

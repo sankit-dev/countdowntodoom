@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { DOOM_DATE, TITLES } from "../data";
+import { useBackdrop } from "../backdrop";
 
 // The opening is the hero itself: the background image comes up out of black
 // with a slow push-in, the wordmark arrives letter by letter, then the rest.
-// Put the background at public/hero.jpg — without it the hero stays dark.
+// Background: public/hero.jpg if present, otherwise the film's image from Wikipedia.
 const HERO_IMAGE = `${import.meta.env.BASE_URL}hero.jpg`;
 
 export function useCountdown() {
@@ -26,9 +27,18 @@ export function Hero() {
   const c = useCountdown();
   const count = TITLES.length - 1;
   const pad = (n: number) => String(n).padStart(2, "0");
+  const bg = useBackdrop(HERO_IMAGE);
+  // The green glow behind the wordmark follows the pointer.
+  const glow = (e: React.PointerEvent<HTMLElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`);
+    e.currentTarget.style.setProperty("--my", `${e.clientY - r.top}px`);
+  };
   return (
-    <section className="hero">
-      <div className="hero-bg" style={{ backgroundImage: `url("${HERO_IMAGE}")` }} aria-hidden="true" />
+    <section className="hero" onPointerMove={glow}>
+      {bg && <div className={`hero-bg${bg.own ? "" : " hero-blur"}`} style={{ backgroundImage: `url("${bg.src}")` }} aria-hidden="true" />}
+      {bg && !bg.own && <img className="hero-poster" src={bg.src} alt="" />}
+      <div className="hero-glow" aria-hidden="true" />
       <div className="hero-vignette" />
       <div className="hero-body">
         <h1 className="wordmark" aria-label="Road to Doomsday">
