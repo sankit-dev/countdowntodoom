@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { track } from "../analytics";
 import { BY_ID } from "../data";
 import { CHAPTERS } from "../story";
 import { Poster, usePosters } from "../posters";
@@ -149,7 +150,7 @@ function Stage({ kind, film, on }: { kind: string; film: string; on: boolean }) 
       {playing ? (
         <button className="play" onClick={() => setPlaying(false)}>✕ Close trailer</button>
       ) : hasTrailers && key ? (
-        <button className="play" onClick={() => setPlaying(true)}>▶ Play trailer</button>
+        <button className="play" onClick={() => { setPlaying(true); track("trailer_play", { title: film, from: "story" }); }}>▶ Play trailer</button>
       ) : !hasTrailers && film !== "doomsday" ? (
         <a className="play" href={searchUrl(film)} target="_blank" rel="noopener noreferrer">▶ Trailer on YouTube</a>
       ) : null}

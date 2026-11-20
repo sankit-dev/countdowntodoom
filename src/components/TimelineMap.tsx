@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { track } from "../analytics";
 import { BY_ID, DOOM_ID, TITLES, Title, fmtMin, parentsOf } from "../data";
 import type { Tier } from "../App";
 import { Poster, usePosters } from "../posters";
@@ -230,7 +231,7 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
         </div>
         <div className="seg" role="group" aria-label="How much to show">
           {VIEWS.map((v) => (
-            <button key={v.tier} className={tier === v.tier ? "on" : ""} onClick={() => setTier(v.tier)}>
+            <button key={v.tier} className={tier === v.tier ? "on" : ""} onClick={() => { setTier(v.tier); track("map_view", { view: v.tier }); }}>
               {v.label} <small>{count(v.tier)}</small>
             </button>
           ))}

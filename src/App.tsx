@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { track } from "./analytics";
 import { BY_ID, DOOM_DATE, DOOM_ID, TITLES } from "./data";
 import { Hero } from "./components/Hero";
 import { TimelineMap } from "./components/TimelineMap";
@@ -41,7 +42,8 @@ export default function App() {
   const toggleWatched = useCallback((id: string) => {
     setWatched((w) => {
       const n = new Set(w);
-      n.has(id) ? n.delete(id) : n.add(id);
+      if (n.has(id)) n.delete(id);
+      else { n.add(id); track("mark_watched", { title: id }); }
       return n;
     });
   }, []);
@@ -78,7 +80,7 @@ export default function App() {
           <a href="#planner">Planner</a>
           <a href="./countdown/">Countdown</a>
         </nav>
-        <button className="nav-support" onClick={() => setSupport(true)}>♥ Support</button>
+        <button className="nav-support" onClick={() => { setSupport(true); track("support_open", { from: "nav" }); }}>♥ Support</button>
         <span className="nav-count">
           {d > 0 ? (
             <>
@@ -111,7 +113,7 @@ export default function App() {
 
       <footer className="foot">
         <Sigil />
-        <button className="btn" onClick={() => setSupport(true)}>♥ Support this project</button>
+        <button className="btn" onClick={() => { setSupport(true); track("support_open", { from: "footer" }); }}>♥ Support this project</button>
         <p>
           An unofficial fan project. Not affiliated with, endorsed by or sponsored by Marvel or
           The Walt Disney Company. All film and series titles belong to their respective owners.

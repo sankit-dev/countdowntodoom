@@ -47,6 +47,15 @@ Edit `src/support.ts`: paste your Dodo Payments payment link and your wallet
 addresses. Empty entries are hidden. No server is involved — Dodo hosts the
 checkout, and crypto is a plain address with a QR code.
 
+## Analytics
+
+- **Vercel Analytics** is built in. Turn it on in the Vercel project's
+  Analytics tab; page views then show up there.
+- **Google Analytics**: set `VITE_GA_ID` (your `G-...` Measurement ID) as an
+  environment variable in Vercel and redeploy, or paste it into
+  `src/analytics.tsx`. Events recorded: `mark_watched`, `support_open`,
+  `trailer_play`, `map_view`.
+
 ## Notes
 
 - Runtimes are approximate (series = whole season) and importance scores are

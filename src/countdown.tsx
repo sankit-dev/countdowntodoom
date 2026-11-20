@@ -1,4 +1,5 @@
 import { createRoot } from "react-dom/client";
+import { Analytics } from "./analytics";
 import { useCountdown } from "./components/Hero";
 import { isPhone, useBackdrop } from "./backdrop";
 import { LoopVideo } from "./components/LoopVideo";
@@ -40,4 +41,9 @@ function Countdown() {
   );
 }
 
-createRoot(document.getElementById("root")!).render(<Countdown />);
+createRoot(document.getElementById("root")!).render(
+  <>
+    <Countdown />
+    <Analytics />
+  </>
+);

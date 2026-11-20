@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { track } from "../analytics";
 import {
   BY_ID, DOOM_ID, LANE_BY_ID, PHASES, TIER_LABEL, fmtMin, parentsOf, roadToDoom, tierOf,
 } from "../data";
@@ -23,7 +24,7 @@ function Trailer({ id }: { id: string }) {
     return playing ? (
       <iframe className="drawer-video" src={embedUrl(key)} title="Trailer" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
     ) : (
-      <button className="trailer" onClick={() => setPlaying(true)}><i aria-hidden="true">▶</i> Play the trailer</button>
+      <button className="trailer" onClick={() => { setPlaying(true); track("trailer_play", { title: id, from: "panel" }); }}><i aria-hidden="true">▶</i> Play the trailer</button>
     );
   if (id === "doomsday" && !hasTrailers) return null;
   return (
