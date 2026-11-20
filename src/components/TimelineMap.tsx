@@ -1,13 +1,13 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
-  BY_ID, DOOM_ID, LANES, LANE_BY_ID, PHASES, TITLES, bloodline, fmtMin, tierOf,
+  BY_ID, DOOM_ID, LANES, LANE_BY_ID, PHASES, TITLES, bloodline, tierOf,
 } from "../data";
 import type { Tier } from "../App";
 
-const STEP = 158; // horizontal distance between consecutive releases
-const PLATE_W = 142;
-const PHASE_GAP = 70;
-const PAD_L = 250;
+const STEP = 126; // horizontal distance between consecutive releases
+const TILE_W = 84;
+const TILE_H = 44;
+const PHASE_GAP = 80;
 const DOOM_R = 96;
 const ROMAN = ["", "I", "II", "III", "IV", "V", "VI"];
 
@@ -30,6 +30,22 @@ function useViewport() {
   return v;
 }
 
+type Pt = [number, number];
+/** A right-angled connector through `pts`, with softened corners. */
+function elbow(raw: Pt[], r = 7) {
+  const pts = raw.filter((p, i) => !i || p[0] !== raw[i - 1][0] || p[1] !== raw[i - 1][1]);
+  let d = `M${pts[0][0]} ${pts[0][1]}`;
+  for (let i = 1; i < pts.length - 1; i++) {
+    const [px, py] = pts[i - 1], [cx, cy] = pts[i], [nx, ny] = pts[i + 1];
+    const d1 = Math.hypot(cx - px, cy - py), d2 = Math.hypot(nx - cx, ny - cy);
+    const rr = Math.min(r, d1 / 2, d2 / 2);
+    if (rr < 0.5) { d += `L${cx} ${cy}`; continue; }
+    d += `L${cx - ((cx - px) / d1) * rr} ${cy - ((cy - py) / d1) * rr}Q${cx} ${cy} ${cx + ((nx - cx) / d2) * rr} ${cy + ((ny - cy) / d2) * rr}`;
+  }
+  const last = pts[pts.length - 1];
+  return d + `L${last[0]} ${last[1]}`;
+}
+
 export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier }: Props) {
   const vp = useViewport();
   const [hover, setHover] = useState<string | null>(null);
@@ -41,17 +57,23 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
   const dragged = useRef(false);
 
   // ── Layout ───────────────────────────────────────────────────────────────
+  // Every title gets its own column (release order) and sits in its
+  // storyline's row. Connectors leave a tile to the right, travel along the
+  // empty channel between two rows, and drop into the target from the left —
+  // so a line never runs across a tile.
   const L = useMemo(() => {
     const compact = vp.w < 720;
-    const top = compact ? 218 : 190;
-    const bottom = 78;
-    const laneH = Math.max(56, Math.min(106, (vp.h - top - bottom) / LANES.length));
-    const laneY = (i: number) => top + i * laneH + laneH / 2;
-    const laneIndex = Object.fromEntries(LANES.map((l, i) => [l.id, i]));
+    const top = compact ? 226 : 198;
+    const bottom = 72;
+    const laneH = Math.max(80, Math.min(118, (vp.h - top - bottom) / LANES.length));
+    const laneTop = (i: number) => top + i * laneH;
+    const tileY = (i: number) => laneTop(i) + 2 + TILE_H / 2;
+    const channel = (i: number) => laneTop(i) + laneH - 9; // gap under row i
+    const laneIndex = Object.fromEntries(LANES.map((l, i) => [l.id, i])) as Record<string, number>;
 
     const pos: Record<string, { x: number; y: number }> = {};
     const bands: { phase: number; x0: number; x1: number }[] = [];
-    let x = compact ? 190 : PAD_L + 20;
+    let x = compact ? 170 : 262;
     let cur = 0;
     for (const t of TITLES) {
       if (t.id === DOOM_ID) continue;
@@ -60,28 +82,53 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
         cur = t.phase;
         bands.push({ phase: cur, x0: x - STEP / 2, x1: x });
       }
-      pos[t.id] = { x, y: laneY(laneIndex[t.lane]) };
+      pos[t.id] = { x, y: tileY(laneIndex[t.lane]) };
       bands[bands.length - 1].x1 = x + STEP / 2;
       x += STEP;
     }
     const doomX = x + 250;
-    pos[DOOM_ID] = { x: doomX, y: top + (laneH * LANES.length) / 2 };
+    const doomY = top + (laneH * LANES.length) / 2;
+    pos[DOOM_ID] = { x: doomX, y: doomY };
     const width = doomX + Math.max(260, vp.w / 2);
+
+    const order = TITLES.map((t) => t.id);
+    const nextInLane = (a: string) => {
+      const lane = BY_ID[a].lane;
+      for (let i = order.indexOf(a) + 1; i < order.length; i++)
+        if (BY_ID[order[i]].lane === lane && order[i] !== DOOM_ID) return order[i];
+      return null;
+    };
 
     const edges = TITLES.flatMap((a) =>
       a.to.map((bid) => {
-        const p = pos[a.id], q = pos[bid];
-        const sx = p.x + PLATE_W / 2, ex = q.x - (bid === DOOM_ID ? DOOM_R : PLATE_W / 2);
-        const c = Math.max(50, (ex - sx) * 0.45);
-        // Same-lane links that skip over other plates dip below the lane.
-        const dip = p.y === q.y && ex - sx > STEP ? laneH * 0.52 : 0;
-        return {
-          key: `${a.id}>${bid}`, from: a.id, to: bid, color: LANE_BY_ID[a.lane].color,
-          d: `M${sx} ${p.y} C${sx + c} ${p.y + dip}, ${ex - c} ${q.y + dip}, ${ex} ${q.y}`,
-        };
+        const p = pos[a.id];
+        const li = laneIndex[a.lane];
+        const sx = p.x + TILE_W / 2, sy = p.y;
+        const x1 = sx + 10;
+        let pts: Pt[];
+        if (bid === DOOM_ID) {
+          // Fan into the left side of the circle, one entry point per row.
+          const ey = doomY + (li - 3) * 18;
+          const ex = doomX - Math.sqrt(DOOM_R * DOOM_R - (ey - doomY) ** 2);
+          const x2 = doomX - DOOM_R - 34 - Math.abs(li - 3) * 10;
+          const cy = channel(ey > sy ? li : li - 1) + (li % 2 ? 3 : -3);
+          pts = [[sx, sy], [x1, sy], [x1, cy], [x2, cy], [x2, ey], [ex, ey]];
+        } else {
+          const q = pos[bid];
+          const ti = laneIndex[BY_ID[bid].lane];
+          const ex = q.x - TILE_W / 2, ey = q.y;
+          const x2 = ex - 12;
+          if (ti === li && nextInLane(a.id) === bid) pts = [[sx, sy], [ex, ey]];
+          else {
+            const off = ((order.indexOf(bid) % 4) - 1.5) * 4; // same target → same trunk
+            const cy = channel(ti < li ? li - 1 : li) + off;
+            pts = [[sx, sy], [x1, sy], [x1, cy], [x2, cy], [x2, ey], [ex, ey]];
+          }
+        }
+        return { key: `${a.id}>${bid}`, from: a.id, to: bid, color: LANE_BY_ID[a.lane].color, d: elbow(pts) };
       })
     );
-    return { top, laneH, laneY, pos, bands, width, edges, height: vp.h };
+    return { top, laneH, laneTop, tileY, pos, bands, width, edges, height: vp.h };
   }, [vp.w, vp.h]);
 
   const travel = Math.max(0, L.width - vp.w);
@@ -160,16 +207,11 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
 
   // Jump targets: each phase lands with its first title near the left edge.
   const marks = L.bands.map((b) => ({
-    label: ROMAN[b.phase], title: PHASES[b.phase].name, x: b.x0 + STEP / 2 + vp.w / 2 - 120,
+    label: ROMAN[b.phase], title: PHASES[b.phase].name, x: b.x0 + STEP / 2 + vp.w / 2 - 140,
   }));
 
   return (
-    <section
-      id="timeline"
-      className="map-section"
-      ref={section}
-      style={{ height: travel + vp.h }}
-    >
+    <section id="timeline" className="map-section" ref={section} style={{ height: travel + vp.h }}>
       <div className="map-stage" onPointerDown={onPointerDown}>
         <div className="map-year" ref={yearEl} aria-hidden="true">2008</div>
 
@@ -195,14 +237,10 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
           onClick={(e) => { if (e.target === e.currentTarget) onSelect(null); }}
         >
           {L.bands.map((b) => (
-            <div key={b.phase} className="band" style={{ left: b.x0, width: b.x1 - b.x0, top: L.top - 58, height: L.laneH * LANES.length + 70 }}>
+            <div key={b.phase} className="band" style={{ left: b.x0, width: b.x1 - b.x0, top: L.top - 50, height: L.laneH * LANES.length + 50 }}>
               <b>{PHASES[b.phase].name}</b>
               <span>{PHASES[b.phase].saga}</span>
             </div>
-          ))}
-
-          {LANES.map((l, i) => (
-            <i key={l.id} className="lane-line" style={{ top: L.laneY(i), color: l.color }} />
           ))}
 
           <svg className="edges" width={L.width} height={L.height} aria-hidden="true">
@@ -210,12 +248,8 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
               const on = lit ? lit.has(e.from) && lit.has(e.to) : false;
               const faded = !passesTier(e.from) || !passesTier(e.to);
               return (
-                <path
-                  key={e.key}
-                  d={e.d}
-                  stroke={e.color}
-                  className={`edge${on ? " on" : ""}${faded ? " faded" : ""}${e.to === DOOM_ID ? " to-doom" : ""}`}
-                />
+                <path key={e.key} d={e.d} style={{ color: e.color }}
+                  className={`edge${on ? " on" : ""}${faded ? " faded" : ""}`} />
               );
             })}
           </svg>
@@ -246,17 +280,17 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
             return (
               <button
                 key={t.id}
-                className={`plate tier-${tierOf(t)} ${cls}`}
-                style={{ left: p.x, top: p.y, ["--c" as string]: LANE_BY_ID[t.lane].color }}
+                className={`tile tier-${tierOf(t)} ${cls}`}
+                style={{ left: p.x, top: p.y - TILE_H / 2, ["--c" as string]: LANE_BY_ID[t.lane].color }}
                 aria-label={`${t.title}, ${t.year}`}
                 {...handlers}
               >
-                <b>{t.title}</b>
-                <span>
-                  {t.year} · {fmtMin(t.min)}
-                  {t.kind !== "film" && <em>{t.kind === "series" ? "Series" : "Special"}</em>}
+                <span className="art" style={t.poster ? { backgroundImage: `url(${t.poster})` } : undefined}>
+                  {!t.poster && t.year}
+                  {t.kind !== "film" && <em>{t.kind === "series" ? "TV" : "SP"}</em>}
+                  {watched.has(t.id) && <u aria-label="Watched">✓</u>}
                 </span>
-                {watched.has(t.id) && <u aria-label="Watched">✓</u>}
+                <b>{t.title}</b>
               </button>
             );
           })}
@@ -264,7 +298,7 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
 
         <div className="lane-labels" aria-hidden="true">
           {LANES.map((l, i) => (
-            <span key={l.id} style={{ top: L.laneY(i), color: l.color }}>{l.name}</span>
+            <span key={l.id} style={{ top: L.tileY(i), color: l.color }}>{l.name}</span>
           ))}
         </div>
 

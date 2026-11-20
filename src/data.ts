@@ -27,6 +27,8 @@ export interface Title {
   imp: number;
   to: string[];
   why: string;
+  /** Optional image URL for the map tile. Without one the tile shows the year. */
+  poster?: string;
 }
 
 export const LANES: { id: LaneId; name: string; color: string }[] = [

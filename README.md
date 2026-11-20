@@ -30,3 +30,15 @@ npm run build    # static site in dist/ — host anywhere
 - The branding is original. This project is not affiliated with or endorsed by
   Marvel or Disney, and uses no official logos, posters or stills.
 - "Watched" marks are stored in the browser only.
+
+## Deploying
+
+`.github/workflows/pages.yml` builds and publishes the site to GitHub Pages on
+every push to `main`. One-time setup: in the repository's **Settings → Pages**,
+set **Source** to **GitHub Actions**. The site then lives at
+`https://<user>.github.io/<repo>/` — name the repo `countdowntodoom` to get
+`…github.io/countdowntodoom/`.
+
+For a custom domain (for example `countdowntodoom.com`), buy the domain, add a
+`public/CNAME` file containing just the domain, and point its DNS at GitHub
+Pages as described in GitHub's custom-domain docs.
