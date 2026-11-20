@@ -70,6 +70,7 @@ export default function App() {
         <nav>
           <a href="#timeline">Timeline</a>
           <a href="#planner">Planner</a>
+          <a href="./countdown/">Countdown</a>
         </nav>
         <span className="nav-count">
           {d > 0 ? (

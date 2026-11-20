@@ -26,6 +26,7 @@ npm run build    # static site in dist/ — host anywhere
 ## Images
 
 - **Hero background**: put an image at `public/hero.jpg`. Without it the hero is plain black.
+- **Countdown page background** (`/countdown/`): put an image at `public/doom-throne.jpg`.
 - **Posters** are looked up in the visitor's browser from each title's Wikipedia
   article (`src/posters.tsx`). To pin one yourself, set `poster` on the title in
   `src/data.ts`.

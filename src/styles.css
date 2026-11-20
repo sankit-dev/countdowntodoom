@@ -168,7 +168,9 @@ h1, h2, h3, h4, p { margin: 0; }
 }
 .art i { font: 400 15px/1 var(--display); font-style: normal; letter-spacing: 0.06em; color: rgba(255, 255, 255, 0.4); }
 .art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; animation: fadeIn 0.5s both; }
-.art u { position: absolute; right: 0; top: 0; padding: 2px 4px; font: 600 10px/1 var(--body); text-decoration: none; color: #06120a; background: var(--doom); }
+.art .num { position: absolute; z-index: 1; left: 0; top: 0; min-width: 24px; padding: 4px 6px 3px; font: 400 15px/1 var(--display); font-style: normal; letter-spacing: 0.02em; text-align: center; color: #06120a; background: #fff; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.6); }
+.tile.lit .num, .tile:hover .num { background: var(--doom); }
+.art u { position: absolute; z-index: 1; right: 0; top: 0; padding: 2px 4px; font: 600 10px/1 var(--body); text-decoration: none; color: #06120a; background: var(--doom); }
 .tile b {
   font: 600 9.5px/12px var(--cond); letter-spacing: 0.16em; text-transform: uppercase; color: #8f9a92;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; transition: color 0.25s;
@@ -306,6 +308,22 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 24px; border: 0; bo
 .foot { display: grid; justify-items: center; gap: 12px; padding: 50px 24px 60px; border-top: 1px solid var(--line); text-align: center; font-size: 13px; color: #a9b4ac; }
 .foot p { max-width: 62ch; }
 .foot .sigil { color: var(--doom); }
+
+/* ── /countdown ──────────────────────────────────────────────────────────── */
+.cd { position: relative; min-height: 100svh; overflow: hidden; display: grid; place-items: end center; padding: 24px 16px clamp(48px, 9vh, 110px); text-align: center; background: #000; isolation: isolate; }
+.cd-bg, .cd-shade { position: absolute; inset: 0; z-index: -1; }
+.cd-bg { background: center 30% / cover no-repeat; animation: bgIn 3s ease-out both, bgPush 30s cubic-bezier(0.2, 0.6, 0.2, 1) both; }
+.cd-shade { background: linear-gradient(rgba(0, 0, 0, 0.35), transparent 30%, rgba(0, 0, 0, 0.55) 62%, rgba(0, 0, 0, 0.92)); }
+.cd-body { display: grid; justify-items: center; gap: clamp(14px, 2.4vh, 26px); animation: fadeUp 1.4s 0.8s ease-out both; }
+.cd-kicker, .cd-date { font: 600 clamp(12px, 1.5vw, 17px)/1 var(--cond); letter-spacing: 0.6em; margin-right: -0.6em; text-transform: uppercase; color: #e9e6da; }
+.cd-date { color: var(--gold); }
+.cd-clock { display: flex; gap: clamp(14px, 4vw, 64px); text-shadow: 0 6px 40px rgba(0, 0, 0, 0.9); }
+.cd-clock div { display: grid; gap: 10px; min-width: 2.2ch; }
+.cd-clock b { font: 400 clamp(54px, 15vw, 230px)/0.9 var(--display); font-variant-numeric: tabular-nums; color: #fff; }
+.cd-clock span { font: 600 clamp(10px, 1.1vw, 14px)/1 var(--cond); letter-spacing: 0.4em; margin-right: -0.4em; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); }
+.cd-over { font: 400 clamp(48px, 11vw, 160px)/1 var(--display); text-transform: uppercase; color: #fff; }
+.cd-back { position: absolute; top: 20px; right: 22px; font: 600 12px/1 var(--cond); letter-spacing: 0.24em; text-transform: uppercase; color: rgba(255, 255, 255, 0.6); }
+.cd-back:hover { color: #fff; }
 
 /* ── Small screens ───────────────────────────────────────────────────────── */
 @media (max-width: 900px) {

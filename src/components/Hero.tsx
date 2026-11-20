@@ -6,7 +6,7 @@ import { DOOM_DATE, TITLES } from "../data";
 // Put the background at public/hero.jpg — without it the hero stays dark.
 const HERO_IMAGE = `${import.meta.env.BASE_URL}hero.jpg`;
 
-function useCountdown() {
+export function useCountdown() {
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
     const iv = setInterval(() => setNow(Date.now()), 1000);

@@ -93,7 +93,11 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
     place(DOOM_ID);
 
     const side = tier === "all" ? TITLES.filter((t) => t.id !== DOOM_ID && !NEXT[t.id]) : [];
-    return { visible, parent, row, dist, rows, cols: maxDist + 1, side };
+    // Watch order: release order among the titles shown in this view.
+    const num: Record<string, number> = {};
+    let n = 0;
+    for (const t of TITLES) if (t.id !== DOOM_ID && visible.has(t.id)) num[t.id] = ++n;
+    return { visible, parent, row, dist, rows, cols: maxDist + 1, side, num };
   }, [tier]);
 
   // ── Sizes ────────────────────────────────────────────────────────────────
@@ -156,6 +160,7 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
     >
       <span className="art">
         <i>{t.year}</i>
+        {T.num[t.id] && <em className="num" aria-label={`Watch number ${T.num[t.id]}`}>{T.num[t.id]}</em>}
         <Poster src={t.poster || posters[t.id]} />
         {watched.has(t.id) && <u aria-label="Watched">✓</u>}
       </span>
@@ -168,7 +173,7 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
       <header className="tree-head">
         <div>
           <h2>Every road leads to Doom</h2>
-          <p>Every line climbs to Doomsday. Hover a title for the short version, click for the full story.</p>
+          <p>Watch in number order, starting at 1. Every line climbs to Doomsday — hover a title for the short version, click for the full story.</p>
         </div>
         <div className="seg" role="group" aria-label="How much to show">
           {VIEWS.map((v) => (
@@ -217,7 +222,7 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
 
       {card && !selected && (
         <aside className={`hover-card${card.flip ? " flip" : ""}`} style={{ left: card.x, top: card.y }} aria-hidden="true">
-          <b>{BY_ID[card.id].title}</b>
+          <b>{T.num[card.id] ? `${T.num[card.id]}. ` : ""}{BY_ID[card.id].title}</b>
           <span>{BY_ID[card.id].year} · {BY_ID[card.id].kind === "film" ? "Film" : BY_ID[card.id].kind === "series" ? "Series" : "Special"} · {fmtMin(BY_ID[card.id].min)}</span>
           <p>{BY_ID[card.id].why}</p>
         </aside>
