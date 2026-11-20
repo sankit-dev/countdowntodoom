@@ -67,7 +67,7 @@ writes `robots.txt` and `sitemap.xml`.
 - `llms.ts` writes `/llms.txt` (a short summary for AI assistants, per
   llmstxt.org) and `/llms-full.txt` (the complete watch order, plots, story
   and story order), generated from the same data as the site.
-- The preview image is `public/og.jpg`; regenerate it with `node promo/render-og.cjs`.
+- The preview image is `public/og.jpg`; regenerate it with `node scripts/render-og.cjs`.
 
 ## Notes
 
