@@ -8,6 +8,7 @@ interface Props {
   focus: { id: string; n: number } | null;
   onSelect: (id: string | null, travel?: boolean) => void;
   watched: Set<string>;
+  toggleWatched: (id: string) => void;
   tier: Tier;
   setTier: (t: Tier) => void;
 }
@@ -52,7 +53,7 @@ function rounded(pts: Pt[], r: number) {
   return d + `L${last[0]} ${last[1]}`;
 }
 
-export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier }: Props) {
+export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched, tier, setTier }: Props) {
   const posters = usePosters();
   const stage = useRef<HTMLDivElement>(null);
   const stageW = useStageWidth(stage);
@@ -218,6 +219,7 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
 
   const count = (t: Tier) => TITLES.filter((x) => x.id !== DOOM_ID && x.imp >= MIN_IMP[t]).length;
   const doomI = G.stops.length - 1;
+  const done = G.list.filter((t) => watched.has(t.id)).length;
 
   return (
     <section id="timeline" className="tree-section">
@@ -234,6 +236,17 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
           ))}
         </div>
       </header>
+
+      <div className={`progress${done === G.list.length ? " full" : ""}`}>
+        <span>
+          <b>{done}</b> of {G.list.length} watched
+          {done === G.list.length ? " — you are ready for Doomsday" : done === 0 ? " — tick the corner of a poster once you've seen it" : ""}
+        </span>
+        <em>{Math.round((done / G.list.length) * 100)}%</em>
+        <div className="progress-bar" role="progressbar" aria-label="Watched in this view" aria-valuemin={0} aria-valuemax={G.list.length} aria-valuenow={done}>
+          <i style={{ transform: `scaleX(${done / G.list.length})` }} />
+        </div>
+      </div>
 
       <div
         className="tree-stage"
@@ -275,10 +288,22 @@ export function TimelineMap({ selected, focus, onSelect, watched, tier, setTier 
                 <i>{t.year}</i>
                 <em className="num" aria-label={`Watch number ${i + 1}`}>{i + 1}</em>
                 <Poster src={t.poster || posters[t.id]} />
-                {watched.has(t.id) && <u aria-label="Watched">✓</u>}
               </span>
               <b>{t.title}</b>
             </button>
+          ))}
+
+          {/* A tick on each poster's corner marks it watched without opening the panel. */}
+          {G.list.map((t, i) => (
+            <button
+              key={`mark-${t.id}`}
+              className={`mark${watched.has(t.id) ? " on" : ""}`}
+              style={{ left: G.cx(i) + PW / 2 - 26, top: G.cy(i) - PH / 2 }}
+              onClick={() => toggleWatched(t.id)}
+              aria-pressed={watched.has(t.id)}
+              aria-label={`${watched.has(t.id) ? "Unmark" : "Mark"} ${t.title} as watched`}
+              title={watched.has(t.id) ? "Watched — click to undo" : "Mark as watched"}
+            >✓</button>
           ))}
 
           <button

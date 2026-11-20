@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { DOOM_DATE } from "./data";
+import { BY_ID, DOOM_DATE, DOOM_ID, TITLES } from "./data";
 import { Hero } from "./components/Hero";
 import { TimelineMap } from "./components/TimelineMap";
 import { Drawer } from "./components/Drawer";
@@ -59,6 +59,8 @@ export default function App() {
   }, []);
 
   const d = daysToDoom();
+  const total = TITLES.length - 1;
+  const seen = [...watched].filter((id) => BY_ID[id] && id !== DOOM_ID).length;
 
   return (
     <PosterProvider>
@@ -88,6 +90,10 @@ export default function App() {
         </span>
       </header>
 
+      <div className="nav-progress" role="progressbar" aria-label="Titles watched" aria-valuemin={0} aria-valuemax={total} aria-valuenow={seen}>
+        <i style={{ transform: `scaleX(${seen / total})` }} />
+      </div>
+
       <main id="top">
         <Hero />
         <Story onSelect={select} />
@@ -96,6 +102,7 @@ export default function App() {
           focus={focus}
           onSelect={select}
           watched={watched}
+          toggleWatched={toggleWatched}
           tier={tier}
           setTier={setTier}
         />

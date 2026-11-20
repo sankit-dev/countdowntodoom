@@ -290,6 +290,19 @@ h1, h2, h3, h4, p { margin: 0; }
 .tree-head p { margin-top: 10px; color: var(--dim); font-size: 15px; }
 .seg small { margin-left: 4px; font-size: 0.85em; opacity: 0.55; }
 
+/* Watched progress */
+.nav-progress { position: fixed; z-index: 51; left: 0; right: 0; top: 0; height: 3px; background: rgba(255, 255, 255, 0.06); }
+.nav-progress i, .progress-bar i { display: block; height: 100%; transform-origin: 0 50%; background: linear-gradient(90deg, var(--gold), var(--doom)); box-shadow: 0 0 12px var(--doom); transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.progress { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 10px 16px; margin: 0 clamp(10px, 2vw, 28px) 16px; }
+.progress span { font: 600 13px/1.3 var(--cond); letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); }
+.progress span b { font: 400 26px/0.8 var(--num); letter-spacing: 0.04em; color: var(--ink); margin-right: 2px; }
+.progress em { font: 400 26px/0.8 var(--num); font-style: normal; color: var(--doom); }
+.progress-bar { grid-column: 1 / -1; height: 6px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.progress.full span, .progress.full span b { color: var(--doom); }
+.mark { position: absolute; z-index: 4; width: 26px; height: 26px; display: grid; place-items: center; font: 700 13px/1 var(--body); color: rgba(255, 255, 255, 0.75); background: rgba(6, 8, 7, 0.72); border-left: 1px solid rgba(255, 255, 255, 0.25); border-bottom: 1px solid rgba(255, 255, 255, 0.25); transition: background 0.2s, color 0.2s, transform 0.2s; }
+.mark:hover { background: #fff; color: #06120a; transform: scale(1.12); }
+.mark.on { background: var(--doom); color: #06120a; border-color: var(--doom); }
+.tree-stage.grabbing .mark { pointer-events: none; }
 .tree-stage {
   position: relative; height: min(84svh, 900px); min-height: 460px; overflow: hidden;
   margin: 0 clamp(10px, 2vw, 28px); cursor: grab; touch-action: pan-y; user-select: none;
