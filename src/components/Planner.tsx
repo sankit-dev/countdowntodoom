@@ -12,7 +12,6 @@ interface Props {
   onSelect: (id: string | null, travel?: boolean) => void;
 }
 
-const PART = { whole: "", start: "start", middle: "continue", end: "finish" } as const;
 const dayFmt = new Intl.DateTimeFormat(undefined, { weekday: "short", day: "numeric", month: "short" });
 
 export function Planner({ watched, onSelect }: Props) {
@@ -31,6 +30,17 @@ export function Planner({ watched, onSelect }: Props) {
   );
 
   const usedDays = plan.days.filter((d) => d.length).length;
+  const entries = useMemo(() => {
+    const out: { id: string; parts: { day: number; minutes: number }[] }[] = [];
+    plan.days.forEach((slots, day) =>
+      slots.forEach((sl) => {
+        const prev = out[out.length - 1];
+        if (prev && prev.id === sl.id && sl.part !== "whole" && sl.part !== "start") prev.parts.push({ day, minutes: sl.minutes });
+        else out.push({ id: sl.id, parts: [{ day, minutes: sl.minutes }] });
+      })
+    );
+    return out;
+  }, [plan]);
   const verdict =
     plan.skipped.length === 0
       ? "You have time for the full marathon. Everything is in."
@@ -117,34 +127,39 @@ export function Planner({ watched, onSelect }: Props) {
           )}
 
           <ol className="listing">
-            {plan.days.flatMap((slots, i) =>
-              slots.map((s, k) => {
-                const t = BY_ID[s.id];
-                const lane = LANE_BY_ID[t.lane];
-                return (
-                  <li key={`${i}-${k}`} className="item" style={{ ["--c" as string]: lane.color }}>
-                    <button onClick={() => onSelect(t.id)}>
-                      <span className="item-art"><Poster src={t.poster || posters[t.id]} /></span>
-                      <span className="item-body">
-                        <span className="item-day"><b>Day {String(i + 1).padStart(2, "0")}</b>{dateOf(i)}</span>
-                        <span className="item-title">{t.title}</span>
-                        <span className="item-meta">
-                          <span>{t.year}</span>
-                          <span>{t.kind === "film" ? "Film" : t.kind === "series" ? "Series" : "Special"}</span>
-                          {s.part === "whole" ? (
-                            <span>{fmtMin(t.min)}</span>
-                          ) : (
-                            <span className="part">{PART[s.part]} · {fmtMin(s.minutes)} of {fmtMin(t.min)}</span>
-                          )}
-                          <i>{TIER_LABEL[tierOf(t)]}</i>
-                        </span>
-                        <span className="item-why">{t.why}</span>
+            {entries.map((en) => {
+              const t = BY_ID[en.id];
+              const lane = LANE_BY_ID[t.lane];
+              const first = en.parts[0].day, last = en.parts[en.parts.length - 1].day;
+              const multi = en.parts.length > 1;
+              const pad = (d: number) => String(d + 1).padStart(2, "0");
+              return (
+                <li key={`${en.id}-${first}`} className="item" style={{ ["--c" as string]: lane.color }}>
+                  <button onClick={() => onSelect(t.id)}>
+                    <span className="item-art"><Poster src={t.poster || posters[t.id]} /></span>
+                    <span className="item-body">
+                      <span className="item-day">
+                        <b>{multi ? `Days ${pad(first)}–${pad(last)}` : `Day ${pad(first)}`}</b>
+                        {multi ? `${dateOf(first)} – ${dateOf(last)}` : dateOf(first)}
                       </span>
-                    </button>
-                  </li>
-                );
-              })
-            )}
+                      <span className="item-title">{t.title}</span>
+                      <span className="item-meta">
+                        <span>{t.year}</span>
+                        <span>{t.kind === "film" ? "Film" : t.kind === "series" ? "Series" : "Special"}</span>
+                        <span>{fmtMin(t.min)}</span>
+                        <i>{TIER_LABEL[tierOf(t)]}</i>
+                      </span>
+                      {multi && (
+                        <span className="item-split">
+                          Split over {en.parts.length} days: {en.parts.map((p) => `Day ${pad(p.day)} ${fmtMin(p.minutes)}`).join(" · ")}
+                        </span>
+                      )}
+                      <span className="item-why">{t.why}</span>
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
             {plan.picked.length > 0 && (
               <li className="item item-doom" style={{ ["--c" as string]: "var(--doom)" }}>
                 <div>

@@ -506,6 +506,7 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 24px; border: 0; bo
 .item-meta { display: flex; flex-wrap: wrap; gap: 4px 12px; font: 600 12.5px/1.3 var(--cond); letter-spacing: 0.14em; text-transform: uppercase; color: #b6c0b9; }
 .item-meta i { font-style: normal; color: var(--c); }
 .item-meta .part { color: var(--doom); }
+.item-split { font: 600 12.5px/1.4 var(--cond); letter-spacing: 0.08em; text-transform: uppercase; color: var(--doom); }
 .item-why { font-size: 14px; line-height: 1.5; color: #9ba69f; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
 .item-doom .item-title { color: var(--doom); }
 @media (max-width: 480px) {
