@@ -1,4 +1,5 @@
 import { Suspense, lazy, useMemo, useState } from "react";
+import { track } from "../analytics";
 import { daysToDoom } from "../App";
 import { RELEASE, useRegion } from "../release";
 import { BY_ID, LANE_BY_ID, TIER_LABEL, fmtMin, tierOf } from "../data";
@@ -107,7 +108,7 @@ export function Planner({ watched, onSelect }: Props) {
               </p>
               <i className="doom-ready-bar"><i /></i>
             </div>
-            <button className="btn btn-primary doom-ready-share" onClick={() => setSharing(true)}>Share my doom-ready %</button>
+            <button className="btn btn-primary doom-ready-share" onClick={() => { setSharing(true); track("share_card_clicked", { from: "planner" }); }}>Share my doom-ready %</button>
           </div>
 
           <div className="stats">

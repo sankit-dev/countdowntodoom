@@ -256,6 +256,8 @@ h1, h2, h3, h4, p { margin: 0; }
 .progress span { font: 600 13px/1.3 var(--cond); color: var(--dim); }
 .progress span b { font: 400 26px/0.8 var(--num); color: var(--ink); margin-right: 2px; }
 .progress em { font: 400 26px/0.8 var(--num); font-style: normal; color: var(--doom); }
+.progress-share { height: 42px; padding: 0 16px; font-size: 15px; align-self: center; }
+@media (max-width: 480px) { .progress { grid-template-columns: 1fr; } .progress-share { width: 100%; } }
 .progress-bar { grid-column: 1 / -1; height: 6px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
 .progress.full span, .progress.full span b { color: var(--doom); }
 .mark { position: absolute; z-index: 4; width: 26px; height: 26px; display: grid; place-items: center; font: 700 13px/1 var(--body); color: rgba(255, 255, 255, 0.75); background: rgba(6, 8, 7, 0.72); border-left: 1px solid rgba(255, 255, 255, 0.25); border-bottom: 1px solid rgba(255, 255, 255, 0.25); transition: background 0.2s, color 0.2s, transform 0.2s; }

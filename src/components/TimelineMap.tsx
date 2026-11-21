@@ -1,8 +1,11 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { track } from "../analytics";
 import { BY_ID, DOOM_ID, TITLES, Title, fmtMin, parentsOf } from "../data";
 import type { Tier } from "../App";
 import { Poster, usePosters } from "../posters";
+import { doomReady } from "../doomReady";
+
+const ShareCard = lazy(() => import("./ShareCard"));
 
 interface Props {
   selected: string | null;
@@ -55,6 +58,7 @@ function rounded(pts: Pt[], r: number) {
 }
 
 export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched, tier, setTier }: Props) {
+  const [sharing, setSharing] = useState(false);
   const posters = usePosters();
   const stage = useRef<HTMLDivElement>(null);
   const stageW = useStageWidth(stage);
@@ -243,11 +247,20 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
           <b>{done}</b> of {G.list.length} watched
           {done === G.list.length ? ". You're ready for Doomsday." : done === 0 ? ". Tick the corner of a poster once you've seen it." : ""}
         </span>
-        <em>{Math.round((done / G.list.length) * 100)}%</em>
+        {watched.size > 0 ? (
+          <button className="btn btn-primary progress-share" onClick={() => { setSharing(true); track("share_card_clicked", { from: "watch_order" }); }}>
+            Share my doom-ready %
+          </button>
+        ) : <em>{Math.round((done / G.list.length) * 100)}%</em>}
         <div className="progress-bar" role="progressbar" aria-label="Watched in this view" aria-valuemin={0} aria-valuemax={G.list.length} aria-valuenow={done}>
           <i style={{ transform: `scaleX(${done / G.list.length})` }} />
         </div>
       </div>
+      {sharing && (
+        <Suspense fallback={null}>
+          <ShareCard ready={doomReady(watched)} onClose={() => setSharing(false)} />
+        </Suspense>
+      )}
 
       <div
         className="tree-stage"
