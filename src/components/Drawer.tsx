@@ -57,13 +57,13 @@ export function Drawer({ id, watched, toggleWatched, onSelect, onClose }: Props)
       <button className="drawer-x" onClick={onClose} aria-label="Close">×</button>
       <div className="drawer-scroll" key={t.id}>
         <Poster className="drawer-poster" src={t.poster || posters[t.id]} />
-        <p className="drawer-lane">{isDoom ? "The destination" : lane.name}</p>
+        <p className="drawer-lane">{isDoom ? "The big one" : lane.name}</p>
         <h3>{t.title}</h3>
         <p className="drawer-meta">
           <span>{t.year}</span>
           {!isDoom && <span>{t.kind === "film" ? "Film" : t.kind === "series" ? "Series" : "Special"}</span>}
           {!isDoom && <span>{fmtMin(t.min)}</span>}
-          <span>{t.phase ? PHASES[t.phase].name : "Legacy universe"}</span>
+          <span>{t.phase ? PHASES[t.phase].name : "Old X-Men universe"}</span>
         </p>
 
         <Trailer id={t.id} />
@@ -79,13 +79,13 @@ export function Drawer({ id, watched, toggleWatched, onSelect, onClose }: Props)
 
         {PLOT[t.id] && (<><h4>What happens</h4><p className="drawer-plot">{PLOT[t.id]}</p></>)}
 
-        <h4>{isDoom ? "What this is" : "Why it matters for Doomsday"}</h4>
+        <h4>{isDoom ? "What it is" : "Why watch it before Doomsday"}</h4>
         <p className="drawer-why">{t.why}</p>
-        {!isDoom && <a className="drawer-more" href={`./title/${slugOf(t)}/`}>Read the full page →</a>}
+        {!isDoom && <a className="drawer-more" href={`./title/${slugOf(t)}/`}>Open the full page →</a>}
 
         {!isDoom && (
           <>
-            <h4>Its road to Doom</h4>
+            <h4>How it leads to Doomsday</h4>
             {road ? (
               <ol className="road">
                 {road.map((x) => (
@@ -95,18 +95,18 @@ export function Drawer({ id, watched, toggleWatched, onSelect, onClose }: Props)
                 ))}
               </ol>
             ) : (
-              <p className="dim">A side road — this story does not feed into Doomsday directly.</p>
+              <p className="dim">This one doesn't lead into Doomsday, it's just a side story.</p>
             )}
           </>
         )}
 
-        {from.length > 0 && (<><h4>{isDoom ? "Feeds in directly" : "Built on"}</h4><div className="chips">{from.map(chip)}</div></>)}
+        {from.length > 0 && (<><h4>{isDoom ? "Leads straight into it" : "Comes after"}</h4><div className="chips">{from.map(chip)}</div></>)}
         {t.to.length > 0 && (<><h4>Leads into</h4><div className="chips">{t.to.map(chip)}</div></>)}
       </div>
 
       {!isDoom && (
         <button className={`btn seen-btn${watched.has(t.id) ? " is-seen" : ""}`} onClick={() => toggleWatched(t.id)}>
-          {watched.has(t.id) ? "✓ Watched — tap to undo" : "Mark as watched"}
+          {watched.has(t.id) ? "✓ Watched, tap to undo" : "Mark as watched"}
         </button>
       )}
     </aside>

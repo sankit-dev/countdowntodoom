@@ -56,7 +56,6 @@ export default function ShareCard({ ready, onClose }: { ready: DoomReady; onClos
     <div className="modal" role="dialog" aria-modal="true" aria-label="Share my doom-ready %" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="modal-box share-box">
         <button className="drawer-x" onClick={onClose} aria-label="Close">×</button>
-        <p className="kicker">Share</p>
         <h3>You're {ready.pct}% doom-ready</h3>
         <div className={`share-preview${loaded ? " loaded" : ""}`}>
           {!failed ? (

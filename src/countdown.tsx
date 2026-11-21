@@ -36,7 +36,7 @@ function Countdown() {
         )}
         <p className="cd-date">18 December 2026</p>
       </div>
-      <a className="cd-back" href="../">Road to Doomsday →</a>
+      <a className="cd-back" href="../">Back to the watch order →</a>
     </main>
   );
 }

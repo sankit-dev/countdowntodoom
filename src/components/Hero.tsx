@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { DOOM_DATE, TITLES } from "../data";
+import { DOOM_DATE, DOOM_ID, TITLES, tierOf } from "../data";
+import { Poster, usePosters } from "../posters";
 import { isPhone, useBackdrop } from "../backdrop";
 import { LoopVideo } from "./LoopVideo";
 
@@ -24,23 +25,19 @@ export function useCountdown() {
   };
 }
 
+// The first five essentials, shown as a poster strip in the hero on phones.
+const FIRST = TITLES.filter((t) => t.id !== DOOM_ID && tierOf(t) === "essential").slice(0, 5);
+
 export function Hero() {
+  const posters = usePosters();
   const c = useCountdown();
-  const count = TITLES.length - 1;
   const pad = (n: number) => String(n).padStart(2, "0");
   const bg = useBackdrop(isPhone() ? `${BASE}phone-tapestry.jpg` : `${BASE}hero.jpg`);
-  // The green glow behind the wordmark follows the pointer.
-  const glow = (e: React.PointerEvent<HTMLElement>) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`);
-    e.currentTarget.style.setProperty("--my", `${e.clientY - r.top}px`);
-  };
-  return (
-    <section className="hero" onPointerMove={glow}>
+    return (
+    <section className="hero">
       {bg && <div className={`hero-bg${bg.own ? "" : " hero-blur"}${isPhone() ? " phone" : ""}`} style={{ backgroundImage: `url("${bg.src}")` }} aria-hidden="true" />}
       {bg && !bg.own && <img className="hero-poster" src={bg.src} alt="" />}
       <LoopVideo base={import.meta.env.BASE_URL} className="hero-video" />
-      <div className="hero-glow" aria-hidden="true" />
       <div className="hero-vignette" />
       <div className="hero-body">
         <h1 className="wordmark" aria-label="Road to Doomsday">
@@ -53,11 +50,7 @@ export function Hero() {
         </h1>
 
         <div className="hero-rest">
-          <p className="kicker">{count} stories · 18 years · one collision course</p>
-          <p className="lede">
-            Every film and series that leads to <em>Avengers: Doomsday</em>, mapped as one connected
-            timeline — and a watch plan built around the time you actually have.
-          </p>
+          <p className="lede">Every MCU movie and show you need before Doomsday, in order.</p>
 
           {c.over ? (
             <p className="count-over">In cinemas now</p>
@@ -72,13 +65,20 @@ export function Hero() {
             </div>
           )}
 
+          <a className="hero-strip" href="#timeline" aria-label="See the watch order">
+            <span className="hero-strip-row">
+              {FIRST.map((t, i) => (
+                <span key={t.id}><em>{i + 1}</em><Poster src={t.poster || posters[t.id]} /></span>
+              ))}
+            </span>
+            <p>Start with these. <b>See the full watch order →</b></p>
+          </a>
           <div className="cta">
-            <a className="btn btn-primary" href="#timeline">Enter the timeline</a>
-            <a className="btn" href="#planner">Plan my marathon</a>
+            <a className="btn btn-primary" href="#timeline">See the watch order</a>
+            <a className="btn" href="#planner">Make me a watch plan</a>
           </div>
         </div>
       </div>
-      <a className="scroll-cue" href="#timeline" aria-label="Scroll to the timeline"><i /></a>
     </section>
   );
 }

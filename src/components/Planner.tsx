@@ -43,12 +43,12 @@ export function Planner({ watched, onSelect }: Props) {
   }, [plan]);
   const verdict =
     plan.skipped.length === 0
-      ? "You have time for the full marathon. Everything is in."
+      ? "You've got time for everything. Nice."
       : plan.essentialsPicked === plan.essentialsTotal
-      ? "Every essential fits, plus the best of the rest."
+      ? `All ${plan.essentialsTotal} essentials fit, plus some extra good ones.`
       : plan.picked.length
-      ? "Tight schedule — this is the sharpest cut that still gets you ready."
-      : "Not enough time for a full title. Add a little more per day.";
+      ? "It's tight, so this is the shortest list that still gets you ready."
+      : "That's not enough time for even one title. Add a bit more per day.";
 
   const today = new Date();
   const dateOf = (i: number) => dayFmt.format(new Date(today.getFullYear(), today.getMonth(), today.getDate() + i));
@@ -56,9 +56,8 @@ export function Planner({ watched, onSelect }: Props) {
   return (
     <section id="planner" className="planner">
       <header className="sec-head">
-        <p className="kicker">The marathon planner</p>
         <h2>How much time do you have?</h2>
-        <p className="lede">Tell it your days and your hours. It picks what matters most for Doomsday, puts it in order and lays it out day by day.</p>
+        <p className="lede">Tell me how many days and hours you've got. I'll pick the most important stuff and put it in order, day by day.</p>
       </header>
 
       <div className="planner-grid">
@@ -67,7 +66,7 @@ export function Planner({ watched, onSelect }: Props) {
             <span>Days available <b>{days}</b></span>
             <input type="range" min={1} max={120} value={days} onChange={(e) => setDays(+e.target.value)} />
             {left > 0 && left <= 120 && days !== left && (
-              <button type="button" className="link" onClick={() => setDays(left)}>Use all {left} days until release</button>
+              <button type="button" className="link" onClick={() => setDays(left)}>Use all {left} days till release</button>
             )}
           </label>
           <label className="slider">
@@ -87,8 +86,8 @@ export function Planner({ watched, onSelect }: Props) {
           </label>
           <p className="dim small">
             {watched.size
-              ? `${watched.size} title${watched.size === 1 ? "" : "s"} marked as watched and left out.`
-              : "Mark titles as watched on the timeline and they are left out here."}
+              ? `${watched.size} title${watched.size === 1 ? "" : "s"} you've watched ${watched.size === 1 ? "is" : "are"} left out.`
+              : "Anything you tick as watched on the watch order gets left out here."}
           </p>
         </form>
 
@@ -102,7 +101,7 @@ export function Planner({ watched, onSelect }: Props) {
             <div className="doom-ready-body">
               <p>
                 <strong>{ready.essentials}/{ready.essentialsTotal}</strong> essentials watched.{" "}
-                {ready.pct === 0 ? "Tick what you've seen on the timeline to raise it." : "Based on what you've ticked as watched."}
+                {ready.pct === 0 ? "Tick what you've seen on the watch order and this goes up." : "This is based on what you've ticked."}
               </p>
               <i className="doom-ready-bar"><i /></i>
             </div>
@@ -134,12 +133,12 @@ export function Planner({ watched, onSelect }: Props) {
               const multi = en.parts.length > 1;
               const pad = (d: number) => String(d + 1).padStart(2, "0");
               return (
-                <li key={`${en.id}-${first}`} className="item" style={{ ["--c" as string]: lane.color }}>
+                <li key={`${en.id}-${first}`} className={`item ${tierOf(t) === "essential" ? "item-big" : "item-small"}`} style={{ ["--c" as string]: lane.color }}>
                   <button onClick={() => onSelect(t.id)}>
                     <span className="item-art"><Poster src={t.poster || posters[t.id]} /></span>
                     <span className="item-body">
                       <span className="item-day">
-                        <b>{multi ? `Days ${pad(first)}–${pad(last)}` : `Day ${pad(first)}`}</b>
+                        <b>{multi ? `Days ${pad(first)} to ${pad(last)}` : `Day ${pad(first)}`}</b>
                         {multi ? `${dateOf(first)} – ${dateOf(last)}` : dateOf(first)}
                       </span>
                       <span className="item-title">{t.title}</span>
@@ -167,19 +166,19 @@ export function Planner({ watched, onSelect }: Props) {
                   <span className="item-body">
                     <span className="item-day"><b>Then</b>18 December 2026</span>
                     <span className="item-title">Avengers: Doomsday</span>
-                    <span className="item-why">You made it. Every road you just watched ends here.</span>
+                    <span className="item-why">You're ready. Go book your tickets.</span>
                   </span>
                 </div>
               </li>
             )}
           </ol>
           {usedDays > 0 && usedDays < days && (
-            <p className="dim small">Done in {usedDays} of your {days} days — {days - usedDays} to spare.</p>
+            <p className="dim small">You'll be done in {usedDays} of your {days} days, so {days - usedDays} {days - usedDays === 1 ? "day" : "days"} to spare.</p>
           )}
 
           {plan.skipped.length > 0 && (
             <details className="skipped">
-              <summary>{plan.skipped.length} left out to fit your time</summary>
+              <summary>{plan.skipped.length} {plan.skipped.length === 1 ? "title" : "titles"} didn't fit</summary>
               <div className="chips">
                 {plan.skipped.map((t) => (
                   <button key={t.id} className="chip" style={{ ["--c" as string]: LANE_BY_ID[t.lane].color }} onClick={() => onSelect(t.id)}>

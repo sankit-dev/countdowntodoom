@@ -51,9 +51,8 @@ export function Support({ open, onClose }: { open: boolean; onClose: () => void 
     <div className="modal" role="dialog" aria-modal="true" aria-label="Support this project" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="modal-box">
         <button className="drawer-x" onClick={onClose} aria-label="Close">×</button>
-        <p className="kicker">Support the project</p>
-        <h3>Keep the countdown running</h3>
-        <p className="modal-lede">This site is free, has no ads and is made by a fan. If it helped you get ready for Doomsday, you can chip in.</p>
+        <h3>Help keep this running</h3>
+        <p className="modal-lede">I made this for me and my friends. It's free with no ads, so if it helped you get ready for Doomsday you can chip in, but no pressure.</p>
 
         {!DODO_LINK && !wallets.length && <p className="dim">Support options are being set up. Check back soon.</p>}
 
@@ -81,7 +80,7 @@ export function Support({ open, onClose }: { open: boolean; onClose: () => void 
                 <button className="btn" onClick={copy}>{copied ? "Copied ✓" : "Copy address"}</button>
               </div>
             </div>
-            <p className="dim small">Sending on a different network than the one named will lose the funds.</p>
+            <p className="dim small">Only send on the network shown, otherwise the money is gone.</p>
           </section>
         )}
       </div>

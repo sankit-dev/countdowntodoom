@@ -60,14 +60,24 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const d = daysToDoom();
+  // Whole days, rounded down like the big countdown, so the two always agree.
+  const d = Math.max(0, Math.floor((DOOM_DATE.getTime() - Date.now()) / 86_400_000));
+  // The nav's "days left" only shows once the big countdown has scrolled out of view.
+  const [pastCountdown, setPastCountdown] = useState(false);
+  useEffect(() => {
+    const el = document.querySelector(".hero .count, .hero .count-over");
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setPastCountdown(!e.isIntersecting && e.boundingClientRect.top < 0));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   const total = TITLES.length - 1;
   const seen = [...watched].filter((id) => BY_ID[id] && id !== DOOM_ID).length;
 
   return (
     <PosterProvider>
       <header className="nav">
-        <a className="brand" href="#top" aria-label="Road to Doomsday — home">
+        <a className="brand" href="#top" aria-label="Road to Doomsday, home">
           <Sigil />
           <span className="brand-text">
             <small>Road to</small>
@@ -75,13 +85,13 @@ export default function App() {
           </span>
         </a>
         <nav>
-          <a href="#story">Story</a>
-          <a href="#timeline">Timeline</a>
-          <a href="#planner">Planner</a>
+          <a href="#timeline">Watch order</a>
+          <a href="#story">Catch up</a>
+          <a href="#planner">Watch plan</a>
           <a href="./countdown/">Countdown</a>
         </nav>
-        <button className="nav-support" onClick={() => { setSupport(true); track("support_open", { from: "nav" }); }}>♥ Support</button>
-        <span className="nav-count">
+        <button className="nav-support" onClick={() => { setSupport(true); track("support_open", { from: "nav" }); }}>Support</button>
+        <span className={`nav-count${pastCountdown ? " on" : ""}`} aria-hidden={!pastCountdown}>
           {d > 0 ? (
             <>
               <b>{d}</b> {d === 1 ? "day" : "days"} left
@@ -98,7 +108,6 @@ export default function App() {
 
       <main id="top">
         <Hero />
-        <Story onSelect={select} />
         <TimelineMap
           selected={selected}
           focus={focus}
@@ -108,6 +117,7 @@ export default function App() {
           tier={tier}
           setTier={setTier}
         />
+        <Story onSelect={select} />
         <Planner watched={watched} onSelect={select} />
       </main>
 
@@ -119,12 +129,12 @@ export default function App() {
           <a href="./story/">The story so far</a>
           <a href="./countdown/">Countdown</a>
         </nav>
-        <button className="btn" onClick={() => { setSupport(true); track("support_open", { from: "footer" }); }}>♥ Support this project</button>
+        <button className="btn" onClick={() => { setSupport(true); track("support_open", { from: "footer" }); }}>Support this site</button>
         <p>
-          An unofficial fan project. Not affiliated with, endorsed by or sponsored by Marvel or
-          The Walt Disney Company. All film and series titles belong to their respective owners.
+          Just a fan project. It's not affiliated with or endorsed by Marvel or Disney, and all the
+          titles belong to them.
         </p>
-        <p className="dim">Runtimes are approximate. Series runtimes cover the whole season. Poster images are loaded from Wikipedia and belong to their respective rights holders.</p>
+        <p className="dim">Runtimes are rough, and for shows it's the whole season. Posters come from Wikipedia and belong to their owners.</p>
       </footer>
 
       <Drawer

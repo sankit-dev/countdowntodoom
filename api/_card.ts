@@ -9,10 +9,10 @@ import sharp from "sharp";
 export const C = {
   bg: "#060807",
   ink: "#eef3ee",
+  muted: "#c3ccc5",
   dim: "#8b978f",
-  line: "rgba(255,255,255,0.10)",
+  line: "rgba(255,255,255,0.14)",
   doom: "#8dff6a",
-  gold: "#d8b56a",
 };
 
 type Style = Record<string, string | number>;
@@ -24,12 +24,10 @@ export const h = (type: string, style: Style, ...children: unknown[]): Node => (
 export const img = (src: string, style: Style): Node => ({ type: "img", props: { src, style } });
 
 const FONTS: [string, string, number][] = [
-  ["Cinzel", "Cinzel-ExtraBold.ttf", 800],
-  ["Cinzel", "Cinzel-Black.ttf", 900],
   ["Bebas Neue", "BebasNeue.ttf", 400],
-  ["Barlow Condensed", "BarlowCondensed-SemiBold.ttf", 600],
-  ["Barlow Condensed", "BarlowCondensed-Bold.ttf", 700],
   ["Barlow", "Barlow-Medium.ttf", 500],
+  ["Barlow", "Barlow-SemiBold.ttf", 600],
+  ["Barlow", "Barlow-Bold.ttf", 700],
 ];
 
 /** Fonts are served from the site itself (public/fonts), so the card always matches it. */
@@ -47,16 +45,13 @@ async function loadFonts(origin: string) {
   );
 }
 
-/** Small "ROAD TO / DOOMSDAY" mark, as in the site's nav. */
-export const brand = () =>
-  h("div", { flexDirection: "column", lineHeight: 1 },
-    h("div", { fontFamily: "Barlow Condensed", fontWeight: 600, fontSize: 15, letterSpacing: 6, color: C.dim }, "ROAD TO"),
-    h("div", { fontFamily: "Cinzel", fontWeight: 800, fontSize: 30, letterSpacing: 1, color: C.ink, marginTop: 6 }, "DOOMSDAY"));
+/** The site name, top left. */
+export const brand = () => h("div", { fontFamily: "Barlow", fontWeight: 700, fontSize: 28, color: C.ink }, "Road to Doomsday");
 
 export const footer = () =>
   h("div", { position: "absolute", left: 72, top: 556, width: 1056, justifyContent: "space-between", alignItems: "center" },
-    h("div", { fontFamily: "Barlow Condensed", fontWeight: 700, fontSize: 26, letterSpacing: 7, color: C.gold }, "COUNTDOWNTODOOM.VERCEL.APP"),
-    h("div", { fontFamily: "Barlow Condensed", fontWeight: 600, fontSize: 20, letterSpacing: 4, color: C.dim }, "AVENGERS: DOOMSDAY · 18.12.2026"));
+    h("div", { fontFamily: "Barlow", fontWeight: 600, fontSize: 28, color: C.doom }, "countdowntodoom.vercel.app"),
+    h("div", { fontFamily: "Barlow", fontWeight: 500, fontSize: 22, color: C.dim }, "Avengers: Doomsday, 18 Dec 2026"));
 
 /** Background used by every card: dark, with the throne still fading in on the right. */
 export const backdrop = (origin: string) => [
@@ -70,7 +65,7 @@ export function readyCard(origin: string, pct: number, essentials: number | null
   const stat = (big: string, label: string) =>
     h("div", { flexDirection: "column", marginRight: 64 },
       h("div", { fontFamily: "Bebas Neue", fontSize: 64, lineHeight: 0.9, color: C.ink }, big),
-      h("div", { fontFamily: "Barlow Condensed", fontWeight: 600, fontSize: 18, letterSpacing: 5, color: C.dim, marginTop: 8 }, label));
+      h("div", { fontFamily: "Barlow", fontWeight: 500, fontSize: 22, color: C.muted, marginTop: 8 }, label));
   return h("div", { position: "relative", width: 1200, height: 630, backgroundColor: C.bg, color: C.ink, fontFamily: "Barlow" },
     ...backdrop(origin),
     h("div", { position: "absolute", left: 72, top: 46 }, brand()),
@@ -78,12 +73,12 @@ export function readyCard(origin: string, pct: number, essentials: number | null
       h("div", { alignItems: "flex-end" },
         h("div", { fontFamily: "Bebas Neue", fontSize: 210, lineHeight: 0.8, color: C.doom }, String(pct)),
         h("div", { fontFamily: "Bebas Neue", fontSize: 92, lineHeight: 0.8, color: C.doom, marginLeft: 6, marginBottom: 4 }, "%")),
-      h("div", { fontFamily: "Cinzel", fontWeight: 900, fontSize: 46, letterSpacing: 4, color: C.ink, marginTop: 14 }, "DOOM-READY"),
+      h("div", { fontFamily: "Barlow", fontWeight: 700, fontSize: 46, color: C.ink, marginTop: 10 }, "doom-ready"),
       h("div", { width: 520, height: 10, marginTop: 18, backgroundColor: C.line },
-        h("div", { width: `${Math.max(1.5, pct)}%`, height: 10, backgroundImage: `linear-gradient(90deg, ${C.gold}, ${C.doom})` })),
+        h("div", { width: `${Math.max(1.5, pct)}%`, height: 10, backgroundColor: C.doom })),
       h("div", { marginTop: 28 },
-        ...(essentials === null ? [] : [stat(`${essentials}/${essentialsTotal}`, "ESSENTIALS WATCHED")]),
-        stat(String(days), days === 1 ? "DAY TO DOOMSDAY" : "DAYS TO DOOMSDAY"))),
+        ...(essentials === null ? [] : [stat(`${essentials}/${essentialsTotal}`, "essentials watched")]),
+        stat(String(days), days === 1 ? "day to Doomsday" : "days to Doomsday"))),
     footer());
 }
 

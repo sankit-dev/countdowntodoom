@@ -19,7 +19,7 @@ export function withShareTags(html: string, origin: string, pct: number, essenti
     essentials === null ? null : `${essentials}/${ESSENTIALS_TOTAL} essentials watched`,
     `${days} ${days === 1 ? "day" : "days"} to Avengers: Doomsday`,
   ].filter(Boolean);
-  const description = `${bits.join(" · ")}. Check yours: the full MCU watch order, a day-by-day watch planner and a live countdown.`;
+  const description = `${bits.join(" and ")}. See how ready you are and get a watch plan.`;
   let out = html;
   out = setMeta(out, "property", "og:url", `${origin}/?${q}`);
   out = setMeta(out, "property", "og:title", title);

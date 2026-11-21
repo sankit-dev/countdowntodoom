@@ -18,7 +18,7 @@ export function llmsTxt(site: string) {
 
 Key facts:
 - Avengers: Doomsday releases in cinemas on 18 December 2026. Doctor Doom is played by Robert Downey Jr.
-- The guide covers ${list.length} films, series and specials, released 2000–2026.
+- The guide covers ${list.length} films, series and specials, released 2000 to 2026.
 - Shortest useful watch list: ${essentials.length} essential titles (about ${hours(essentials)}). With recommended titles: ${essentials.length + recommended.length} titles (about ${hours([...essentials, ...recommended])}).
 - Most important set-up: Loki seasons 1 and 2 (the multiverse), Doctor Strange in the Multiverse of Madness (incursions), Thunderbolts* (the New Avengers) and The Fantastic Four: First Steps (Doctor Doom's first appearance).
 
@@ -29,7 +29,7 @@ Key facts:
 - [Full watch order](${site}/watch-order/): all titles in order with why each matters, plus story (chronological) order
 - [The essentials](${site}/essentials/): the shortest list to watch before Doomsday
 - [The story so far](${site}/story/): the saga explained, including what an incursion is
-- Every title has its own page at ${site}/title/<name>/, e.g. [Loki — Season 2](${site}/title/loki-season-2/)
+- Every title has its own page at ${site}/title/<name>/, e.g. [Loki Season 2](${site}/title/loki-season-2/)
 
 ## Full content
 
@@ -50,7 +50,7 @@ export function llmsFullTxt(site: string) {
 
 - Year: ${t.year} · ${kind(t.kind)} · ${fmtMin(t.min)}${t.kind === "series" ? " (whole season)" : ""} · ${phase(t.phase)}
 - Importance for Doomsday: ${t.imp}/10 (${TIER_LABEL[tierOf(t)]})
-- What happens (spoilers): ${PLOT[t.id] || "—"}
+- What happens (spoilers): ${PLOT[t.id] || "none"}
 - Why it matters for Doomsday: ${t.why}
 - Leads to Doomsday via: ${road ? road.map((id) => BY_ID[id].title).join(" → ") : "a side story; it does not feed into Doomsday directly"}`;
     })
@@ -59,9 +59,9 @@ export function llmsFullTxt(site: string) {
     `### ${i + 1}. ${c.title}\n\n${c.body.join("\n\n")}\n\nSee it in: ${c.watch.map((id) => BY_ID[id].title).join(", ")}`).join("\n\n");
   const chrono = CHRONO.filter((id) => id !== DOOM_ID).map((id, i) => `${i + 1}. ${BY_ID[id].title} (${BY_ID[id].year})`).join("\n");
 
-  return `# Road to Doomsday — full content
+  return `# Road to Doomsday: full content
 
-> The complete text of ${site}/ — an unofficial fan guide to Avengers: Doomsday (in cinemas 18 December 2026). Contains spoilers for every title listed. Runtimes are approximate; series runtimes cover the whole season. Importance scores are the guide's editorial judgement.
+> The complete text of ${site}/, an unofficial fan guide to Avengers: Doomsday (in cinemas 18 December 2026). Contains spoilers for every title listed. Runtimes are approximate; series runtimes cover the whole season. Importance scores are the guide's editorial judgement.
 
 Not affiliated with, endorsed by or sponsored by Marvel or The Walt Disney Company.
 
@@ -73,7 +73,7 @@ ${essential}
 
 ## The full watch order (${list.length} titles)
 
-Release order, except that the three older X-Men films (2000–2014, from a different film universe) are placed just before Deadpool & Wolverine, where they join the story.
+Release order, except that the three older X-Men films (2000 to 2014, from a different film universe) are placed just before Deadpool & Wolverine, where they join the story.
 
 ${order}
 

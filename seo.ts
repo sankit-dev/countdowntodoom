@@ -1,5 +1,5 @@
 // Build-time SEO: head tags, structured data, a plain-HTML copy of the watch
-// order inside #root (so crawlers see real content before JavaScript runs —
+// order inside #root (so crawlers see real content before JavaScript runs;
 // React replaces it on load), plus robots.txt and sitemap.xml.
 import type { Plugin } from "vite";
 import { DOOM_ID, TITLES } from "./src/data";
@@ -17,16 +17,16 @@ interface Page { title: string; description: string; path: string; body: string;
 
 const PAGES: Record<string, Page> = {
   main: {
-    title: "Avengers: Doomsday Watch Order — Every MCU Film & Series in Order",
+    title: "Avengers: Doomsday Watch Order: Every MCU Movie and Show in Order",
     description:
-      "What to watch before Avengers: Doomsday (18 Dec 2026): all 58 MCU films and series in order, how they connect, a day-by-day watch plan for the time you have, and a live countdown.",
+      "What to watch before Avengers: Doomsday (18 Dec 2026). All 58 MCU movies and shows in order, a watch plan for the days you've got, and a countdown.",
     path: "/",
     body: `<main style="max-width:760px;margin:0 auto;padding:96px 20px;color:#eef3ee;background:#060807;font-family:system-ui,sans-serif">
 <h1>Avengers: Doomsday watch order</h1>
-<p>Every film and series that leads to <strong>Avengers: Doomsday</strong> (in cinemas 18 December 2026), in order, with why each one matters.</p>
+<p>Every MCU movie and show you need before <strong>Avengers: Doomsday</strong> (out 18 December 2026), in order, with why each one matters.</p>
 <p><a href="/watch-order/" style="color:#8dff6a">Full watch order</a> · <a href="/essentials/" style="color:#8dff6a">The essentials</a> · <a href="/story/" style="color:#8dff6a">The story so far</a> · <a href="/countdown/" style="color:#8dff6a">Countdown</a></p>
 <ol>
-${list.map((t) => `<li><a href="${titleHref(t)}" style="color:#8dff6a"><strong>${esc(t.title)}</strong></a> (${t.year}, ${kind(t.kind)}) — ${esc(t.why)}</li>`).join("\n")}
+${list.map((t) => `<li><a href="${titleHref(t)}" style="color:#8dff6a"><strong>${esc(t.title)}</strong></a> (${t.year}, ${kind(t.kind)}): ${esc(t.why)}</li>`).join("\n")}
 <li><strong>Avengers: Doomsday</strong> (18 December 2026)</li>
 </ol>
 </main>`,
@@ -40,8 +40,8 @@ ${list.map((t) => `<li><a href="${titleHref(t)}" style="color:#8dff6a"><strong>$
     ],
   },
   countdown: {
-    title: "Avengers: Doomsday Countdown — Days Until 18 December 2026",
-    description: "A live countdown to Avengers: Doomsday, in cinemas 18 December 2026 — days, hours, minutes and seconds left.",
+    title: "Avengers: Doomsday Countdown: Days Until 18 December 2026",
+    description: "How long until Avengers: Doomsday? A live countdown to 18 December 2026, down to the second.",
     path: "/countdown/",
     body: `<main style="padding:96px 20px;text-align:center;color:#eef3ee;background:#000;font-family:system-ui,sans-serif">
 <h1>Avengers: Doomsday countdown</h1>

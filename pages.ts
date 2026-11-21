@@ -25,32 +25,32 @@ const link = (t: Title) => `<a href="${href(t)}">${esc(t.title)}</a>`;
 
 const verdict = (t: Title) => {
   const tier = tierOf(t);
-  if (tier === "essential") return `<strong>Yes — it is essential.</strong> It is one of the ${essentials.length} titles we would not skip before Avengers: Doomsday.`;
-  if (tier === "recommended") return "<strong>Recommended.</strong> It helps you follow Avengers: Doomsday, but you can skip it if you are short on time.";
-  return "<strong>Optional.</strong> It is worth watching for its own sake, but Avengers: Doomsday does not depend on it.";
+  if (tier === "essential") return `<strong>Yes, watch it.</strong> It's one of the ${essentials.length} I wouldn't skip before Avengers: Doomsday.`;
+  if (tier === "recommended") return "<strong>Good to watch.</strong> It helps with Doomsday, but you can skip it if you're short on time.";
+  return "<strong>Not needed.</strong> Watch it if you like, but Doomsday doesn't depend on it.";
 };
 
 const CSS = `
-:root{--bg:#060807;--panel:#0f1512;--ink:#eef3ee;--dim:#9aa59d;--line:rgba(255,255,255,.1);--doom:#8dff6a;--gold:#d8b56a}
+:root{--bg:#060807;--panel:#0f1512;--ink:#eef3ee;--dim:#9aa59d;--line:rgba(255,255,255,.1);--doom:#8dff6a;--muted:#c3ccc5}
 *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.65 "Barlow",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:var(--doom);text-underline-offset:3px}a:hover{color:#c4ffb0}
 .top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:16px clamp(16px,4vw,40px);border-bottom:1px solid var(--line)}
-.brand{font:800 18px/1 "Cinzel",serif;color:var(--ink);text-decoration:none;letter-spacing:.04em}.brand small{display:block;font:600 9px/1 "Barlow Condensed",sans-serif;letter-spacing:.4em;color:var(--dim);margin-bottom:4px}
-.top nav{display:flex;gap:18px;flex-wrap:wrap}.top nav a{font:600 13px/1 "Barlow Condensed",sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);text-decoration:none}.top nav a:hover{color:var(--ink)}
+.brand{font:800 18px/1 "Cinzel",serif;color:var(--ink);text-decoration:none;text-transform:uppercase}.brand small{display:block;font:600 9px/1 "Barlow",sans-serif;letter-spacing:.42em;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
+.top nav{display:flex;gap:18px;flex-wrap:wrap}.top nav a{font:500 15px/1 "Barlow",sans-serif;color:var(--muted);text-decoration:none}.top nav a:hover{color:var(--ink)}
 main{max-width:780px;margin:0 auto;padding:48px clamp(16px,4vw,24px) 80px}
-.crumbs{font:600 12px/1.4 "Barlow Condensed",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin:0 0 18px}.crumbs a{color:var(--dim)}
-.kicker{font:600 13px/1 "Cinzel",serif;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin:0 0 14px}
-h1{font:800 clamp(30px,5.4vw,48px)/1.12 "Cinzel",serif;margin:0 0 18px;text-wrap:balance}
-h2{font:800 clamp(21px,3vw,27px)/1.25 "Cinzel",serif;margin:44px 0 12px;text-wrap:balance}
+.crumbs{font:500 14px/1.4 "Barlow",sans-serif;color:var(--dim);margin:0 0 18px}.crumbs a{color:var(--dim)}
+.kicker{font:500 15px/1 "Barlow",sans-serif;color:var(--muted);margin:0 0 10px}
+h1{font:400 clamp(40px,6.4vw,64px)/1 "Bebas Neue",sans-serif;margin:0 0 18px;text-wrap:balance}
+h2{font:400 clamp(28px,3.6vw,36px)/1.05 "Bebas Neue",sans-serif;margin:44px 0 12px;text-wrap:balance}
 h3{font:700 19px/1.3 "Barlow",sans-serif;margin:28px 0 6px}
 p{margin:0 0 14px}.lede{font-size:20px;color:#d5ddd6}
 .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:24px 0}
-.facts div{background:var(--panel);border:1px solid var(--line);padding:14px 16px}.facts dt{font:600 11px/1 "Barlow Condensed",sans-serif;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}.facts dd{margin:0;font:600 17px/1.3 "Barlow",sans-serif}
+.facts div{background:var(--panel);border:1px solid var(--line);padding:14px 16px}.facts dt{font:500 13px/1 "Barlow",sans-serif;color:var(--dim);margin-bottom:8px}.facts dd{margin:0;font:600 17px/1.3 "Barlow",sans-serif}
 .verdict{padding:16px 18px;border-left:3px solid var(--doom);background:rgba(141,255,106,.06);margin:22px 0}
-.road{list-style:none;padding:0;margin:0}.road li{position:relative;padding:0 0 10px 24px}.road li:before{content:"";position:absolute;left:3px;top:9px;width:9px;height:9px;border-radius:50%;border:2px solid var(--gold)}.road li:last-child:before{background:var(--doom);border-color:var(--doom)}
+.road{list-style:none;padding:0;margin:0}.road li{position:relative;padding:0 0 10px 24px}.road li:before{content:"";position:absolute;left:3px;top:9px;width:9px;height:9px;border-radius:50%;border:2px solid var(--dim)}.road li:last-child:before{background:var(--doom);border-color:var(--doom)}
 ol.order{padding-left:1.6em}ol.order li{margin:0 0 12px}ol.order li span{color:var(--dim);font-size:15px}
 .pager{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:15px}
-.cta{display:inline-block;margin:10px 10px 0 0;padding:12px 18px;font:700 14px/1 "Barlow Condensed",sans-serif;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;color:#06120a;background:var(--doom)}
+.cta{display:inline-block;margin:10px 10px 0 0;padding:13px 18px;font:600 16px/1 "Barlow",sans-serif;text-decoration:none;color:#06120a;background:var(--doom)}
 .cta.alt{background:none;color:var(--ink);border:1px solid rgba(255,255,255,.3)}
 .spoiler{font-size:14px;color:var(--dim)}
 footer{max-width:780px;margin:0 auto;padding:30px 20px 60px;border-top:1px solid var(--line);font-size:13px;color:var(--dim)}
@@ -80,7 +80,7 @@ function shell(o: { site: string; path: string; title: string; description: stri
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@800&family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="/guide.css" />
 <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-NS78CJ3F"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());</script>
@@ -95,7 +95,7 @@ ${ld}
 <main>
 ${o.body}
 </main>
-<footer>An unofficial fan guide. Not affiliated with, endorsed by or sponsored by Marvel or The Walt Disney Company. Runtimes are approximate; series runtimes cover the whole season.</footer>
+<footer>Just a fan project. It's not affiliated with or endorsed by Marvel or Disney. Runtimes are rough, and for shows it's the whole season.</footer>
 </body>
 </html>
 `;
@@ -113,8 +113,8 @@ function titlePage(site: string, t: Title): StaticPage {
   const road = roadToDoom(t.id);
   const from = parentsOf(t.id).map((id) => BY_ID[id]);
   const into = t.to.map((id) => BY_ID[id]);
-  const short = t.title.replace(" — ", " ");
-  const description = `Do you need to watch ${short} before Avengers: Doomsday? ${tierOf(t) === "essential" ? "Yes — it's essential." : tierOf(t) === "recommended" ? "Recommended." : "Optional."} What happens, why it matters, and where it fits in the watch order.`;
+  const short = t.title;
+  const description = `Do you need to watch ${short} before Avengers: Doomsday? ${tierOf(t) === "essential" ? "Yes, it's essential." : tierOf(t) === "recommended" ? "It's recommended." : "It's optional."} Here's what happens, why it matters and where it fits in the watch order.`;
   const body = `
 <p class="crumbs"><a href="/">Road to Doomsday</a> › <a href="/watch-order/">Watch order</a> › #${pos(t)}</p>
 <p class="kicker">#${pos(t)} of ${list.length} in the watch order</p>
@@ -128,16 +128,16 @@ function titlePage(site: string, t: Title): StaticPage {
   <div><dt>Importance</dt><dd>${t.imp}/10 · ${TIER_LABEL[tierOf(t)]}</dd></div>
   <div><dt>Era</dt><dd>${esc(phase(t))}</dd></div>
 </dl>
-<h2>Why it matters for Avengers: Doomsday</h2>
+<h2>Why watch it before Doomsday</h2>
 <p>${esc(t.why)}</p>
 ${PLOT[t.id] ? `<h2>What happens in ${esc(short)}</h2>\n<p class="spoiler">Spoilers.</p>\n<p>${esc(PLOT[t.id])}</p>` : ""}
-<h2>Its road to Doomsday</h2>
-${road ? `<ol class="road">${road.map((id) => `<li>${link(BY_ID[id])}</li>`).join("")}</ol>` : "<p>This is a side story: it does not lead into Avengers: Doomsday directly.</p>"}
-${from.length ? `<h3>Builds on</h3><p>${from.map(link).join(" · ")}</p>` : ""}
+<h2>How it leads to Doomsday</h2>
+${road ? `<ol class="road">${road.map((id) => `<li>${link(BY_ID[id])}</li>`).join("")}</ol>` : "<p>This is a side story, it doesn't lead into Avengers: Doomsday.</p>"}
+${from.length ? `<h3>Comes after</h3><p>${from.map(link).join(" · ")}</p>` : ""}
 ${into.length ? `<h3>Leads into</h3><p>${into.map(link).join(" · ")}</p>` : ""}
-<h2>Plan your watch</h2>
-<p>Tell the planner how many days and hours you have, and it builds a day-by-day watch list — essentials first.</p>
-<p><a class="cta" href="/#planner">Plan my marathon</a><a class="cta alt" href="/watch-order/">See the full watch order</a></p>
+<h2>Make a watch plan</h2>
+<p>Tell the planner how many days and hours you've got and it'll make a day by day list, essentials first.</p>
+<p><a class="cta" href="/#planner">Make me a watch plan</a><a class="cta alt" href="/watch-order/">See the full watch order</a></p>
 <nav class="pager">
   <span>${prev ? `← #${pos(prev)} ${link(prev)}` : ""}</span>
   <span>${next ? `#${pos(next)} ${link(next)} →` : `Next: <a href="/">Avengers: Doomsday</a> →`}</span>
@@ -146,7 +146,7 @@ ${into.length ? `<h3>Leads into</h3><p>${into.map(link).join(" · ")}</p>` : ""}
     path: href(t),
     html: shell({
       site, path: href(t), body, description,
-      title: `${short} — Watch Before Avengers: Doomsday?`,
+      title: `Do You Need to Watch ${short} Before Doomsday?`,
       jsonld: [
         { "@context": "https://schema.org", "@type": t.kind === "series" ? "TVSeries" : "Movie", name: t.title,
           datePublished: String(t.year), description: PLOT[t.id] || t.why, url: site + href(t) },
@@ -160,28 +160,27 @@ function watchOrderPage(site: string): StaticPage {
   const path = "/watch-order/";
   const body = `
 <p class="crumbs"><a href="/">Road to Doomsday</a> › Watch order</p>
-<p class="kicker">The complete list</p>
-<h1>Avengers: Doomsday Watch Order: All ${list.length} MCU Films &amp; Series</h1>
-<p class="lede">Every film, series and special that leads to Avengers: Doomsday (in cinemas 18 December 2026), in order, with why each one matters.</p>
+<h1>Avengers: Doomsday watch order, all ${list.length} movies and shows</h1>
+<p class="lede">Every MCU movie, show and special you need before Avengers: Doomsday (out 18 December 2026), in order, with why each one matters.</p>
 <p>Short on time? Start with the <a href="/essentials/">${essentials.length} essentials</a> (about ${hours(essentials)}), or let the <a href="/#planner">planner</a> fit a list to the days you have.</p>
-<p>The order is release order, except that the three older X-Men films (2000–2014, from a different film universe) sit just before Deadpool &amp; Wolverine, where they join the story.</p>
+<p>It's release order, except for the three old X-Men movies (2000 to 2014, from a different universe). I put those right before Deadpool &amp; Wolverine, because that's where they come into the story.</p>
 <h2>The full watch order</h2>
 <ol class="order">
 ${list.map((t) => `<li>${link(t)} <span>(${t.year} · ${kind(t)} · ${fmtMin(t.min)} · ${TIER_LABEL[tierOf(t)]})</span><br />${esc(t.why)}</li>`).join("\n")}
 <li><a href="/">Avengers: Doomsday</a> <span>(18 December 2026)</span></li>
 </ol>
-<h2>Watching in story (chronological) order instead</h2>
-<p>If you prefer to follow events in the order they happen in-universe:</p>
+<h2>Prefer story order?</h2>
+<p>Here's the order things happen inside the story:</p>
 <ol class="order">
 ${CHRONO.filter((id) => id !== DOOM_ID).map((id) => `<li>${link(BY_ID[id])} <span>(${BY_ID[id].year})</span></li>`).join("\n")}
 </ol>
-<p><a class="cta" href="/#planner">Plan my marathon</a><a class="cta alt" href="/story/">Catch up on the story</a></p>`;
+<p><a class="cta" href="/#planner">Make me a watch plan</a><a class="cta alt" href="/story/">Catch up on the story</a></p>`;
   return {
     path,
     html: shell({
       site, path, body,
-      title: `Avengers: Doomsday Watch Order — All ${list.length} MCU Films & Series`,
-      description: `The complete Avengers: Doomsday watch order: all ${list.length} MCU films and series in order, why each matters, plus story (chronological) order and a ${essentials.length}-title essentials list.`,
+      title: `Avengers: Doomsday Watch Order: All ${list.length} MCU Movies and Shows`,
+      description: `The full Avengers: Doomsday watch order. All ${list.length} MCU movies and shows in order and why each one matters, plus story order and the ${essentials.length} essentials.`,
       jsonld: [
         { "@context": "https://schema.org", "@type": "ItemList", name: "Avengers: Doomsday watch order", numberOfItems: list.length,
           itemListElement: list.map((t, i) => ({ "@type": "ListItem", position: i + 1, url: site + href(t), name: t.title })) },
@@ -196,20 +195,20 @@ function essentialsPage(site: string): StaticPage {
   const body = `
 <p class="crumbs"><a href="/">Road to Doomsday</a> › Essentials</p>
 <p class="kicker">Short on time</p>
-<h1>What to Watch Before Avengers: Doomsday: The ${essentials.length} Essentials</h1>
-<p class="lede">If you watch nothing else, watch these ${essentials.length} — about ${hours(essentials)} in total — in this order.</p>
+<h1>What to watch before Avengers: Doomsday if you're short on time</h1>
+<p class="lede">If you only watch ${essentials.length} things, make it these, in this order. It's about ${hours(essentials)} in total.</p>
 <ol class="order">
 ${essentials.map((t) => `<li>${link(t)} <span>(${t.year} · ${fmtMin(t.min)})</span><br />${esc(t.why)}</li>`).join("\n")}
 </ol>
 <h2>Have a bit more time?</h2>
-<p>Add the recommended titles, or see the <a href="/watch-order/">full watch order of all ${list.length}</a>. The <a href="/#planner">planner</a> picks the best set for the exact number of days and hours you have.</p>
-<p><a class="cta" href="/#planner">Plan my marathon</a><a class="cta alt" href="/countdown/">How long is left?</a></p>`;
+<p>Add the recommended ones, or look at the <a href="/watch-order/">full watch order of all ${list.length}</a>. The <a href="/#planner">planner</a> can also pick the best list for the exact days and hours you've got.</p>
+<p><a class="cta" href="/#planner">Make me a watch plan</a><a class="cta alt" href="/countdown/">How long is left?</a></p>`;
   return {
     path,
     html: shell({
       site, path, body,
       title: `What to Watch Before Avengers: Doomsday: ${essentials.length} Essentials`,
-      description: `Short on time before Avengers: Doomsday? The ${essentials.length} essential MCU films and series to watch (about ${hours(essentials)}), in order, and why each one matters.`,
+      description: `Short on time before Avengers: Doomsday? These are the ${essentials.length} MCU movies and shows to watch (about ${hours(essentials)}), in order, and why each one matters.`,
       jsonld: [
         { "@context": "https://schema.org", "@type": "ItemList", name: "Essential watching before Avengers: Doomsday", numberOfItems: essentials.length,
           itemListElement: essentials.map((t, i) => ({ "@type": "ListItem", position: i + 1, url: site + href(t), name: t.title })) },
@@ -225,20 +224,20 @@ function storyPage(site: string): StaticPage {
   const body = `
 <p class="crumbs"><a href="/">Road to Doomsday</a> › Story so far</p>
 <p class="kicker">Catch up</p>
-<h1>The Story So Far: How the MCU Got to Avengers: Doomsday</h1>
-<p class="lede">The Infinity Stones, the Sacred Timeline, incursions and Doctor Doom — everything you need to know before Avengers: Doomsday, in ${CHAPTERS.length} short chapters.</p>
+<h1>The story so far, before Avengers: Doomsday</h1>
+<p class="lede">A quick catch-up on the Infinity Stones, the Sacred Timeline, incursions and Doctor Doom, in ${CHAPTERS.length} short bits.</p>
 <p class="spoiler">Spoilers for every MCU film and series up to now.</p>
 <p>${CHAPTERS.map((c) => `<a href="#${anchor(c.title)}">${esc(c.title)}</a>`).join(" · ")}</p>
 ${CHAPTERS.map((c, i) => `<h2 id="${anchor(c.title)}">${i + 1}. ${esc(c.title)}</h2>
 ${c.body.map((p) => `<p>${esc(p)}</p>`).join("\n")}
 <p><span class="spoiler">See it in:</span> ${c.watch.map((id) => link(BY_ID[id])).join(" · ")}</p>`).join("\n")}
-<p><a class="cta" href="/watch-order/">See the full watch order</a><a class="cta alt" href="/#planner">Plan my marathon</a></p>`;
+<p><a class="cta" href="/watch-order/">See the full watch order</a><a class="cta alt" href="/#planner">Make me a watch plan</a></p>`;
   return {
     path,
     html: shell({
       site, path, body,
-      title: "Avengers: Doomsday Story So Far — Incursions & Doom Explained",
-      description: "Everything that happened before Avengers: Doomsday, explained: the snap, the Sacred Timeline, what an incursion is, the New Avengers, the Fantastic Four and Doctor Doom.",
+      title: "Avengers: Doomsday Story So Far: Incursions and Doom Explained",
+      description: "A quick catch-up on what happened before Avengers: Doomsday: the snap, the Sacred Timeline, what an incursion is, the New Avengers, the Fantastic Four and Doctor Doom.",
       jsonld: [crumbs(site, [["Road to Doomsday", "/"], ["Story so far", path]])],
     }),
   };

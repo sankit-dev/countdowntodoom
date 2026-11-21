@@ -226,8 +226,8 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
     <section id="timeline" className="tree-section">
       <header className="tree-head">
         <div>
-          <h2>Every road leads to Doom</h2>
-          <p>Start at 1 and follow the line. Hover a title to see what it connects to, click for the full story.</p>
+          <h2>The watch order</h2>
+          <p>Start at 1 and go in order. Tap the tick on a poster once you've watched it, or tap the poster for details.</p>
         </div>
         <div className="seg" role="group" aria-label="How much to show">
           {VIEWS.map((v) => (
@@ -241,7 +241,7 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
       <div className={`progress${done === G.list.length ? " full" : ""}`}>
         <span>
           <b>{done}</b> of {G.list.length} watched
-          {done === G.list.length ? " — you are ready for Doomsday" : done === 0 ? " — tick the corner of a poster once you've seen it" : ""}
+          {done === G.list.length ? ". You're ready for Doomsday." : done === 0 ? ". Tick the corner of a poster once you've seen it." : ""}
         </span>
         <em>{Math.round((done / G.list.length) * 100)}%</em>
         <div className="progress-bar" role="progressbar" aria-label="Watched in this view" aria-valuemin={0} aria-valuemax={G.list.length} aria-valuenow={done}>
@@ -303,7 +303,7 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
               onClick={() => toggleWatched(t.id)}
               aria-pressed={watched.has(t.id)}
               aria-label={`${watched.has(t.id) ? "Unmark" : "Mark"} ${t.title} as watched`}
-              title={watched.has(t.id) ? "Watched — click to undo" : "Mark as watched"}
+              title={watched.has(t.id) ? "Watched, click to undo" : "Mark as watched"}
             >✓</button>
           ))}
 
