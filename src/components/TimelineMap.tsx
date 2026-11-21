@@ -4,6 +4,7 @@ import { BY_ID, DOOM_ID, TITLES, Title, fmtMin, parentsOf } from "../data";
 import type { Tier } from "../App";
 import { Poster, usePosters } from "../posters";
 import { doomReady } from "../doomReady";
+import { RELEASE, useRegion } from "../release";
 
 const ShareCard = lazy(() => import("./ShareCard"));
 
@@ -58,6 +59,7 @@ function rounded(pts: Pt[], r: number) {
 }
 
 export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched, tier, setTier }: Props) {
+  const [region] = useRegion();
   const [sharing, setSharing] = useState(false);
   const posters = usePosters();
   const stage = useRef<HTMLDivElement>(null);
@@ -330,7 +332,7 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
           >
             <small>Avengers</small>
             <b>Doomsday</b>
-            <span>18 · 12 · 2026</span>
+            <span>{RELEASE[region].d} · 12 · 2026</span>
           </button>
         </div>
 
