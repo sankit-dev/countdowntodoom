@@ -51,6 +51,7 @@ export const CHAPTERS: Chapter[] = [
   },
   {
     kind: "incursion",
+    image: "story/incursion.jpg",
     title: "What's an incursion?",
     body: [
       "This one is very important for Doomsday, so read it properly. An incursion is when two universes crash into each other, and one of them or both get destroyed.",
@@ -60,6 +61,7 @@ export const CHAPTERS: Chapter[] = [
   },
   {
     kind: "tree",
+    image: "story/tree.jpg",
     title: "Loki holding everything together",
     body: [
       "In Loki season 2 the TVA's machine can't handle infinite branches, and they start dying. So Loki holds every timeline together himself, alone at the end of time. He's in the Doomsday cast though, so something gets him off that throne.",
