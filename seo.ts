@@ -70,6 +70,7 @@ function head(p: Page) {
     `<meta property="og:image:width" content="1200" />`,
     `<meta property="og:image:height" content="630" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
+    `<meta name="twitter:creator" content="@sankitdev" />`,
     `<meta name="twitter:title" content="${esc(p.title)}" />`,
     `<meta name="twitter:description" content="${esc(p.description)}" />`,
     `<meta name="twitter:image" content="${img}" />`,

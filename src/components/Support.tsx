@@ -52,7 +52,7 @@ export function Support({ open, onClose }: { open: boolean; onClose: () => void 
       <div className="modal-box">
         <button className="drawer-x" onClick={onClose} aria-label="Close">×</button>
         <h3>Help keep this running</h3>
-        <p className="modal-lede">I made this for me and my friends. It's free with no ads, so if it helped you get ready for Doomsday you can chip in, but no pressure.</p>
+        <p className="modal-lede">I'm <a href="https://x.com/sankitdev" target="_blank" rel="noopener noreferrer">@sankitdev</a> and I made this for me and my friends. It's free with no ads, so if it helped you get ready for Doomsday you can chip in, but no pressure.</p>
 
         {!DODO_LINK && !wallets.length && <p className="dim">Support options are being set up. Check back soon.</p>}
 

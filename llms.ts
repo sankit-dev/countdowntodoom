@@ -22,6 +22,8 @@ Key facts:
 - Shortest useful watch list: ${essentials.length} essential titles (about ${hours(essentials)}). With recommended titles: ${essentials.length + recommended.length} titles (about ${hours([...essentials, ...recommended])}).
 - Most important set-up: Loki seasons 1 and 2 (the multiverse), Doctor Strange in the Multiverse of Madness (incursions), Thunderbolts* (the New Avengers) and The Fantastic Four: First Steps (Doctor Doom's first appearance).
 
+Made by @sankitdev (https://x.com/sankitdev).
+
 ## Pages
 
 - [Watch order, timeline and planner](${site}/): the interactive guide, the story-so-far explainer and the marathon planner

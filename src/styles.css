@@ -489,6 +489,11 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 24px; border: 0; bo
 .foot-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; }
 .foot-links a { font: 600 13px/1 var(--cond); color: var(--ink); }
 .foot-links a:hover { color: var(--doom); }
+.foot-creator { font-size: 15px; color: var(--ink); }
+.foot-creator a { color: var(--doom); }
+.foot-follow { display: inline-block; margin-left: 6px; padding: 6px 12px; border: 1px solid rgba(141, 255, 106, 0.5); font-weight: 600; }
+.foot-follow:hover { background: var(--doom); color: #06120a; }
+.modal-lede a { color: var(--doom); }
 .drawer-more { display: inline-block; margin-top: 10px; font: 600 13px/1 var(--cond); color: var(--doom); }
 .foot .sigil { color: var(--doom); }
 

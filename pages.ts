@@ -76,6 +76,7 @@ function shell(o: { site: string; path: string; title: string; description: stri
 <meta property="og:description" content="${esc(o.description)}" />
 <meta property="og:image" content="${o.site}/og.jpg" />
 <meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:creator" content="@sankitdev" />
 <meta name="twitter:image" content="${o.site}/og.jpg" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -95,7 +96,7 @@ ${ld}
 <main>
 ${o.body}
 </main>
-<footer>Just a fan project. It's not affiliated with or endorsed by Marvel or Disney. Runtimes are rough, and for shows it's the whole season.</footer>
+<footer>Made by <a href="https://x.com/sankitdev" rel="noopener">@sankitdev</a> for me and my friends before Doomsday. Just a fan project. It's not affiliated with or endorsed by Marvel or Disney. Runtimes are rough, and for shows it's the whole season.</footer>
 </body>
 </html>
 `;

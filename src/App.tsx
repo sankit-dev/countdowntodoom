@@ -93,6 +93,7 @@ export default function App() {
           <a href="#story">Catch up</a>
           <a href="#planner">Watch plan</a>
           <a href="./countdown/">Countdown</a>
+          <a href="https://x.com/sankitdev" target="_blank" rel="noopener noreferrer" onClick={() => track("follow_x", { from: "nav" })}>@sankitdev</a>
         </nav>
         <button className="nav-support" onClick={() => { setSupport(true); track("support_open", { from: "nav" }); }}>Support</button>
         <span className={`nav-count${pastCountdown ? " on" : ""}`} aria-hidden={!pastCountdown}>
@@ -133,6 +134,10 @@ export default function App() {
           <a href="./story/">The story so far</a>
           <a href="./countdown/">Countdown</a>
         </nav>
+        <p className="foot-creator">
+          Made by <a href="https://x.com/sankitdev" target="_blank" rel="noopener noreferrer" onClick={() => track("follow_x", { from: "footer" })}>@sankitdev</a> for me and my friends before Doomsday.{" "}
+          <a className="foot-follow" href="https://x.com/sankitdev" target="_blank" rel="noopener noreferrer" onClick={() => track("follow_x", { from: "footer_button" })}>Follow on X</a>
+        </p>
         <button className="btn" onClick={() => { setSupport(true); track("support_open", { from: "footer" }); }}>Support this site</button>
         <p>
           Just a fan project. It's not affiliated with or endorsed by Marvel or Disney, and all the
