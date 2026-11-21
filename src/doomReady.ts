@@ -5,7 +5,8 @@
 // essentials dominate.
 //
 // No React and no browser APIs here: the server functions in api/ use it too.
-import { DOOM_ID, TITLES, tierOf } from "./data";
+// Relative imports keep their ".js" extension so Node can load them on Vercel.
+import { DOOM_ID, TITLES, tierOf } from "./data.js";
 
 export const SITE_HOST = "countdowntodoom.vercel.app";
 export const SITE_URL = `https://${SITE_HOST}`;

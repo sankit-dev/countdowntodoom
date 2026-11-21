@@ -1,7 +1,7 @@
 // GET /api/card?ready=82&e=12 → the 1200x630 doom-ready card as a JPEG.
 // Used for the "Download image" button and as the link preview of share links.
-import { ESSENTIALS_TOTAL, daysLeft, parseShare } from "../src/doomReady";
-import { readyCard, render } from "./_card";
+import { ESSENTIALS_TOTAL, daysLeft, parseShare } from "../src/doomReady.js";
+import { readyCard, render } from "./_card.js";
 
 // Node.js runtime (not edge): the JPEG conversion needs sharp.
 export async function GET(req: Request) {

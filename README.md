@@ -63,9 +63,11 @@ checkout, and crypto is a plain address with a QR code.
 - `GET /api/card?ready=82&e=12` → the 1200×630 share card (JPEG). Drawn with
   `@vercel/og` in `api/_card.ts`, converted to JPEG with `sharp` to stay small
   enough for WhatsApp previews. Fonts are the site's own, served from `public/fonts/`.
-- `/?ready=82&e=12` is rewritten (see `vercel.json`) to `api/share.ts`, which
+- `/?ready=82&e=12` is routed by `middleware.ts` to `api/share.ts`, which
   returns the normal homepage with its preview tags pointing at that card.
 - `npm run dev` runs these functions locally too (see `vite.config.ts`).
+- Relative imports used by `api/` keep their `.js` extension: Vercel runs them as
+  ES modules, and Node needs the extension to find the file.
 
 ## SEO
 

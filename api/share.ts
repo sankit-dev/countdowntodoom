@@ -1,7 +1,7 @@
 // GET /?ready=82&e=12 (rewritten here by vercel.json) → the normal homepage,
 // with its link-preview tags pointing at that person's doom-ready card.
 // Visitors get the usual site; X, WhatsApp and Reddit see the card.
-import { ESSENTIALS_TOTAL, daysLeft, parseShare } from "../src/doomReady";
+import { ESSENTIALS_TOTAL, daysLeft, parseShare } from "../src/doomReady.js";
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 

@@ -20,6 +20,7 @@
     "llms.ts",
     "pages.ts",
     "api",
+    "middleware.ts",
     "vite.config.ts"
   ]
 }
