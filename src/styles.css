@@ -18,7 +18,7 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; background: var(--bg); }
+html { scroll-behavior: smooth; background: var(--bg); overflow-x: clip; }
 body {
   margin: 0;
   background: var(--bg);
@@ -519,7 +519,15 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 24px; border: 0; bo
   .controls { position: static; }
   .stats { grid-template-columns: 1fr 1fr; }
 }
+@media (max-width: 420px) {
+  .nav-count.on { display: none; }
+  .brand-text small { letter-spacing: 0.3em; }
+}
 @media (max-width: 720px) {
+  .deck-nav { gap: 12px; padding: 0 16px; }
+  .deck-nav > button { width: 40px; height: 40px; flex: none; }
+  .dots { gap: 4px; min-width: 0; }
+  .dots button { width: 14px; }
   .hero { min-height: 0; padding: calc(var(--nav-h) + 40px) 16px 40px; }
   .hero-body { gap: 20px; }
   .lede { font-size: 16px; }
