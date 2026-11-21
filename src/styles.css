@@ -197,6 +197,10 @@ h1, h2, h3, h4, p { margin: 0; }
 @media (min-width: 821px) { .card { grid-template-columns: minmax(220px, 34%) minmax(0, 1fr); } }
 .card-media { position: relative; background: #000; min-height: 220px; aspect-ratio: 16 / 10; }
 @media (min-width: 821px) { .card-media { aspect-ratio: auto; min-height: 380px; } }
+/* Cards with their own wide picture: the picture runs as a banner across the top */
+.card-wide { width: min(900px, 88vw); }
+@media (min-width: 821px) { .card.card-wide { grid-template-columns: minmax(0, 1fr); } .card-wide .card-media { aspect-ratio: 21 / 9; min-height: 0; } }
+.card-wide .card-poster img { object-position: center; }
 .card-poster { position: absolute; inset: 0; display: block; }
 .card-poster img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block; animation: fadeIn 0.5s both; }
 .card-video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }

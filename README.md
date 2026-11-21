@@ -33,6 +33,13 @@ npm run build    # static site in dist/ — host anywhere
   article (`src/posters.tsx`). To pin one yourself, set `poster` on the title in
   `src/data.ts`.
 
+## Story card pictures
+
+Each story card shows its main film's poster, unless it has its own picture:
+put a wide image (about 1400px across) in `public/story/`, named after the
+card's `kind` in `src/story.ts` (for example `kang.jpg`), and add
+`image: "story/kang.jpg"` to that card.
+
 ## Trailers
 
 Embedded trailers come from TMDB and need a free API key

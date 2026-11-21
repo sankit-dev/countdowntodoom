@@ -22,6 +22,7 @@ export const CHAPTERS: Chapter[] = [
   },
   {
     kind: "sacred",
+    image: "story/sacred.jpg",
     title: "The TVA and the Sacred Timeline",
     body: [
       "Then the Loki show comes in. There's this group called the Time Variance Authority, the TVA, and their whole job is cutting off any branch of reality that doesn't match one \"Sacred Timeline\". Everyone living on those branches gets erased too, which is pretty dark.",
@@ -31,6 +32,7 @@ export const CHAPTERS: Chapter[] = [
   },
   {
     kind: "fracture",
+    image: "story/fracture.jpg",
     title: "How the multiverse opened up",
     body: [
       "Remember the 2012 Loki who runs off with the Tesseract during the time heist in Endgame? That's how he ends up at the TVA, where he meets Sylvie, and Sylvie kills He Who Remains. With nobody left to cut the branches, the timeline splits into loads of them, and that's the multiverse.",
@@ -39,6 +41,7 @@ export const CHAPTERS: Chapter[] = [
   },
   {
     kind: "multiverse",
+    image: "story/multiverse.jpg",
     title: "Other universes start leaking in",
     body: [
       "A spell goes wrong in No Way Home and pulls villains and two other Spider-Men into Peter's world. Peter saves all of them, but the price is that everyone on Earth forgets him.",
