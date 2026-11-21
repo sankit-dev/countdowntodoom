@@ -14,10 +14,10 @@ const hours = (xs: typeof list) => fmtMin(xs.reduce((n, t) => n + t.min, 0));
 export function llmsTxt(site: string) {
   return `# Road to Doomsday
 
-> An unofficial fan guide to Avengers: Doomsday (Marvel Studios, in cinemas 18 December 2026): every MCU film and series that leads to it, in watch order, with why each one matters, a day-by-day watch planner and a live countdown.
+> An unofficial fan guide to Avengers: Doomsday (Marvel Studios, in cinemas 17 December 2026 in India and 18 December 2026 in the US): every MCU film and series that leads to it, in watch order, with why each one matters, a day-by-day watch planner and a live countdown.
 
 Key facts:
-- Avengers: Doomsday releases in cinemas on 18 December 2026. Doctor Doom is played by Robert Downey Jr.
+- Avengers: Doomsday releases in cinemas on 17 December 2026 in India (announced by Marvel India) and 18 December 2026 in the US. Doctor Doom is played by Robert Downey Jr.
 - The guide covers ${list.length} films, series and specials, released 2000 to 2026.
 - Shortest useful watch list: ${essentials.length} essential titles (about ${hours(essentials)}). With recommended titles: ${essentials.length + recommended.length} titles (about ${hours([...essentials, ...recommended])}).
 - Most important set-up: Loki seasons 1 and 2 (the multiverse), Doctor Strange in the Multiverse of Madness (incursions), Thunderbolts* (the New Avengers) and The Fantastic Four: First Steps (Doctor Doom's first appearance).
@@ -25,7 +25,7 @@ Key facts:
 ## Pages
 
 - [Watch order, timeline and planner](${site}/): the interactive guide, the story-so-far explainer and the marathon planner
-- [Countdown](${site}/countdown/): a live countdown to 18 December 2026
+- [Countdown](${site}/countdown/): a live countdown to release day, in India or the US
 - [Full watch order](${site}/watch-order/): all titles in order with why each matters, plus story (chronological) order
 - [The essentials](${site}/essentials/): the shortest list to watch before Doomsday
 - [The story so far](${site}/story/): the saga explained, including what an incursion is
@@ -61,7 +61,7 @@ export function llmsFullTxt(site: string) {
 
   return `# Road to Doomsday: full content
 
-> The complete text of ${site}/, an unofficial fan guide to Avengers: Doomsday (in cinemas 18 December 2026). Contains spoilers for every title listed. Runtimes are approximate; series runtimes cover the whole season. Importance scores are the guide's editorial judgement.
+> The complete text of ${site}/, an unofficial fan guide to Avengers: Doomsday (in cinemas 17 December 2026 in India, 18 December 2026 in the US). Contains spoilers for every title listed. Runtimes are approximate; series runtimes cover the whole season. Importance scores are the guide's editorial judgement.
 
 Not affiliated with, endorsed by or sponsored by Marvel or The Walt Disney Company.
 

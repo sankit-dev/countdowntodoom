@@ -113,7 +113,7 @@ export const CHAPTERS: Chapter[] = [
     title: "So, Doomsday",
     body: [
       "Here's who's in it: Sam's Avengers, the New Avengers, Wakanda, the Fantastic Four, the original X-Men, Thor and Loki, and Steve Rogers is back too.",
-      "On the other side is Victor von Doom, played by Robert Downey Jr., the same guy who played Tony. It's out on 18 December 2026 and Secret Wars comes a year after that. I can't wait.",
+      "On the other side is Victor von Doom, played by Robert Downey Jr., the same guy who played Tony. It's out on 17 December 2026 in India and 18 December in the US, and Secret Wars comes a year after that. I can't wait.",
     ],
     watch: ["doomsday"],
   },

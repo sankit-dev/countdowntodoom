@@ -51,7 +51,8 @@ export const PHASES: Record<number, { name: string; saga: string }> = {
 };
 
 export const DOOM_ID = "doomsday";
-export const DOOM_DATE = new Date(2026, 11, 18); // 18 December 2026
+/** US release day. India is a day earlier: see RELEASE in doomReady.ts. */
+export const DOOM_DATE = new Date(2026, 11, 18);
 
 const t = (
   id: string,
@@ -199,7 +200,7 @@ export const TITLES: Title[] = [
     "This is the last movie before Doomsday, with Peter Parker on his own in a world that has forgotten him."),
 
   t(DOOM_ID, "Avengers: Doomsday", 2026, "film", 6, "avengers", 0, 10, [],
-    "This is the one we're all waiting for. It's in cinemas on 18 December 2026."),
+    "This is the one we're all waiting for. It's out on 17 December 2026 in India and 18 December in the US."),
 ];
 
 // In-universe story order, for people who prefer to watch chronologically.

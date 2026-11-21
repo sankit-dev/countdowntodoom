@@ -48,10 +48,10 @@ async function loadFonts(origin: string) {
 /** The site name, top left. */
 export const brand = () => h("div", { fontFamily: "Barlow", fontWeight: 700, fontSize: 28, color: C.ink }, "Road to Doomsday");
 
-export const footer = () =>
+export const footer = (releaseLine: string) =>
   h("div", { position: "absolute", left: 72, top: 556, width: 1056, justifyContent: "space-between", alignItems: "center" },
     h("div", { fontFamily: "Barlow", fontWeight: 600, fontSize: 28, color: C.doom }, "countdowntodoom.vercel.app"),
-    h("div", { fontFamily: "Barlow", fontWeight: 500, fontSize: 22, color: C.dim }, "Avengers: Doomsday, 18 Dec 2026"));
+    h("div", { fontFamily: "Barlow", fontWeight: 500, fontSize: 22, color: C.dim }, releaseLine));
 
 /** Background used by every card: dark, with the throne still fading in on the right. */
 export const backdrop = (origin: string) => [
@@ -61,7 +61,7 @@ export const backdrop = (origin: string) => [
 ];
 
 /** The doom-ready card. */
-export function readyCard(origin: string, pct: number, essentials: number | null, essentialsTotal: number, days: number): Node {
+export function readyCard(origin: string, pct: number, essentials: number | null, essentialsTotal: number, days: number, releaseLine = "Out 17 Dec in India, 18 Dec in the US"): Node {
   const stat = (big: string, label: string) =>
     h("div", { flexDirection: "column", marginRight: 64 },
       h("div", { fontFamily: "Bebas Neue", fontSize: 64, lineHeight: 0.9, color: C.ink }, big),
@@ -79,7 +79,7 @@ export function readyCard(origin: string, pct: number, essentials: number | null
       h("div", { marginTop: 28 },
         ...(essentials === null ? [] : [stat(`${essentials}/${essentialsTotal}`, "essentials watched")]),
         stat(String(days), days === 1 ? "day to Doomsday" : "days to Doomsday"))),
-    footer());
+    footer(releaseLine));
 }
 
 /**

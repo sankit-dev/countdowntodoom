@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { DOOM_DATE, DOOM_ID, TITLES, tierOf } from "../data";
+import { DOOM_ID, TITLES, tierOf } from "../data";
+import { RegionNote, releaseAt, useRegion } from "../release";
 import { Poster, usePosters } from "../posters";
 import { isPhone, useBackdrop } from "../backdrop";
 import { LoopVideo } from "./LoopVideo";
@@ -10,12 +11,13 @@ import { LoopVideo } from "./LoopVideo";
 const BASE = import.meta.env.BASE_URL;
 
 export function useCountdown() {
+  const [region] = useRegion();
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
     const iv = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(iv);
   }, []);
-  const ms = Math.max(0, DOOM_DATE.getTime() - now);
+  const ms = Math.max(0, releaseAt(region) - now);
   return {
     over: ms === 0,
     d: Math.floor(ms / 86_400_000),
@@ -64,6 +66,7 @@ export function Hero() {
               ))}
             </div>
           )}
+          <RegionNote />
 
           <a className="hero-strip" href="#timeline" aria-label="See the watch order">
             <span className="hero-strip-row">

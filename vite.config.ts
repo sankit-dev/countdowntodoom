@@ -26,7 +26,7 @@ function vercelFunctionsInDev(): Plugin {
             const { parseShare, daysLeft } = await server.ssrLoadModule("/src/doomReady.ts");
             const share = parseShare(url.searchParams);
             res.setHeader("Content-Type", "text/html; charset=utf-8");
-            return res.end(share ? mod.withShareTags(html, url.origin, share.pct, share.essentials, daysLeft()) : html);
+            return res.end(share ? mod.withShareTags(html, url.origin, share.pct, share.essentials, daysLeft(share.region), share.region) : html);
           }
           const r: Response = await mod.GET(new Request(url));
           res.statusCode = r.status;

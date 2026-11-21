@@ -34,28 +34,46 @@ export function doomReady(watched: Set<string>): DoomReady {
 }
 
 /** Clamp untrusted numbers from a share link. */
-export function parseShare(params: URLSearchParams): { pct: number; essentials: number | null } | null {
+export function parseShare(params: URLSearchParams): { pct: number; essentials: number | null; region: Region } | null {
   const raw = params.get("ready");
   if (raw === null || !/^\d{1,3}$/.test(raw)) return null;
   const pct = Math.min(100, Number(raw));
   const e = params.get("e");
   const essentials = e !== null && /^\d{1,2}$/.test(e) ? Math.min(ESSENTIALS_TOTAL, Number(e)) : null;
-  return { pct, essentials };
+  return { pct, essentials, region: params.get("r") === "us" ? "US" : "IN" };
 }
 
-export const shareUrl = (r: DoomReady) => `${SITE_URL}/?ready=${r.pct}&e=${r.essentials}`;
+const regionParam = (region: Region) => (region === "US" ? "&r=us" : "");
+export const shareUrl = (r: DoomReady, region: Region = "IN") => `${SITE_URL}/?ready=${r.pct}&e=${r.essentials}${regionParam(region)}`;
 
 /** Path of the share-card image for these numbers. */
-export const cardPath = (pct: number, essentials: number | null) =>
-  `/api/card?ready=${pct}${essentials === null ? "" : `&e=${essentials}`}`;
+export const cardPath = (pct: number, essentials: number | null, region: Region = "IN") =>
+  `/api/card?ready=${pct}${essentials === null ? "" : `&e=${essentials}`}${regionParam(region)}`;
 
-// Release: 18 December 2026. Server-side "days left" counts to midnight in India
-// (IST, UTC+5:30), where most visitors are; the page itself counts to midnight
-// in each visitor's own timezone.
-const DOOM_IST = Date.UTC(2026, 11, 17, 18, 30);
-export const daysLeft = (now = Date.now()) => Math.max(0, Math.ceil((DOOM_IST - now) / 86_400_000));
+// ── Release dates ───────────────────────────────────────────────────────────
+// India gets Avengers: Doomsday a day early: 17 Dec 2026 (announced by Marvel
+// India on 27 Oct 2026). Everywhere else counts to 18 Dec, the US date. Other
+// countries' dates still conflict between sources, so they aren't listed.
+export type Region = "IN" | "US";
+export const RELEASE = {
+  IN: { label: "India", date: "17 December 2026", short: "17 Dec", y: 2026, m: 11, d: 17 },
+  US: { label: "the US", date: "18 December 2026", short: "18 Dec", y: 2026, m: 11, d: 18 },
+} as const;
+
+/** Midnight at the start of release day: in IST for India, in the visitor's own time otherwise (UTC on the server). */
+export function releaseAt(region: Region) {
+  const r = RELEASE[region];
+  return region === "IN" ? Date.UTC(r.y, r.m, r.d - 1, 18, 30) : new Date(r.y, r.m, r.d).getTime();
+}
+
+/** Whole days left, rounded down, the same way the big countdown shows them. */
+export const daysUntil = (region: Region, now = Date.now()) =>
+  Math.max(0, Math.floor((releaseAt(region) - now) / 86_400_000));
+
+/** Days left shown on share cards: India's date unless the link says otherwise. */
+export const daysLeft = (region: Region = "IN", now = Date.now()) => daysUntil(region, now);
 
 /** The prefilled post for X: the wording you asked for, with the share link in place of the bare domain. */
-export const xText = (r: DoomReady) =>
-  `i'm ${r.pct}% doom-ready, how ready are you?? ${SITE_HOST}/?ready=${r.pct}&e=${r.essentials}`;
-export const xIntent = (r: DoomReady) => `https://x.com/intent/post?text=${encodeURIComponent(xText(r))}`;
+export const xText = (r: DoomReady, region: Region = "IN") =>
+  `i'm ${r.pct}% doom-ready, how ready are you?? ${SITE_HOST}/?ready=${r.pct}&e=${r.essentials}${regionParam(region)}`;
+export const xIntent = (r: DoomReady, region: Region = "IN") => `https://x.com/intent/post?text=${encodeURIComponent(xText(r, region))}`;

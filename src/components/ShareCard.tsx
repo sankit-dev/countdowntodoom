@@ -3,10 +3,12 @@
 // first load.
 import { useEffect, useState } from "react";
 import { DoomReady, cardPath, shareUrl, xIntent } from "../doomReady";
+import { useRegion } from "../release";
 
 export default function ShareCard({ ready, onClose }: { ready: DoomReady; onClose: () => void }) {
-  const src = cardPath(ready.pct, ready.essentials);
-  const link = shareUrl(ready);
+  const [region] = useRegion();
+  const src = cardPath(ready.pct, ready.essentials, region);
+  const link = shareUrl(ready, region);
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -68,7 +70,7 @@ export default function ShareCard({ ready, onClose }: { ready: DoomReady; onClos
         <div className="share-actions">
           <button className="btn" onClick={download} disabled={saving || failed}>{saving ? "Saving…" : "Download image"}</button>
           <button className="btn" onClick={copy}>{copied ? "Link copied ✓" : "Copy link"}</button>
-          <a className="btn btn-primary" href={xIntent(ready)} target="_blank" rel="noopener noreferrer">Share on X</a>
+          <a className="btn btn-primary" href={xIntent(ready, region)} target="_blank" rel="noopener noreferrer">Share on X</a>
         </div>
         <p className="dim small share-link">{link.replace("https://", "")}</p>
       </div>

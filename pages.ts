@@ -161,13 +161,13 @@ function watchOrderPage(site: string): StaticPage {
   const body = `
 <p class="crumbs"><a href="/">Road to Doomsday</a> › Watch order</p>
 <h1>Avengers: Doomsday watch order, all ${list.length} movies and shows</h1>
-<p class="lede">Every MCU movie, show and special you need before Avengers: Doomsday (out 18 December 2026), in order, with why each one matters.</p>
+<p class="lede">Every MCU movie, show and special you need before Avengers: Doomsday (out 17 December 2026 in India, 18 December in the US), in order, with why each one matters.</p>
 <p>Short on time? Start with the <a href="/essentials/">${essentials.length} essentials</a> (about ${hours(essentials)}), or let the <a href="/#planner">planner</a> fit a list to the days you have.</p>
 <p>It's release order, except for the three old X-Men movies (2000 to 2014, from a different universe). I put those right before Deadpool &amp; Wolverine, because that's where they come into the story.</p>
 <h2>The full watch order</h2>
 <ol class="order">
 ${list.map((t) => `<li>${link(t)} <span>(${t.year} · ${kind(t)} · ${fmtMin(t.min)} · ${TIER_LABEL[tierOf(t)]})</span><br />${esc(t.why)}</li>`).join("\n")}
-<li><a href="/">Avengers: Doomsday</a> <span>(18 December 2026)</span></li>
+<li><a href="/">Avengers: Doomsday</a> <span>(17 December 2026 in India, 18 December in the US)</span></li>
 </ol>
 <h2>Prefer story order?</h2>
 <p>Here's the order things happen inside the story:</p>

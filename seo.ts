@@ -19,15 +19,15 @@ const PAGES: Record<string, Page> = {
   main: {
     title: "Avengers: Doomsday Watch Order: Every MCU Movie and Show in Order",
     description:
-      "What to watch before Avengers: Doomsday (18 Dec 2026). All 58 MCU movies and shows in order, a watch plan for the days you've got, and a countdown.",
+      "What to watch before Avengers: Doomsday (17 Dec 2026 in India, 18 Dec in the US). All 58 MCU movies and shows in order, a watch plan for the days you've got, and a countdown.",
     path: "/",
     body: `<main style="max-width:760px;margin:0 auto;padding:96px 20px;color:#eef3ee;background:#060807;font-family:system-ui,sans-serif">
 <h1>Avengers: Doomsday watch order</h1>
-<p>Every MCU movie and show you need before <strong>Avengers: Doomsday</strong> (out 18 December 2026), in order, with why each one matters.</p>
+<p>Every MCU movie and show you need before <strong>Avengers: Doomsday</strong> (out 17 December 2026 in India, 18 December in the US), in order, with why each one matters.</p>
 <p><a href="/watch-order/" style="color:#8dff6a">Full watch order</a> · <a href="/essentials/" style="color:#8dff6a">The essentials</a> · <a href="/story/" style="color:#8dff6a">The story so far</a> · <a href="/countdown/" style="color:#8dff6a">Countdown</a></p>
 <ol>
 ${list.map((t) => `<li><a href="${titleHref(t)}" style="color:#8dff6a"><strong>${esc(t.title)}</strong></a> (${t.year}, ${kind(t.kind)}): ${esc(t.why)}</li>`).join("\n")}
-<li><strong>Avengers: Doomsday</strong> (18 December 2026)</li>
+<li><strong>Avengers: Doomsday</strong> (17 December 2026 in India, 18 December in the US)</li>
 </ol>
 </main>`,
     jsonld: [
@@ -40,12 +40,12 @@ ${list.map((t) => `<li><a href="${titleHref(t)}" style="color:#8dff6a"><strong>$
     ],
   },
   countdown: {
-    title: "Avengers: Doomsday Countdown: Days Until 18 December 2026",
-    description: "How long until Avengers: Doomsday? A live countdown to 18 December 2026, down to the second.",
+    title: "Avengers: Doomsday Countdown: Days Until Release in India and the US",
+    description: "How long until Avengers: Doomsday? A live countdown to 17 December 2026 in India and 18 December in the US, down to the second.",
     path: "/countdown/",
     body: `<main style="padding:96px 20px;text-align:center;color:#eef3ee;background:#000;font-family:system-ui,sans-serif">
 <h1>Avengers: Doomsday countdown</h1>
-<p>Avengers: Doomsday is released in cinemas on 18 December 2026.</p>
+<p>Avengers: Doomsday is out in cinemas on 17 December 2026 in India and 18 December 2026 in the US.</p>
 <p><a href="/watch-order/" style="color:#8dff6a">See the full watch order</a> · <a href="/essentials/" style="color:#8dff6a">The essentials</a></p>
 </main>`,
     jsonld: [],

@@ -158,6 +158,10 @@ h1, h2, h3, h4, p { margin: 0; }
 .count-cell b { font: 400 clamp(76px, 12vw, 150px)/0.95 var(--num); font-variant-numeric: tabular-nums; }
 .count-cell span { font: 500 14px/1 var(--body); color: var(--muted); }
 .count-over { font: 400 30px/1 var(--display); color: var(--doom); }
+.region-note { font: 500 15px/1.4 var(--body); color: var(--muted); }
+.region-note b { color: var(--ink); font-weight: 600; }
+.region-note button { margin-left: 4px; font: 500 15px/1.4 var(--body); color: var(--doom); text-decoration: underline; text-underline-offset: 3px; }
+.cd-region { margin-top: -4px; }
 .cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 10px; }
 /* Phones: a strip of the first essential posters right in the hero, so posters show on the first screen */
 .hero-strip { display: none; }

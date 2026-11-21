@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import { Analytics } from "./analytics";
 import { useCountdown } from "./components/Hero";
+import { RELEASE, RegionNote, useRegion } from "./release";
 import { isPhone, useBackdrop } from "./backdrop";
 import { LoopVideo } from "./components/LoopVideo";
 import "./styles.css";
@@ -11,6 +12,7 @@ import "./styles.css";
 // image of the film's Wikipedia article is loaded in the visitor's browser.
 function Countdown() {
   const c = useCountdown();
+  const [region] = useRegion();
   const bg = useBackdrop(isPhone() ? "../phone-glass.jpg" : "../doom-throne.jpg");
   const pad = (n: number) => String(n).padStart(2, "0");
   return (
@@ -34,7 +36,8 @@ function Countdown() {
             ))}
           </div>
         )}
-        <p className="cd-date">18 December 2026</p>
+        <p className="cd-date">{RELEASE[region].date}</p>
+        <RegionNote className="cd-region" />
       </div>
       <a className="cd-back" href="../">Back to the watch order →</a>
     </main>

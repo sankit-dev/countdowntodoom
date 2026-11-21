@@ -1,5 +1,6 @@
 import { Suspense, lazy, useMemo, useState } from "react";
 import { daysToDoom } from "../App";
+import { RELEASE, useRegion } from "../release";
 import { BY_ID, LANE_BY_ID, TIER_LABEL, fmtMin, tierOf } from "../data";
 import { buildPlan } from "../planner";
 import { doomReady } from "../doomReady";
@@ -16,7 +17,8 @@ const dayFmt = new Intl.DateTimeFormat(undefined, { weekday: "short", day: "nume
 
 export function Planner({ watched, onSelect }: Props) {
   const posters = usePosters();
-  const left = daysToDoom();
+  const [region] = useRegion();
+  const left = daysToDoom(region);
   const ready = useMemo(() => doomReady(watched), [watched]);
   const [sharing, setSharing] = useState(false);
   const [days, setDays] = useState(left > 0 ? Math.min(left, 120) : 14);
@@ -164,7 +166,7 @@ export function Planner({ watched, onSelect }: Props) {
                 <div>
                   <span className="item-art"><Poster src={posters.doomsday} /></span>
                   <span className="item-body">
-                    <span className="item-day"><b>Then</b>18 December 2026</span>
+                    <span className="item-day"><b>Then</b>{RELEASE[region].date}</span>
                     <span className="item-title">Avengers: Doomsday</span>
                     <span className="item-why">You're ready. Go book your tickets.</span>
                   </span>
