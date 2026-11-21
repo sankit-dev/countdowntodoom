@@ -201,6 +201,8 @@ h1, h2, h3, h4, p { margin: 0; }
 .card-wide { width: min(900px, 88vw); }
 @media (min-width: 821px) { .card.card-wide { grid-template-columns: minmax(0, 1fr); } .card-wide .card-media { aspect-ratio: 21 / 9; min-height: 0; } }
 .card-wide .card-poster img { object-position: center; }
+/* Keep faces in frame where the subject sits high in the picture */
+.card-wide[data-kind="kang"] .card-poster img, .card-wide[data-kind="doom"] .card-poster img, .card-wide[data-kind="team"] .card-poster img { object-position: center 18%; }
 .card-poster { position: absolute; inset: 0; display: block; }
 .card-poster img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block; animation: fadeIn 0.5s both; }
 .card-video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }

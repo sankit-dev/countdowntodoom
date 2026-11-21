@@ -70,6 +70,7 @@ export const CHAPTERS: Chapter[] = [
   },
   {
     kind: "kang",
+    image: "story/kang.jpg",
     title: "Kang got dropped",
     body: [
       "Quantumania brought in Kang the Conqueror, plus a whole council of his variants, as the big villain of this saga.",
@@ -79,6 +80,7 @@ export const CHAPTERS: Chapter[] = [
   },
   {
     kind: "void",
+    image: "story/void.jpg",
     title: "Dying universes and the old X-Men",
     body: [
       "Deadpool & Wolverine goes to the universe of the old X-Men movies and shows that a universe slowly dies once its \"anchor being\" is gone. It also brings the TVA and those older heroes back in.",
@@ -88,6 +90,7 @@ export const CHAPTERS: Chapter[] = [
   },
   {
     kind: "team",
+    image: "story/team.jpg",
     title: "There's no Avengers team right now",
     body: [
       "Back home there's no Avengers team at all. Sam Wilson is Captain America now, and he gets warned that other worlds are coming.",
@@ -106,6 +109,7 @@ export const CHAPTERS: Chapter[] = [
   },
   {
     kind: "doom",
+    image: "story/doom.jpg",
     title: "So, Doomsday",
     body: [
       "Here's who's in it: Sam's Avengers, the New Avengers, Wakanda, the Fantastic Four, the original X-Men, Thor and Loki, and Steve Rogers is back too.",
