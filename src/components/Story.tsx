@@ -83,9 +83,8 @@ export function Story({ onSelect }: { onSelect: (id: string | null, travel?: boo
       >
         {CHAPTERS.map((c, i) => (
           <article key={c.kind} data-i={i} className={`card ${cardStyle(c)}${i === active ? " on" : ""}`}>
-            {cardStyle(c) === "card-poster-card" && (
-              <Media film={c.watch[c.watch.length - 1]} on={i === active} poster={BY_ID[c.watch[c.watch.length - 1]].poster || posters[c.watch[c.watch.length - 1]]} />
-            )}
+            <Media film={c.watch[c.watch.length - 1]} on={i === active}
+              poster={c.image ? `${import.meta.env.BASE_URL}${c.image}` : BY_ID[c.watch[c.watch.length - 1]].poster || posters[c.watch[c.watch.length - 1]]} />
             <div className="card-text">
               <span className="card-n">{i + 1}<small> of {CHAPTERS.length}</small></span>
               <h3>{c.title}</h3>

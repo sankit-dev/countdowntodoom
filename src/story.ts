@@ -6,6 +6,8 @@ export interface Chapter {
   title: string;
   body: string[];
   watch: string[]; // title ids
+  /** Optional custom picture, e.g. "story/multiverse.jpg" in public/. Falls back to the main film's poster. */
+  image?: string;
 }
 
 export const CHAPTERS: Chapter[] = [
