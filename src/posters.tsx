@@ -6,71 +6,11 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 //
 // To pin an image yourself, set `poster` on the title in data.ts; that wins.
 
-/** Title id → Wikipedia article name. */
-export const WIKI: Record<string, string> = {
-  "iron-man": "Iron Man (2008 film)",
-  "incredible-hulk": "The Incredible Hulk (film)",
-  "iron-man-2": "Iron Man 2",
-  "thor": "Thor (film)",
-  "first-avenger": "Captain America: The First Avenger",
-  "avengers": "The Avengers (2012 film)",
-  "iron-man-3": "Iron Man 3",
-  "dark-world": "Thor: The Dark World",
-  "winter-soldier": "Captain America: The Winter Soldier",
-  "guardians": "Guardians of the Galaxy (film)",
-  "age-of-ultron": "Avengers: Age of Ultron",
-  "ant-man": "Ant-Man (film)",
-  "civil-war": "Captain America: Civil War",
-  "doctor-strange": "Doctor Strange (2016 film)",
-  "guardians-2": "Guardians of the Galaxy Vol. 2",
-  "homecoming": "Spider-Man: Homecoming",
-  "ragnarok": "Thor: Ragnarok",
-  "black-panther": "Black Panther (film)",
-  "infinity-war": "Avengers: Infinity War",
-  "ant-man-wasp": "Ant-Man and the Wasp",
-  "captain-marvel": "Captain Marvel (film)",
-  "endgame": "Avengers: Endgame",
-  "far-from-home": "Spider-Man: Far From Home",
-  "wandavision": "WandaVision",
-  "falcon-winter-soldier": "The Falcon and the Winter Soldier",
-  "loki-1": "Loki season 1",
-  "black-widow": "Black Widow (2021 film)",
-  "shang-chi": "Shang-Chi and the Legend of the Ten Rings",
-  "eternals": "Eternals (film)",
-  "hawkeye": "Hawkeye (miniseries)",
-  "no-way-home": "Spider-Man: No Way Home",
-  "moon-knight": "Moon Knight (miniseries)",
-  "multiverse-of-madness": "Doctor Strange in the Multiverse of Madness",
-  "ms-marvel": "Ms. Marvel (miniseries)",
-  "love-and-thunder": "Thor: Love and Thunder",
-  "she-hulk": "She-Hulk: Attorney at Law",
-  "werewolf": "Werewolf by Night (TV special)",
-  "wakanda-forever": "Black Panther: Wakanda Forever",
-  "holiday-special": "The Guardians of the Galaxy Holiday Special",
-  "quantumania": "Ant-Man and the Wasp: Quantumania",
-  "guardians-3": "Guardians of the Galaxy Vol. 3",
-  "secret-invasion": "Secret Invasion (miniseries)",
-  "loki-2": "Loki season 2",
-  "the-marvels": "The Marvels",
-  "echo": "Echo (miniseries)",
-  "x-men": "X-Men (film)",
-  "x2": "X2 (film)",
-  "days-of-future-past": "X-Men: Days of Future Past",
-  "deadpool-wolverine": "Deadpool & Wolverine",
-  "agatha": "Agatha All Along",
-  "brave-new-world": "Captain America: Brave New World",
-  "born-again-1": "Daredevil: Born Again season 1",
-  "thunderbolts": "Thunderbolts*",
-  "ironheart": "Ironheart (miniseries)",
-  "first-steps": "The Fantastic Four: First Steps",
-  "born-again-2": "Daredevil: Born Again season 2",
-  "brand-new-day": "Spider-Man: Brand New Day",
-  "visionquest": "VisionQuest",
-  "doomsday": "Avengers: Doomsday",
-};
+import { WIKI } from "./wiki";
+export { WIKI };
 
 type Posters = Record<string, string>;
-const CACHE = "rtd.posters.v1";
+const CACHE = "rtd.posters.v2";
 const TTL = 7 * 86_400_000;
 const API = "https://en.wikipedia.org/w/api.php";
 
@@ -98,12 +38,29 @@ async function fetchBatch(ids: string[]): Promise<Posters> {
   return out;
 }
 
+/** Posters copied onto the site at build time (see posterPlugin.ts). */
+async function localPosters(): Promise<Posters> {
+  try {
+    const r = await fetch(`${import.meta.env.BASE_URL}posters/manifest.json`);
+    if (!r.ok) return {};
+    const m: Posters = await r.json();
+    const base = new URL(import.meta.env.BASE_URL, location.href);
+    return Object.fromEntries(Object.entries(m).map(([id, path]) => [id, new URL(path, base).href]));
+  } catch {
+    return {};
+  }
+}
+
 async function loadPosters(): Promise<Posters> {
+  // Our own copies first: instant, and no dependence on Wikipedia.
+  const local = await localPosters();
   try {
     const c = JSON.parse(localStorage.getItem(CACHE) || "null");
-    if (c && Date.now() - c.at < TTL && Object.keys(c.posters).length) return c.posters;
+    if (c && Date.now() - c.at < TTL && Object.keys(c.posters).length) return { ...c.posters, ...local };
   } catch { /* no cache */ }
-  const ids = Object.keys(WIKI);
+  // Only ask Wikipedia for the ones we don't have.
+  const ids = Object.keys(WIKI).filter((id) => !local[id]);
+  if (!ids.length) return local;
   const batches: string[][] = [];
   for (let i = 0; i < ids.length; i += 40) batches.push(ids.slice(i, i + 40));
   const parts = await Promise.all(batches.map((b) => fetchBatch(b).catch(() => ({} as Posters))));
@@ -111,7 +68,7 @@ async function loadPosters(): Promise<Posters> {
   try {
     if (Object.keys(posters).length) localStorage.setItem(CACHE, JSON.stringify({ at: Date.now(), posters }));
   } catch { /* ignore */ }
-  return posters;
+  return { ...posters, ...local };
 }
 
 const Ctx = createContext<Posters>({});

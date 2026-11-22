@@ -1,6 +1,7 @@
 import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import { seo } from "./seo";
+import { posters } from "./posterPlugin";
 
 /**
  * Local development only: run the Vercel functions in api/ inside the Vite dev
@@ -41,7 +42,7 @@ function vercelFunctionsInDev(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), seo(), vercelFunctionsInDev()],
+  plugins: [react(), seo(), posters(), vercelFunctionsInDev()],
   base: "./",
   build: { rollupOptions: { input: { main: "index.html", countdown: "countdown/index.html" } } },
 });

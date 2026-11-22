@@ -136,6 +136,17 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
   // not the page; once the tree hits its top or bottom edge, the rest of the
   // scroll goes to the page so nobody gets stuck. Pinch, Ctrl+scroll or the
   // buttons zoom.
+  // Phones default to a plain scrolling list; the zoomable map is one tap away.
+  // The choice is remembered. The map stays mounted (hidden) so pan/zoom keeps its state.
+  const [layout, setLayoutState] = useState<"map" | "list">(() => {
+    try { const v = localStorage.getItem("rtd.layout"); if (v === "map" || v === "list") return v; } catch { /* none */ }
+    return typeof window !== "undefined" && window.matchMedia("(max-width: 720px)").matches ? "list" : "map";
+  });
+  const setLayout = (l: "map" | "list") => {
+    setLayoutState(l);
+    try { localStorage.setItem("rtd.layout", l); } catch { /* fine */ }
+    track("watch_order_layout", { layout: l });
+  };
   const [view, setView] = useState({ x: 0, y: 0, k: 1 });
   const viewRef = useRef(view);
   viewRef.current = view;
@@ -154,7 +165,7 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
     viewRef.current = next;
     setView(next);
   };
-  useLayoutEffect(() => fit(false), [G]); // eslint-disable-line react-hooks/exhaustive-deps
+  useLayoutEffect(() => { if (layout === "map") fit(false); }, [G, layout]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /** Keep the tree on screen: centred if it fits, otherwise no further than PAD past an edge. */
   const clamp = (v: { x: number; y: number; k: number }) => {
@@ -259,6 +270,10 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
     const t = BY_ID[focus.id];
     const need = t.id === DOOM_ID ? tier : tierFor(t);
     if (MIN_IMP[need] < MIN_IMP[tier]) { setTier(need); return; }
+    if (layout === "list") {
+      document.querySelector(`.wo-row[data-title="${t.id}"]`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
     const el = stage.current;
     const i = G.index[t.id];
     if (!el || i === undefined) return;
@@ -317,10 +332,51 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
             <li key={k} data-tier={k}><i />{TIER_LABEL[k]}</li>
           ))}
         </ul>
-        <p>The bar under each poster shows how much it matters for Doomsday, out of 10. Tap a poster to see why.</p>
+        <p>The colour shows how much each title matters for Doomsday. Tap one to see why.</p>
       </div>
 
+      <div className="seg layout-seg" role="group" aria-label="How to show the watch order">
+        <button className={layout === "list" ? "on" : ""} aria-pressed={layout === "list"} onClick={() => setLayout("list")}>List</button>
+        <button className={layout === "map" ? "on" : ""} aria-pressed={layout === "map"} onClick={() => setLayout("map")}>Map</button>
+      </div>
+
+      {layout === "list" && (
+        <ol className="wo-list">
+          {G.list.map((t, i) => {
+            const tier = tierOf(t);
+            const seen = watched.has(t.id);
+            return (
+              <li key={t.id} className={`wo-row${seen ? " seen" : ""}`} data-title={t.id} data-tier={tier}>
+                <button className="wo-main" onClick={() => onSelect(t.id)}>
+                  <em className="wo-num">{i + 1}</em>
+                  <span className="row-art"><Poster src={t.poster || posters[t.id]} /></span>
+                  <span className="row-body">
+                    <span className="row-title">{t.title}</span>
+                    <span className="row-meta">
+                      {t.year} · {t.kind === "series" ? "Series" : t.kind === "film" ? "Film" : "Special"} · {fmtMin(t.min)}
+                      <i>{TIER_LABEL[tier]}</i>
+                    </span>
+                  </span>
+                </button>
+                <button className={`wo-tick${seen ? " on" : ""}`} onClick={() => toggleWatched(t.id)} aria-pressed={seen}
+                  aria-label={`${seen ? "Unmark" : "Mark"} ${t.title} as watched`}>✓</button>
+              </li>
+            );
+          })}
+          <li className="wo-row wo-doom">
+            <button className="wo-main" onClick={() => onSelect(DOOM_ID)}>
+              <em className="wo-num">★</em>
+              <span className="row-body">
+                <span className="row-title">Avengers: Doomsday</span>
+                <span className="row-meta">In cinemas {RELEASE[region].short}</span>
+              </span>
+            </button>
+          </li>
+        </ol>
+      )}
+
       <div
+        hidden={layout !== "map"}
         className="tree-stage"
         ref={stage}
         onPointerDown={onPointerDown}
@@ -400,8 +456,11 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
         <div className="stage-tools" onPointerDown={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
           <button onClick={() => zoomBy(1.35)} aria-label="Zoom in">+</button>
           <button onClick={() => zoomBy(1 / 1.35)} aria-label="Zoom out">−</button>
-          <button className="wide" onClick={() => fit(true)}>Fit all</button>
-          <button className="wide" onClick={() => fit(false)}>Reset</button>
+          <button className="wide" onClick={() => fit(true)} aria-label="Fit all">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            <span>Fit all</span>
+          </button>
+          <button className="wide tool-reset" onClick={() => fit(false)}>Reset</button>
         </div>
       </div>
 
