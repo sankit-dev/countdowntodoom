@@ -179,5 +179,6 @@ export const PLOT: Record<string, string> = {
   "wonder-man": "Simon Williams is a struggling actor going for the lead in a superhero remake, while hiding that he has powers of his own.",
   "born-again-2": "The fight for New York keeps going, with Daredevil and his friends against Mayor Fisk's city.",
   "brand-new-day": "Peter Parker is on his own now, with nobody knowing who he is, and he's Spider-Man full time in New York. It's the last movie before Doomsday.",
+  "visionquest": "Vision, rebuilt after WandaVision, tries to piece together who he really is, and Ultron is back to make it harder. Eight episodes, finished in November 2026.",
   "doomsday": "Not out yet. It's heroes from a bunch of different universes against Doctor Doom.",
 };

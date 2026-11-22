@@ -124,7 +124,7 @@ export const TITLES: Title[] = [
     "Shows the world after Tony Stark, and it ends with everyone finding out Peter is Spider-Man."),
 
   // ── Phase Four ───────────────────────────────────────────────────────────
-  t("wandavision", "WandaVision", 2021, "series", 4, "multiverse", 350, 4, ["multiverse-of-madness", "agatha", "the-marvels"],
+  t("wandavision", "WandaVision", 2021, "series", 4, "multiverse", 350, 4, ["multiverse-of-madness", "agatha", "the-marvels", "visionquest"],
     "Wanda becomes the Scarlet Witch and Monica Rambeau gets her powers in this show."),
   t("falcon-winter-soldier", "The Falcon and the Winter Soldier", 2021, "series", 4, "cap", 310, 7, ["brave-new-world", "thunderbolts"],
     "Sam Wilson takes the shield. It also brings in John Walker and Valentina, and that's where the New Avengers stuff starts."),
@@ -198,6 +198,8 @@ export const TITLES: Title[] = [
     "It's more of the fight for New York. Good if you liked season 1, but optional."),
   t("brand-new-day", "Spider-Man: Brand New Day", 2026, "film", 6, "street", 135, 8, [DOOM_ID],
     "This is the last movie before Doomsday, with Peter Parker on his own in a world that has forgotten him."),
+  t("visionquest", "VisionQuest", 2026, "series", 6, "multiverse", 360, 3, [],
+    "The newest Marvel show before Doomsday, picking Vision's story back up after WandaVision, with Ultron back too. Nice extra, but nothing says Doomsday needs it."),
 
   t(DOOM_ID, "Avengers: Doomsday", 2026, "film", 6, "avengers", 0, 10, [],
     "This is the one we're all waiting for. It's out on 17 December 2026 in India and 18 December in the US."),
@@ -215,7 +217,7 @@ export const CHRONO: string[] = [
   "quantumania", "guardians-3", "secret-invasion", "the-marvels", "loki-2", "echo",
   "x-men", "x2", "days-of-future-past", "deadpool-wolverine", "agatha", "born-again-1",
   "brave-new-world", "thunderbolts", "first-steps", "wonder-man", "born-again-2",
-  "brand-new-day", DOOM_ID,
+  "brand-new-day", "visionquest", DOOM_ID,
 ];
 
 export const BY_ID: Record<string, Title> = Object.fromEntries(TITLES.map((x) => [x.id, x]));

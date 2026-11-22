@@ -66,6 +66,7 @@ export const WIKI: Record<string, string> = {
   "wonder-man": "Wonder Man (miniseries)",
   "born-again-2": "Daredevil: Born Again season 2",
   "brand-new-day": "Spider-Man: Brand New Day",
+  "visionquest": "VisionQuest",
   "doomsday": "Avengers: Doomsday",
 };
 
