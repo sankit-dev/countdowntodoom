@@ -1,6 +1,6 @@
 import { Suspense, lazy, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { track } from "../analytics";
-import { BY_ID, DOOM_ID, TITLES, Title, fmtMin, parentsOf } from "../data";
+import { BY_ID, DOOM_ID, TIER_LABEL, TITLES, Title, fmtMin, parentsOf, tierOf } from "../data";
 import type { Tier } from "../App";
 import { Poster, usePosters } from "../posters";
 import { doomReady } from "../doomReady";
@@ -26,7 +26,7 @@ const VIEWS: { tier: Tier; label: string }[] = [
 ];
 const tierFor = (t: Title): Tier => (t.imp >= 7 ? "essential" : t.imp >= 4 ? "recommended" : "all");
 
-const LEAF_W = 136, PW = 96, PH = 144, LABEL = 34;
+const LEAF_W = 136, PW = 96, PH = 144, LABEL = 50;
 const ROW_H = PH + LABEL + 50;
 const SIDE = 46; // room at each edge for the road to turn around
 const DOOM_R = 70;
@@ -301,6 +301,13 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
         </Suspense>
       )}
 
+      {/* What the coloured bar under each poster means. */}
+      <ul className="tier-key" aria-label="Colour key">
+        {(["essential", "recommended", "deep"] as const).map((k) => (
+          <li key={k} data-tier={k}><i />{TIER_LABEL[k]}</li>
+        ))}
+      </ul>
+
       <div
         className="tree-stage"
         ref={stage}
@@ -331,6 +338,7 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
             <button
               key={t.id}
               data-title={t.id}
+              data-tier={tierOf(t)}
               className={`tile${links?.set.has(t.id) ? " lit" : ""}${selected === t.id ? " sel" : ""}${watched.has(t.id) ? " seen" : ""}`}
               style={{ left: G.cx(i), top: G.cy(i) - PH / 2 }}
               onMouseEnter={(e) => { if (!dragged.current) enter(t.id, e.currentTarget.querySelector(".art") as HTMLElement); }}
@@ -341,8 +349,10 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
                 <i>{t.year}</i>
                 <em className="num" aria-label={`Watch number ${i + 1}`}>{i + 1}</em>
                 <Poster src={t.poster || posters[t.id]} />
+                <s className="imp" style={{ ["--imp" as string]: t.imp / 10 }} aria-label={`${TIER_LABEL[tierOf(t)]}, ${t.imp} out of 10`} />
               </span>
               <b>{t.title}</b>
+              <small className="tile-meta">{t.kind === "series" ? "Series" : t.kind === "film" ? "Film" : "Special"} · {fmtMin(t.min)}</small>
             </button>
           ))}
 

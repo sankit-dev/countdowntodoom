@@ -75,11 +75,11 @@ export function Drawer({ id, watched, toggleWatched, onSelect, onClose }: Props)
         <Trailer id={t.id} />
 
         {!isDoom && (
-          <div className="weight">
+          <div className="weight" data-tier={tierOf(t)}>
             <div className="pips" aria-label={`Importance ${t.imp} out of 10`}>
               {Array.from({ length: 10 }, (_, i) => <i key={i} className={i < t.imp ? "on" : ""} />)}
             </div>
-            <span>{TIER_LABEL[tierOf(t)]}</span>
+            <span>{TIER_LABEL[tierOf(t)]} <small>{t.imp}/10</small></span>
           </div>
         )}
 

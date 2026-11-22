@@ -6,6 +6,10 @@
   --dim: #8b978f;
   --line: rgba(255, 255, 255, 0.08);
   --doom: #8dff6a;
+  /* How much a title matters, as a traffic light: must watch, worth it, skippable. */
+  --tier-essential: #6ee05a;
+  --tier-recommended: #f5c242;
+  --tier-deep: #f0584a;
   --muted: #c3ccc5; /* secondary text; green (--doom) is the only accent colour */
   /* Fonts: Archivo throughout (extra-condensed bold for headings and big numbers),
      and Cinzel only for the silver "Road to Doomsday" title. */
@@ -323,6 +327,16 @@ h1, h2, h3, h4, p { margin: 0; }
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; transition: color 0.25s;
 }
 .tile.seen .art img { filter: grayscale(1) brightness(0.6); }
+/* Importance bar along the poster's bottom edge: length = score, colour = tier. */
+.art .imp { position: absolute; z-index: 1; left: 0; right: 0; bottom: 0; height: 5px; background: rgba(0, 0, 0, 0.7); text-decoration: none; }
+.art .imp::after { content: ""; position: absolute; inset: 0; transform-origin: left; transform: scaleX(var(--imp)); background: var(--t); }
+.tile-meta { margin-top: -4px; font: 600 10.5px/1 var(--body); color: #6c776f; white-space: nowrap; }
+.tree .tile-meta { background: #050706; padding: 0 4px; }
+.has-lit .tile:not(.lit) .tile-meta { color: #3a423d; }
+/* Colour key above the map. */
+.tier-key { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; list-style: none; margin: 0 0 12px; padding: 0 16px; font: 600 13px/1 var(--body); color: #aab4ad; }
+.tier-key li { display: flex; align-items: center; gap: 7px; }
+.tier-key i { width: 18px; height: 5px; background: var(--t); }
 .tile:hover, .tile.sel { z-index: 3; }
 .tile:hover .art, .tile.sel .art { transform: scale(1.08); box-shadow: 0 0 0 1px #fff; }
 .tile:hover b, .tile.sel b, .tile.lit b { color: #fff; }
@@ -369,10 +383,14 @@ h1, h2, h3, h4, p { margin: 0; }
 .drawer h3 { margin: 12px 0 14px; font: condensed 800 clamp(22px, 3.4vw, 28px)/1.15 var(--display); text-wrap: balance; }
 .drawer-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
 .drawer-meta span { padding: 5px 9px; border: 1px solid var(--line); font: 600 13px/1 var(--body); color: #c2ccc5; }
-.weight { display: flex; align-items: center; gap: 12px; margin-top: 18px; font: 700 13px/1 var(--body); color: var(--c); }
+[data-tier="essential"] { --t: var(--tier-essential); }
+[data-tier="recommended"] { --t: var(--tier-recommended); }
+[data-tier="deep"] { --t: var(--tier-deep); }
+.weight { display: flex; align-items: center; gap: 12px; margin-top: 18px; font: 700 14px/1 var(--body); color: var(--t); }
+.weight small { font-weight: 600; color: var(--dim); margin-left: 4px; }
 .pips { display: flex; gap: 3px; }
 .pips i { width: 14px; height: 6px; background: rgba(255, 255, 255, 0.1); transform: skewX(-20deg); }
-.pips i.on { background: var(--c); }
+.pips i.on { background: var(--t); }
 .drawer h4 { margin: 26px 0 10px; font: 700 14px/1.2 var(--body); color: var(--dim); }
 .drawer-plot { font-size: 15px; line-height: 1.55; color: #b6c0b9; text-wrap: pretty; }
 .drawer-why { font-size: 17px; line-height: 1.5; color: #dde5df; text-wrap: pretty; }
