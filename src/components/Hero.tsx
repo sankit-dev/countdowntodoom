@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import { DOOM_ID, TITLES, tierOf } from "../data";
 import { RegionNote, releaseAt, useRegion } from "../release";
-import { Poster, usePosters } from "../posters";
 import { isPhone, useBackdrop } from "../backdrop";
 import { LoopVideo } from "./LoopVideo";
 
@@ -27,11 +25,7 @@ export function useCountdown() {
   };
 }
 
-// The first five essentials, shown as a poster strip in the hero on phones.
-const FIRST = TITLES.filter((t) => t.id !== DOOM_ID && tierOf(t) === "essential").slice(0, 5);
-
 export function Hero() {
-  const posters = usePosters();
   const c = useCountdown();
   const pad = (n: number) => String(n).padStart(2, "0");
   const bg = useBackdrop(isPhone() ? `${BASE}phone-tapestry.jpg` : `${BASE}hero.jpg`);
@@ -41,6 +35,7 @@ export function Hero() {
       {bg && !bg.own && <img className="hero-poster" src={bg.src} alt="" />}
       <LoopVideo base={import.meta.env.BASE_URL} className="hero-video" />
       <div className="hero-vignette" />
+      <a className="scroll-cue" href="#timeline" aria-label="Scroll to the watch order"><span>Scroll</span><i /></a>
       <div className="hero-body">
         <h1 className="wordmark" aria-label="Road to Doomsday">
           <span className="wm-top" aria-hidden="true">Road to</span>
@@ -57,28 +52,29 @@ export function Hero() {
           {c.over ? (
             <p className="count-over">In cinemas now</p>
           ) : (
-            <div className="count" role="timer" aria-label={`${c.d} days until release`}>
-              {([["Days", c.d], ["Hours", c.h], ["Minutes", c.m], ["Seconds", c.s]] as const).map(([l, v]) => (
-                <div key={l} className="count-cell">
-                  <b>{pad(v)}</b>
-                  <span>{l}</span>
-                </div>
-              ))}
-            </div>
+            <>
+              {/* Laptops: the full four-box countdown. */}
+              <div className="count" role="timer" aria-label={`${c.d} days until release`}>
+                {([["Days", c.d], ["Hours", c.h], ["Minutes", c.m], ["Seconds", c.s]] as const).map(([l, v]) => (
+                  <div key={l} className="count-cell">
+                    <b>{pad(v)}</b>
+                    <span>{l}</span>
+                  </div>
+                ))}
+              </div>
+              {/* Phones: one big number, the rest small underneath. */}
+              <div className="count-mini" role="timer" aria-label={`${c.d} days until release`}>
+                <b>{c.d}</b>
+                <span>{c.d === 1 ? "day" : "days"} to go</span>
+                <small>{pad(c.h)}h {pad(c.m)}m {pad(c.s)}s</small>
+              </div>
+            </>
           )}
           <RegionNote />
 
-          <a className="hero-strip" href="#timeline" aria-label="See the watch order">
-            <span className="hero-strip-row">
-              {FIRST.map((t, i) => (
-                <span key={t.id}><em>{i + 1}</em><Poster src={t.poster || posters[t.id]} /></span>
-              ))}
-            </span>
-            <p>Start with these. <b>See the full watch order →</b></p>
-          </a>
           <div className="cta">
             <a className="btn btn-primary" href="#timeline">See the watch order</a>
-            <a className="btn" href="#planner">Make me a watch plan</a>
+            <a className="btn cta-alt" href="#planner">Make me a watch plan</a>
           </div>
         </div>
       </div>
