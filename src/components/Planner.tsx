@@ -1,12 +1,9 @@
-import { Suspense, lazy, useEffect, useMemo, useState } from "react";
-import { track } from "../analytics";
+import { useEffect, useMemo, useState } from "react";
 import { daysToDoom } from "../App";
 import { RELEASE, useNow, useRegion } from "../release";
 import { BY_ID, LANE_BY_ID, TIER_LABEL, fmtMin, tierOf } from "../data";
 import { buildPlan } from "../planner";
-import { doomReady } from "../doomReady";
 
-const ShareCard = lazy(() => import("./ShareCard"));
 import { Poster, usePosters } from "../posters";
 
 interface Props {
@@ -21,8 +18,6 @@ export function Planner({ watched, onSelect }: Props) {
   const [region] = useRegion();
   const now = useNow();
   const left = daysToDoom(region, now);
-  const ready = useMemo(() => doomReady(watched), [watched]);
-  const [sharing, setSharing] = useState(false);
   // You can only plan up to release day: the slider tops out at the days actually left.
   // (After release it still works for catching up later, up to 60 days.)
   const maxDays = left > 0 ? left : 60;
@@ -117,38 +112,15 @@ export function Planner({ watched, onSelect }: Props) {
         </form>
 
         <div className="results">
-          {/* How ready you are now: only titles you've ticked count. */}
-          <div className="doom-ready" style={{ ["--p" as string]: ready.pct }}>
-            <div className="doom-ready-num">
-              <b>{ready.pct}<small>%</small></b>
-              <span>Doom-ready</span>
-            </div>
-            <div className="doom-ready-body">
-              <p>
-                <strong>{ready.essentials}/{ready.essentialsTotal}</strong> essentials watched.{" "}
-                {ready.pct === 0 ? "Tick what you've seen on the watch order and this goes up." : "This is based on what you've ticked."}
-              </p>
-              <i className="doom-ready-bar"><i /></i>
-            </div>
-            <button className="btn btn-primary doom-ready-share" onClick={() => { setSharing(true); track("share_card_clicked", { from: "planner" }); }}>Share my doom-ready %</button>
-          </div>
-
-          <div className="stats">
-            <div className="stat stat-ring" style={{ ["--p" as string]: plan.readiness }}>
-              <b>{plan.readiness}<small>%</small></b>
-              <span>Ready by release</span>
-            </div>
-            <div className="stat"><b>{plan.picked.length}</b><span>Titles to watch</span></div>
-            <div className="stat"><b>{fmtMin(plan.totalMin)}</b><span>Total runtime</span></div>
-            <div className="stat"><b>{plan.essentialsPicked}<small>/{plan.essentialsTotal}</small></b><span>Essentials covered</span></div>
-          </div>
-          <p className="verdict">{verdict}</p>
-
-          {sharing && (
-            <Suspense fallback={null}>
-              <ShareCard ready={ready} onClose={() => setSharing(false)} />
-            </Suspense>
+          {/* One line of numbers, then one sentence. Sharing your % lives in the footer and the watch order. */}
+          {plan.picked.length > 0 && (
+            <p className="plan-sum">
+              <span><b>{plan.picked.length}</b> {plan.picked.length === 1 ? "title" : "titles"}</span>
+              <span><b>{fmtMin(plan.totalMin)}</b> total</span>
+              <span><b>{plan.essentialsPicked}/{plan.essentialsTotal}</b> essentials</span>
+            </p>
           )}
+          <p className="verdict">{verdict}</p>
 
           <ol className="listing">
             {entries.map((en) => {

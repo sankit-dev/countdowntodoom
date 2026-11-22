@@ -472,30 +472,7 @@ h1, h2, h3, h4, p { margin: 0; }
 .ctl-switch input:checked::after { transform: translateX(20px); background: #06120a; }
 .ctl-note { font: 400 14px/1.45 var(--body); color: var(--dim); padding-top: 14px; border-top: 1px solid var(--line); }
 
-.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
-.stat { display: grid; gap: 8px; padding: 20px 18px; background: var(--bg-2); }
-.stat b { font: condensed 800 clamp(32px, 4vw, 52px)/1 var(--num); font-variant-numeric: tabular-nums; }
-.stat b small { font-size: 0.5em; color: var(--dim); margin-left: 2px; }
-.stat span { font: 600 13px/1.2 var(--body); color: var(--dim); }
-.stat-ring { position: relative; }
-.stat-ring b { color: var(--doom); }
-.stat-ring::after { content: ""; position: absolute; left: 0; bottom: 0; height: 3px; width: calc(var(--p) * 1%); background: var(--doom); transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
 /* Doom-ready: what you've actually watched, with the share button */
-.doom-ready { display: grid; grid-template-columns: auto 1fr; gap: 14px 22px; align-items: center; margin-bottom: 14px; padding: 20px; background: var(--bg-2); border: 1px solid rgba(141, 255, 106, 0.4); }
-.doom-ready-num { display: grid; gap: 8px; }
-.doom-ready-num b { font: condensed 800 clamp(52px, 7vw, 76px)/0.9 var(--num); color: var(--doom); }
-.doom-ready-num b small { font-size: 0.5em; margin-left: 2px; }
-.doom-ready-num span { font: 600 13px/1 var(--body); color: var(--ink); }
-.doom-ready-body { display: grid; gap: 12px; min-width: 0; }
-.doom-ready-body p { color: #c0cac3; font-size: 15px; line-height: 1.45; }
-.doom-ready-body strong { color: var(--ink); }
-.doom-ready-bar { display: block; height: 6px; background: rgba(255, 255, 255, 0.08); }
-.doom-ready-bar i { display: block; height: 100%; width: calc(var(--p) * 1%); background: var(--doom); transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.doom-ready-share { grid-column: 1 / -1; width: 100%; }
-@media (min-width: 760px) {
-  .doom-ready { grid-template-columns: auto 1fr auto; }
-  .doom-ready-share { grid-column: auto; width: auto; }
-}
 
 /* Share dialog */
 .share-box { width: min(680px, 100%); }
@@ -510,7 +487,9 @@ h1, h2, h3, h4, p { margin: 0; }
 @media (min-width: 560px) { .share-actions { grid-template-columns: 1fr 1fr 1fr; } }
 .share-link { text-align: center; word-break: break-all; }
 
-.verdict { margin: 20px 0 26px; font: 600 clamp(17px, 2vw, 20px)/1.35 var(--body); color: var(--ink); }
+.plan-sum { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 0 0 8px; font: 500 14px/1.3 var(--body); color: var(--dim); }
+.plan-sum b { font: condensed 800 21px/1 var(--num); color: var(--ink); margin-right: 3px; font-variant-numeric: tabular-nums; }
+.verdict { margin: 4px 0 24px; font: 600 clamp(17px, 2vw, 20px)/1.35 var(--body); color: var(--ink); }
 
 /* The plan, as a listing: poster, then what it is and why it is on the list. */
 .listing { list-style: none; margin: 0 0 18px; padding: 0; display: grid; max-width: 820px; }
@@ -572,7 +551,7 @@ h1, h2, h3, h4, p { margin: 0; }
 .foot-top { display: grid; gap: 12px; }
 .foot-brand { justify-self: start; }
 .foot-tag { margin: 0; max-width: 46ch; font: 400 17px/1.5 var(--read); color: var(--muted); }
-.foot-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.foot-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; }
 .foot-card { display: grid; align-content: start; gap: 10px; padding: 20px; background: var(--panel); border: 1px solid var(--line); }
 .foot-card h3, .foot-nav h3 { margin: 0; font: 700 15px/1.2 var(--body); color: var(--ink); }
 .foot-card p { margin: 0 0 6px; font: 400 14px/1.5 var(--body); color: #a9b4ac; }
@@ -583,6 +562,13 @@ h1, h2, h3, h4, p { margin: 0; }
 .foot-legal { display: grid; gap: 8px; padding-top: 20px; border-top: 1px solid var(--line); }
 .foot-legal p { margin: 0; font: 400 12.5px/1.55 var(--body); color: var(--dim); }
 
+/* Footer: your doom-ready % with a share button. */
+.foot-ready-num { color: #c2ccc5 !important; }
+.foot-ready-num b { font: condensed 800 30px/1 var(--num); color: var(--doom); margin-right: 4px; }
+.foot-ready-bar { display: block; height: 5px; margin-bottom: 8px; background: rgba(255, 255, 255, 0.08); }
+.foot-ready-bar i { display: block; height: 100%; width: calc(var(--p) * 1%); background: var(--doom); }
+.glow-line { background: transparent; color: var(--doom); animation-delay: 0.7s; }
+@media (hover: hover) { .glow-line:hover { background: rgba(141, 255, 106, 0.1); } }
 /* Glow buttons: the two things we want people to tap in the footer. */
 .glow-btn { --g: var(--doom); display: inline-flex; align-items: center; justify-content: center; gap: 9px; width: 100%; height: 48px; padding: 0 18px;
   font: 700 15px/1 var(--body); border: 1px solid var(--g); position: relative; isolation: isolate;
@@ -626,7 +612,6 @@ h1, h2, h3, h4, p { margin: 0; }
 @media (max-width: 900px) {
   .planner-grid { grid-template-columns: 1fr; }
   .controls { position: static; }
-  .stats { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 420px) {
   .nav-count.on { display: none; }

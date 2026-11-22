@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from "react";
 import { track } from "./analytics";
 import { BY_ID, DOOM_ID, TITLES } from "./data";
 import { releaseAt, useNow, useRegion } from "./release";
-import { daysUntil } from "./doomReady";
+import { daysUntil, doomReady } from "./doomReady";
+
+const ShareCard = lazy(() => import("./components/ShareCard"));
 import { Hero } from "./components/Hero";
 import { TimelineMap } from "./components/TimelineMap";
 import { Drawer } from "./components/Drawer";
@@ -35,6 +37,7 @@ export default function App() {
   const [watched, setWatched] = useState<Set<string>>(loadWatched);
   const [tier, setTier] = useState<Tier>("essential");
   const [support, setSupport] = useState(false);
+  const [sharing, setSharing] = useState(false);
   useScrollMotion();
 
   useEffect(() => {
@@ -79,6 +82,7 @@ export default function App() {
     io.observe(el);
     return () => io.disconnect();
   }, []);
+  const ready = useMemo(() => doomReady(watched), [watched]);
   const total = TITLES.length - 1;
   const seen = [...watched].filter((id) => BY_ID[id] && id !== DOOM_ID).length;
 
@@ -141,6 +145,12 @@ export default function App() {
           </div>
 
           <div className="foot-actions">
+            <section className="foot-card foot-ready" style={{ ["--p" as string]: ready.pct }}>
+              <h3>How ready are you?</h3>
+              <p className="foot-ready-num"><b>{ready.pct}%</b> doom-ready · {ready.essentials}/{ready.essentialsTotal} essentials watched</p>
+              <i className="foot-ready-bar"><i /></i>
+              <button className="glow-btn glow-line" onClick={() => { setSharing(true); track("share_card_clicked", { from: "footer" }); }}>Share my doom-ready %</button>
+            </section>
             <section className="foot-card">
               <h3>Made by @sankitdev</h3>
               <p>I built this for me and my friends before Doomsday. Follow for updates and new features.</p>
@@ -181,6 +191,11 @@ export default function App() {
         onClose={() => setSelected(null)}
       />
       <Support open={support} onClose={() => setSupport(false)} />
+      {sharing && (
+        <Suspense fallback={null}>
+          <ShareCard ready={ready} onClose={() => setSharing(false)} />
+        </Suspense>
+      )}
     </PosterProvider>
   );
 }
