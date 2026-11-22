@@ -1,17 +1,13 @@
 import { useEffect, useState } from "react";
 
-// EXPERIMENT (only with ?glow in the URL): a soft glow behind each poster on the
-// watch order, in that poster's own strongest colour (Iron Man red-gold, Hulk green...).
-// The colour is read from a tiny copy of the poster on a canvas, then cached.
+// A soft glow behind each poster in that poster's own strongest colour (Iron Man
+// red-gold, Hulk green...). The colour is read from a tiny copy of the poster on a
+// canvas, then cached. Posters are served from our own domain, so this always works;
+// a poster that can't be read just gets no glow.
 
-export const glowOn = (() => {
-  try {
-    if (new URLSearchParams(location.search).has("glow")) sessionStorage.setItem("rtd.glow", "1");
-    return sessionStorage.getItem("rtd.glow") === "1";
-  } catch { return false; }
-})();
+export const glowOn = true;
 
-const KEY = "rtd.glow.v1";
+const KEY = "rtd.glow.v2";
 let cache: Record<string, string> = {};
 try { cache = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch { /* none */ }
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(cache)); } catch { /* full or blocked */ } };

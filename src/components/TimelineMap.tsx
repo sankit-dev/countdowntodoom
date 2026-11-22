@@ -7,12 +7,21 @@ import { useGlow } from "../glow";
 import { doomReady } from "../doomReady";
 import { RELEASE, useRegion } from "../release";
 
-/** Experimental poster glow (see src/glow.ts); renders nothing unless ?glow is on. */
+/** Poster glow on the map (see src/glow.ts). */
 function Glow({ id, src }: { id: string; src?: string }) {
   const c = useGlow(id, src);
   // Trial for everyone: Iron Man gets a hand-picked suit gradient (hot-rod red into gold).
   if (id === "iron-man") return <span className="glow glow-suit" aria-hidden="true" />;
   return c ? <span className="glow" style={{ ["--glow" as string]: c }} aria-hidden="true" /> : null;
+}
+
+/** A list row's poster, with a small glow in its own colour. */
+function ListArt({ id, src }: { id: string; src?: string }) {
+  const c = useGlow(id, src);
+  const style = id === "iron-man"
+    ? { boxShadow: "-3px -3px 12px -2px rgba(224,48,30,.75), 3px 4px 12px -2px rgba(242,165,26,.7)" }
+    : c ? { boxShadow: `0 0 14px -2px color-mix(in srgb, ${c} 75%, transparent)` } : undefined;
+  return <span className="row-art" style={style}><Poster src={src} /></span>;
 }
 
 const ShareCard = lazy(() => import("./ShareCard"));
@@ -349,7 +358,7 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
               <li key={t.id} className={`wo-row${seen ? " seen" : ""}`} data-title={t.id} data-tier={tier}>
                 <button className="wo-main" onClick={() => onSelect(t.id)}>
                   <em className="wo-num">{i + 1}</em>
-                  <span className="row-art"><Poster src={t.poster || posters[t.id]} /></span>
+                  <ListArt id={t.id} src={t.poster || posters[t.id]} />
                   <span className="row-body">
                     <span className="row-title">{t.title}</span>
                     <span className="row-meta">

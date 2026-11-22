@@ -39,17 +39,16 @@ export function useRegion(): [Region, (r: Region) => void] {
   return [region, set];
 }
 
-/** "Counting down to India's date (17 Dec)." plus a button to switch to the other one. */
+/** "Out 17 Dec in India · Switch to US": the date being counted down to, and a switch. */
 export function RegionNote({ className }: { className?: string }) {
   const [region, setRegion] = useRegion();
   const other: Region = region === "IN" ? "US" : "IN";
   return (
     <p className={`region-note${className ? ` ${className}` : ""}`}>
-      {region === "IN"
-        ? <>Out in India on <b>{RELEASE.IN.short}</b>, a day before the US.</>
-        : <>Out <b>{RELEASE.US.short}</b> in the US, and a day earlier ({RELEASE.IN.short}) in India.</>}{" "}
-      <button type="button" onClick={() => setRegion(other)}>
-        {other === "IN" ? "Count down to India's date" : "Count down to the US date"}
+      Out <b>{RELEASE[region].short}</b> in {RELEASE[region].label}
+      <span aria-hidden="true"> · </span>
+      <button type="button" onClick={() => setRegion(other)} aria-label={`Count down to the ${other === "IN" ? "India" : "US"} date instead`}>
+        Switch to {other === "IN" ? "India" : "US"}
       </button>
     </p>
   );

@@ -104,6 +104,35 @@ export function Story({ onSelect }: { onSelect: (id: string | null, travel?: boo
     return () => io.disconnect();
   }, []);
 
+  // One-time swipe hint on phones: the first time the cards come into view, the
+  // deck nudges sideways and back, and a "Swipe for more" line shows until the
+  // reader moves to another card.
+  const [swiped, setSwiped] = useState(() => { try { return localStorage.getItem("rtd.swiped") === "1"; } catch { return false; } });
+  useEffect(() => {
+    if (active > 0 && !swiped) {
+      setSwiped(true);
+      try { localStorage.setItem("rtd.swiped", "1"); } catch { /* fine */ }
+    }
+  }, [active, swiped]);
+  useEffect(() => {
+    if (swiped || !ok) return;
+    const el = scroller.current!;
+    if (!window.matchMedia("(max-width: 720px)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let t1 = 0, t2 = 0;
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      // Snapping would turn a small nudge into a jump to card 2, so it's off for the moment.
+      t1 = window.setTimeout(() => { el.style.scrollSnapType = "none"; el.scrollBy({ left: 70, behavior: "smooth" }); }, 500);
+      t2 = window.setTimeout(() => {
+        el.scrollTo({ left: 0, behavior: "smooth" });
+        window.setTimeout(() => (el.style.scrollSnapType = ""), 600);
+      }, 1100);
+    }, { threshold: 0.6 });
+    io.observe(el);
+    return () => { io.disconnect(); clearTimeout(t1); clearTimeout(t2); };
+  }, [swiped, ok]);
+
   const go = (i: number) => {
     const el = scroller.current!;
     const card = el.querySelectorAll<HTMLElement>(".card")[Math.max(0, Math.min(CHAPTERS.length - 1, i))];
@@ -162,6 +191,7 @@ export function Story({ onSelect }: { onSelect: (id: string | null, travel?: boo
         ))}
       </div>
 
+      {ok && !swiped && <p className="swipe-hint" aria-hidden="true">Swipe for more →</p>}
       <div className="deck-nav">
         <button onClick={() => go(active - 1)} disabled={active === 0} aria-label="Previous card">←</button>
         <div className="dots">
