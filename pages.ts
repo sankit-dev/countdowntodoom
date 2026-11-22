@@ -35,22 +35,22 @@ const CSS = `
 *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.65 "Barlow",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:var(--doom);text-underline-offset:3px}a:hover{color:#c4ffb0}
 .top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:16px clamp(16px,4vw,40px);border-bottom:1px solid var(--line)}
-.brand{font:800 18px/1 "Cinzel",serif;color:var(--ink);text-decoration:none;text-transform:uppercase}.brand small{display:block;font:600 9px/1 "Barlow",sans-serif;letter-spacing:.42em;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
-.top nav{display:flex;gap:18px;flex-wrap:wrap}.top nav a{font:500 15px/1 "Barlow",sans-serif;color:var(--muted);text-decoration:none}.top nav a:hover{color:var(--ink)}
+.brand{font:800 18px/1 "Cinzel",serif;color:var(--ink);text-decoration:none;text-transform:uppercase}.brand small{display:block;font:600 9px/1 "Archivo",sans-serif;letter-spacing:.42em;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
+.top nav{display:flex;gap:18px;flex-wrap:wrap}.top nav a{font:500 15px/1 "Archivo",sans-serif;color:var(--muted);text-decoration:none}.top nav a:hover{color:var(--ink)}
 main{max-width:780px;margin:0 auto;padding:48px clamp(16px,4vw,24px) 80px}
-.crumbs{font:500 14px/1.4 "Barlow",sans-serif;color:var(--dim);margin:0 0 18px}.crumbs a{color:var(--dim)}
-.kicker{font:500 15px/1 "Barlow",sans-serif;color:var(--muted);margin:0 0 10px}
-h1{font:400 clamp(40px,6.4vw,64px)/1 "Bebas Neue",sans-serif;margin:0 0 18px;text-wrap:balance}
-h2{font:400 clamp(28px,3.6vw,36px)/1.05 "Bebas Neue",sans-serif;margin:44px 0 12px;text-wrap:balance}
-h3{font:700 19px/1.3 "Barlow",sans-serif;margin:28px 0 6px}
+.crumbs{font:500 14px/1.4 "Archivo",sans-serif;color:var(--dim);margin:0 0 18px}.crumbs a{color:var(--dim)}
+.kicker{font:500 15px/1 "Archivo",sans-serif;color:var(--muted);margin:0 0 10px}
+h1{font:extra-condensed 800 clamp(40px,6.4vw,64px)/1 "Archivo","Arial Narrow",sans-serif;margin:0 0 18px;text-wrap:balance}
+h2{font:extra-condensed 800 clamp(28px,3.6vw,36px)/1.05 "Archivo","Arial Narrow",sans-serif;margin:44px 0 12px;text-wrap:balance}
+h3{font:700 19px/1.3 "Archivo",sans-serif;margin:28px 0 6px}
 p{margin:0 0 14px}.lede{font-size:20px;color:#d5ddd6}
 .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:24px 0}
-.facts div{background:var(--panel);border:1px solid var(--line);padding:14px 16px}.facts dt{font:500 13px/1 "Barlow",sans-serif;color:var(--dim);margin-bottom:8px}.facts dd{margin:0;font:600 17px/1.3 "Barlow",sans-serif}
+.facts div{background:var(--panel);border:1px solid var(--line);padding:14px 16px}.facts dt{font:500 13px/1 "Archivo",sans-serif;color:var(--dim);margin-bottom:8px}.facts dd{margin:0;font:600 17px/1.3 "Archivo",sans-serif}
 .verdict{padding:16px 18px;border-left:3px solid var(--doom);background:rgba(141,255,106,.06);margin:22px 0}
 .road{list-style:none;padding:0;margin:0}.road li{position:relative;padding:0 0 10px 24px}.road li:before{content:"";position:absolute;left:3px;top:9px;width:9px;height:9px;border-radius:50%;border:2px solid var(--dim)}.road li:last-child:before{background:var(--doom);border-color:var(--doom)}
 ol.order{padding-left:1.6em}ol.order li{margin:0 0 12px}ol.order li span{color:var(--dim);font-size:15px}
 .pager{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:15px}
-.cta{display:inline-block;margin:10px 10px 0 0;padding:13px 18px;font:600 16px/1 "Barlow",sans-serif;text-decoration:none;color:#06120a;background:var(--doom)}
+.cta{display:inline-block;margin:10px 10px 0 0;padding:13px 18px;font:600 16px/1 "Archivo",sans-serif;text-decoration:none;color:#06120a;background:var(--doom)}
 .cta.alt{background:none;color:var(--ink);border:1px solid rgba(255,255,255,.3)}
 .spoiler{font-size:14px;color:var(--dim)}
 footer{max-width:780px;margin:0 auto;padding:30px 20px 60px;border-top:1px solid var(--line);font-size:13px;color:var(--dim)}
@@ -81,7 +81,7 @@ function shell(o: { site: string; path: string; title: string; description: stri
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@800&family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@800&family=Archivo:wdth,wght@62..100,400..800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="/guide.css" />
 <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-NS78CJ3F"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());</script>

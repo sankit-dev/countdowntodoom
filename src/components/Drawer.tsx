@@ -53,12 +53,18 @@ export function Drawer({ id, watched, toggleWatched, onSelect, onClose }: Props)
   );
 
   return (
+    <>
+    <div className={`drawer-backdrop${id ? " open" : ""}`} onClick={onClose} aria-hidden="true" />
     <aside className={`drawer${id ? " open" : ""}`} style={{ ["--c" as string]: isDoom ? "var(--doom)" : lane.color }} aria-hidden={!id}>
       <button className="drawer-x" onClick={onClose} aria-label="Close">×</button>
       <div className="drawer-scroll" key={t.id}>
-        <Poster className="drawer-poster" src={t.poster || posters[t.id]} />
-        <p className="drawer-lane">{isDoom ? "The big one" : lane.name}</p>
-        <h3>{t.title}</h3>
+        <div className="drawer-head">
+          <Poster className="drawer-poster" src={t.poster || posters[t.id]} />
+          <div>
+            <p className="drawer-lane">{isDoom ? "The big one" : lane.name}</p>
+            <h3>{t.title}</h3>
+          </div>
+        </div>
         <p className="drawer-meta">
           <span>{t.year}</span>
           {!isDoom && <span>{t.kind === "film" ? "Film" : t.kind === "series" ? "Series" : "Special"}</span>}
@@ -105,10 +111,13 @@ export function Drawer({ id, watched, toggleWatched, onSelect, onClose }: Props)
       </div>
 
       {!isDoom && (
-        <button className={`btn seen-btn${watched.has(t.id) ? " is-seen" : ""}`} onClick={() => toggleWatched(t.id)}>
-          {watched.has(t.id) ? "✓ Watched, tap to undo" : "Mark as watched"}
-        </button>
+        <div className="drawer-foot">
+          <button className={`btn seen-btn${watched.has(t.id) ? " is-seen" : ""}`} onClick={() => toggleWatched(t.id)}>
+            {watched.has(t.id) ? "✓ Watched, tap to undo" : "Mark as watched"}
+          </button>
+        </div>
       )}
     </aside>
+    </>
   );
 }

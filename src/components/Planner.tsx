@@ -65,29 +65,37 @@ export function Planner({ watched, onSelect }: Props) {
 
       <div className="planner-grid">
         <form className="controls" onSubmit={(e) => e.preventDefault()}>
-          <label className="slider">
-            <span>Days available <b>{days}</b></span>
-            <input type="range" min={1} max={120} value={days} onChange={(e) => setDays(+e.target.value)} />
-            {left > 0 && left <= 120 && days !== left && (
-              <button type="button" className="link" onClick={() => setDays(left)}>Use all {left} days till release</button>
-            )}
-          </label>
-          <label className="slider">
-            <span>Hours per day <b>{hours}</b></span>
-            <input type="range" min={0.5} max={10} step={0.5} value={hours} onChange={(e) => setHours(+e.target.value)} />
-          </label>
-          <fieldset>
-            <legend>Watch order</legend>
-            <div className="seg">
-              <button type="button" className={order === "release" ? "on" : ""} onClick={() => setOrder("release")}>Release</button>
-              <button type="button" className={order === "story" ? "on" : ""} onClick={() => setOrder("story")}>Story chronology</button>
+          <div className="ctl">
+            <div className="ctl-head">
+              <label htmlFor="days">Days you've got</label>
+              <output htmlFor="days">{days}</output>
             </div>
-          </fieldset>
-          <label className="check">
-            <input type="checkbox" checked={includeSeries} onChange={(e) => setIncludeSeries(e.target.checked)} />
-            <span>Include series</span>
+            <input id="days" type="range" min={1} max={120} value={days} onChange={(e) => setDays(+e.target.value)}
+              style={{ ["--fill" as string]: `${((days - 1) / 119) * 100}%` }} />
+            {left > 0 && left <= 120 && days !== left && (
+              <button type="button" className="use-all" onClick={() => setDays(left)}>Use all {left} days till release</button>
+            )}
+          </div>
+          <div className="ctl">
+            <div className="ctl-head">
+              <label htmlFor="hours">Hours a day</label>
+              <output htmlFor="hours">{hours}</output>
+            </div>
+            <input id="hours" type="range" min={0.5} max={10} step={0.5} value={hours} onChange={(e) => setHours(+e.target.value)}
+              style={{ ["--fill" as string]: `${((hours - 0.5) / 9.5) * 100}%` }} />
+          </div>
+          <div className="ctl">
+            <span className="ctl-label" id="order-label">Watch order</span>
+            <div className="seg ctl-seg" role="group" aria-labelledby="order-label">
+              <button type="button" className={order === "release" ? "on" : ""} onClick={() => setOrder("release")}>Release</button>
+              <button type="button" className={order === "story" ? "on" : ""} onClick={() => setOrder("story")}>Story order</button>
+            </div>
+          </div>
+          <label className="ctl ctl-switch" htmlFor="series">
+            <span className="ctl-label">Include shows</span>
+            <input id="series" type="checkbox" role="switch" checked={includeSeries} onChange={(e) => setIncludeSeries(e.target.checked)} />
           </label>
-          <p className="dim small">
+          <p className="ctl-note">
             {watched.size
               ? `${watched.size} title${watched.size === 1 ? "" : "s"} you've watched ${watched.size === 1 ? "is" : "are"} left out.`
               : "Anything you tick as watched on the watch order gets left out here."}
