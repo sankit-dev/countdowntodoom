@@ -32,7 +32,7 @@ const verdict = (t: Title) => {
 
 const CSS = `
 :root{--bg:#060807;--panel:#0f1512;--ink:#eef3ee;--dim:#9aa59d;--line:rgba(255,255,255,.1);--doom:#8dff6a;--muted:#c3ccc5}
-*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.65 "Barlow",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--ink);font:400 18px/1.6 "Newsreader",Georgia,serif;-webkit-font-smoothing:antialiased}
 a{color:var(--doom);text-underline-offset:3px}a:hover{color:#c4ffb0}
 .top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:16px clamp(16px,4vw,40px);border-bottom:1px solid var(--line)}
 .brand{font:800 18px/1 "Cinzel",serif;color:var(--ink);text-decoration:none;text-transform:uppercase}.brand small{display:block;font:600 9px/1 "Archivo",sans-serif;letter-spacing:.42em;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
@@ -40,8 +40,8 @@ a{color:var(--doom);text-underline-offset:3px}a:hover{color:#c4ffb0}
 main{max-width:780px;margin:0 auto;padding:48px clamp(16px,4vw,24px) 80px}
 .crumbs{font:500 14px/1.4 "Archivo",sans-serif;color:var(--dim);margin:0 0 18px}.crumbs a{color:var(--dim)}
 .kicker{font:500 15px/1 "Archivo",sans-serif;color:var(--muted);margin:0 0 10px}
-h1{font:extra-condensed 800 clamp(40px,6.4vw,64px)/1 "Archivo","Arial Narrow",sans-serif;margin:0 0 18px;text-wrap:balance}
-h2{font:extra-condensed 800 clamp(28px,3.6vw,36px)/1.05 "Archivo","Arial Narrow",sans-serif;margin:44px 0 12px;text-wrap:balance}
+h1{font:condensed 800 clamp(40px,6.4vw,64px)/1 "Archivo","Arial Narrow",sans-serif;margin:0 0 18px;text-wrap:balance}
+h2{font:condensed 800 clamp(28px,3.6vw,36px)/1.05 "Archivo","Arial Narrow",sans-serif;margin:44px 0 12px;text-wrap:balance}
 h3{font:700 19px/1.3 "Archivo",sans-serif;margin:28px 0 6px}
 p{margin:0 0 14px}.lede{font-size:20px;color:#d5ddd6}
 .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:24px 0}
@@ -81,7 +81,7 @@ function shell(o: { site: string; path: string; title: string; description: stri
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@800&family=Archivo:wdth,wght@62..100,400..800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@800&family=Archivo:wdth,wght@62..100,400..800&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="/guide.css" />
 <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-NS78CJ3F"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());</script>

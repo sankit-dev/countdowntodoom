@@ -24,10 +24,12 @@ export const h = (type: string, style: Style, ...children: unknown[]): Node => (
 export const img = (src: string, style: Style): Node => ({ type: "img", props: { src, style } });
 
 const FONTS: [string, string, number][] = [
-  ["Bebas Neue", "BebasNeue.ttf", 400],
-  ["Barlow", "Barlow-Medium.ttf", 500],
-  ["Barlow", "Barlow-SemiBold.ttf", 600],
-  ["Barlow", "Barlow-Bold.ttf", 700],
+  // Same three fonts as the site: Cinzel for the name, Archivo (condensed for big numbers) for the rest.
+  ["Cinzel", "Cinzel-ExtraBold.ttf", 800],
+  ["Archivo Condensed", "Archivo-CondensedExtraBold.ttf", 800],
+  ["Archivo", "Archivo-Medium.ttf", 500],
+  ["Archivo", "Archivo-SemiBold.ttf", 600],
+  ["Archivo", "Archivo-Bold.ttf", 700],
 ];
 
 /** Fonts are served from the site itself (public/fonts), so the card always matches it. */
@@ -46,12 +48,12 @@ async function loadFonts(origin: string) {
 }
 
 /** The site name, top left. */
-export const brand = () => h("div", { fontFamily: "Barlow", fontWeight: 700, fontSize: 28, color: C.ink }, "Road to Doomsday");
+export const brand = () => h("div", { fontFamily: "Cinzel", fontWeight: 800, fontSize: 28, color: C.ink, textTransform: "uppercase" }, "Road to Doomsday");
 
 export const footer = (releaseLine: string) =>
   h("div", { position: "absolute", left: 72, top: 556, width: 1056, justifyContent: "space-between", alignItems: "center" },
-    h("div", { fontFamily: "Barlow", fontWeight: 600, fontSize: 28, color: C.doom }, "countdowntodoom.vercel.app"),
-    h("div", { fontFamily: "Barlow", fontWeight: 500, fontSize: 22, color: C.dim }, releaseLine));
+    h("div", { fontFamily: "Archivo", fontWeight: 600, fontSize: 28, color: C.doom }, "countdowntodoom.vercel.app"),
+    h("div", { fontFamily: "Archivo", fontWeight: 500, fontSize: 22, color: C.dim }, releaseLine));
 
 /** Background used by every card: dark, with the throne still fading in on the right. */
 export const backdrop = (origin: string) => [
@@ -64,16 +66,16 @@ export const backdrop = (origin: string) => [
 export function readyCard(origin: string, pct: number, essentials: number | null, essentialsTotal: number, days: number, releaseLine = "Out 17 Dec in India, 18 Dec in the US"): Node {
   const stat = (big: string, label: string) =>
     h("div", { flexDirection: "column", marginRight: 64 },
-      h("div", { fontFamily: "Bebas Neue", fontSize: 64, lineHeight: 0.9, color: C.ink }, big),
-      h("div", { fontFamily: "Barlow", fontWeight: 500, fontSize: 22, color: C.muted, marginTop: 8 }, label));
-  return h("div", { position: "relative", width: 1200, height: 630, backgroundColor: C.bg, color: C.ink, fontFamily: "Barlow" },
+      h("div", { fontFamily: "Archivo Condensed", fontWeight: 800, fontSize: 64, lineHeight: 0.9, color: C.ink }, big),
+      h("div", { fontFamily: "Archivo", fontWeight: 500, fontSize: 22, color: C.muted, marginTop: 8 }, label));
+  return h("div", { position: "relative", width: 1200, height: 630, backgroundColor: C.bg, color: C.ink, fontFamily: "Archivo" },
     ...backdrop(origin),
     h("div", { position: "absolute", left: 72, top: 46 }, brand()),
     h("div", { position: "absolute", left: 72, top: 124, flexDirection: "column" },
       h("div", { alignItems: "flex-end" },
-        h("div", { fontFamily: "Bebas Neue", fontSize: 210, lineHeight: 0.8, color: C.doom }, String(pct)),
-        h("div", { fontFamily: "Bebas Neue", fontSize: 92, lineHeight: 0.8, color: C.doom, marginLeft: 6, marginBottom: 4 }, "%")),
-      h("div", { fontFamily: "Barlow", fontWeight: 700, fontSize: 46, color: C.ink, marginTop: 10 }, "doom-ready"),
+        h("div", { fontFamily: "Archivo Condensed", fontWeight: 800, fontSize: 210, lineHeight: 0.8, color: C.doom }, String(pct)),
+        h("div", { fontFamily: "Archivo Condensed", fontWeight: 800, fontSize: 92, lineHeight: 0.8, color: C.doom, marginLeft: 6, marginBottom: 4 }, "%")),
+      h("div", { fontFamily: "Archivo", fontWeight: 700, fontSize: 46, color: C.ink, marginTop: 10 }, "doom-ready"),
       h("div", { width: 520, height: 10, marginTop: 18, backgroundColor: C.line },
         h("div", { width: `${Math.max(1.5, pct)}%`, height: 10, backgroundColor: C.doom })),
       h("div", { marginTop: 28 },
