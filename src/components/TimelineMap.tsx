@@ -123,8 +123,10 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
   }, [active, G]);
 
   // ── Pan and zoom ─────────────────────────────────────────────────────────
-  // The tree sits on a canvas: drag to move it, pinch / Ctrl+scroll / the
-  // buttons to zoom. Plain scrolling is left alone so the page still scrolls.
+  // The tree sits on a canvas. Scrolling or swiping inside it moves the tree,
+  // not the page; once the tree hits its top or bottom edge, the rest of the
+  // scroll goes to the page so nobody gets stuck. Pinch, Ctrl+scroll or the
+  // buttons zoom.
   const [view, setView] = useState({ x: 0, y: 0, k: 1 });
   const viewRef = useRef(view);
   viewRef.current = view;
@@ -139,14 +141,36 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
     const byW = (w - PAD * 2) / G.width, byH = (h - PAD * 2) / G.height;
     const k = Math.max(MIN_K, Math.min(1, whole ? Math.min(byW, byH) : byW));
     // Centred, starting from the top (number 1) unless showing it all.
-    setView({ k, x: (w - G.width * k) / 2, y: whole ? Math.max(PAD, (h - G.height * k) / 2) : PAD });
+    const next = clamp({ k, x: (w - G.width * k) / 2, y: whole ? Math.max(PAD, (h - G.height * k) / 2) : PAD });
+    viewRef.current = next;
+    setView(next);
   };
   useLayoutEffect(() => fit(false), [G]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  /** Keep the tree on screen: centred if it fits, otherwise no further than PAD past an edge. */
+  const clamp = (v: { x: number; y: number; k: number }) => {
+    const el = stage.current;
+    if (!el) return v;
+    const w = el.clientWidth, h = el.clientHeight, tw = G.width * v.k, th = G.height * v.k;
+    const cx = tw + PAD * 2 <= w ? (w - tw) / 2 : Math.min(PAD, Math.max(w - tw - PAD, v.x));
+    const cy = th + PAD * 2 <= h ? (h - th) / 2 : Math.min(PAD, Math.max(h - th - PAD, v.y));
+    return { ...v, x: cx, y: cy };
+  };
+  /** Move the tree by (dx, dy). Returns the part of the move that didn't fit, for the page to use. */
+  const panBy = (dx: number, dy: number) => {
+    const v = viewRef.current;
+    const next = clamp({ ...v, x: v.x + dx, y: v.y + dy });
+    viewRef.current = next;
+    setView(next);
+    return { x: dx - (next.x - v.x), y: dy - (next.y - v.y) };
+  };
 
   const zoomAt = (cx: number, cy: number, factor: number) =>
     setView((v) => {
       const k = Math.max(MIN_K, Math.min(MAX_K, v.k * factor));
-      return { k, x: cx - ((cx - v.x) * k) / v.k, y: cy - ((cy - v.y) * k) / v.k };
+      const next = clamp({ k, x: cx - ((cx - v.x) * k) / v.k, y: cy - ((cy - v.y) * k) / v.k });
+      viewRef.current = next;
+      return next;
     });
   const zoomBy = (factor: number) => {
     const el = stage.current!;
@@ -157,7 +181,16 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
   useEffect(() => {
     const el = stage.current!;
     const onWheel = (e: WheelEvent) => {
-      if (!e.ctrlKey && !e.metaKey) return;
+      if (!e.ctrlKey && !e.metaKey) {
+        // Plain scroll moves the tree; whatever it can't use scrolls the page.
+        const px = e.deltaMode === 1 ? 32 : 1;
+        const left = panBy(-e.deltaX * px, -e.deltaY * px);
+        if (Math.abs(left.y) < Math.abs(e.deltaY * px) || Math.abs(left.x) < Math.abs(e.deltaX * px)) {
+          e.preventDefault();
+          if (left.y) window.scrollBy(0, -left.y);
+        }
+        return;
+      }
       e.preventDefault();
       const r = el.getBoundingClientRect();
       // A mouse wheel sends big steps, a trackpad pinch small ones; cap the big ones.
@@ -194,7 +227,9 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
       try { stage.current!.setPointerCapture(e.pointerId); } catch { /* pointer already gone */ }
     }
     gesture.current = g1;
-    setView((v) => ({ ...v, x: v.x + dx, y: v.y + dy }));
+    const left = panBy(dx, dy);
+    // A one-finger swipe past the tree's top or bottom scrolls the page instead.
+    if (e.pointerType !== "mouse" && pointers.current.size === 1 && left.y) window.scrollBy(0, -left.y);
     if (g0.d && g1.d) {
       const r = stage.current!.getBoundingClientRect();
       zoomAt(g1.x - r.left, g1.y - r.top, g1.d / g0.d);
@@ -219,7 +254,9 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
     const i = G.index[t.id];
     if (!el || i === undefined) return;
     const k = Math.max(viewRef.current.k, 0.7);
-    setView({ k, x: el.clientWidth / 2 - G.cx(i) * k, y: el.clientHeight / 2 - G.cy(i) * k });
+    const next = clamp({ k, x: el.clientWidth / 2 - G.cx(i) * k, y: el.clientHeight / 2 - G.cy(i) * k });
+    viewRef.current = next;
+    setView(next);
     el.scrollIntoView({ behavior: "smooth", block: "nearest" });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focus, tier]);
@@ -336,7 +373,7 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
           </button>
         </div>
 
-        <span className="stage-hint">Drag to move · pinch or Ctrl + scroll to zoom</span>
+        <span className="stage-hint">Scroll or drag inside to move · pinch or Ctrl + scroll to zoom</span>
         <div className="stage-tools" onPointerDown={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
           <button onClick={() => zoomBy(1.35)} aria-label="Zoom in">+</button>
           <button onClick={() => zoomBy(1 / 1.35)} aria-label="Zoom out">−</button>
