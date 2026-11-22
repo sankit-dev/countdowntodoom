@@ -130,23 +130,46 @@ export default function App() {
       </main>
 
       <footer className="foot">
-        <Sigil />
-        <nav className="foot-links" aria-label="Guides">
-          <a href="./watch-order/">Full watch order</a>
-          <a href="./essentials/">The essentials</a>
-          <a href="./story/">The story so far</a>
-          <a href="./countdown/">Countdown</a>
-        </nav>
-        <p className="foot-creator">
-          Made by <a href="https://x.com/sankitdev" target="_blank" rel="noopener noreferrer" onClick={() => track("follow_x", { from: "footer" })}>@sankitdev</a> for me and my friends before Doomsday.{" "}
-          <a className="foot-follow" href="https://x.com/sankitdev" target="_blank" rel="noopener noreferrer" onClick={() => track("follow_x", { from: "footer_button" })}>Follow on X</a>
-        </p>
-        <button className="btn" onClick={() => { setSupport(true); track("support_open", { from: "footer" }); }}>Support this site</button>
-        <p>
-          Just a fan project. It's not affiliated with or endorsed by Marvel or Disney, and all the
-          titles belong to them.
-        </p>
-        <p className="dim">Runtimes are rough, and for shows it's the whole season. Posters come from Wikipedia and belong to their owners.</p>
+        <div className="foot-inner">
+          <div className="foot-top">
+            <a className="brand foot-brand" href="#top" aria-label="Back to the top">
+              <Sigil />
+              <span className="brand-text"><small>Road to</small><b>Doomsday</b></span>
+            </a>
+            <p className="foot-tag">Every MCU movie and show you need before Avengers: Doomsday, in the right order.</p>
+          </div>
+
+          <div className="foot-actions">
+            <section className="foot-card">
+              <h3>Made by @sankitdev</h3>
+              <p>I built this for me and my friends before Doomsday. Follow for updates and new features.</p>
+              <a className="glow-btn glow-x" href="https://x.com/sankitdev" target="_blank" rel="noopener noreferrer" onClick={() => track("follow_x", { from: "footer_button" })}>
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M17.75 3h3.07l-6.7 7.66L22 21h-6.17l-4.83-6.32L5.47 21H2.4l7.17-8.2L2 3h6.33l4.37 5.77L17.75 3Zm-1.08 16.2h1.7L7.4 4.73H5.58L16.67 19.2Z"/></svg>
+                Follow on X
+              </a>
+            </section>
+            <section className="foot-card">
+              <h3>Keep it free</h3>
+              <p>No ads, no sign-up. If it helped you get ready, you can chip in for the hosting.</p>
+              <button className="glow-btn glow-doom" onClick={() => { setSupport(true); track("support_open", { from: "footer" }); }}>Support this site</button>
+            </section>
+          </div>
+
+          <nav className="foot-nav" aria-label="Guides">
+            <h3>Guides</h3>
+            <ul>
+              <li><a href="./watch-order/">Full watch order</a></li>
+              <li><a href="./essentials/">The essentials</a></li>
+              <li><a href="./story/">The story so far</a></li>
+              <li><a href="./countdown/">Countdown</a></li>
+            </ul>
+          </nav>
+
+          <div className="foot-legal">
+            <p>Just a fan project. It's not affiliated with or endorsed by Marvel or Disney, and all the titles belong to them.</p>
+            <p>Runtimes are rough, and for shows it's the whole season. Posters come from Wikipedia and belong to their owners.</p>
+          </div>
+        </div>
       </footer>
 
       <Drawer

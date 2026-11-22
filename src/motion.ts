@@ -10,14 +10,14 @@ import { useEffect } from "react";
 
 const REVEAL: [selector: string, kind?: "stagger" | "side" | "title"][] = [
   [".tree-head h2, .story-head h2, .sec-head h2", "title"],
-  [".tree-head > *:not(h2), .story-head .story-warn, .sec-head .lede"],
+  [".tree-head > *:not(h2), .spoiler, .sec-head .lede"],
   [".progress"],
   [".tree-stage"],
   [".deck", "side"],
   [".deck-nav"],
   [".controls > *", "stagger"],
   [".planner-grid > :not(.controls)"],
-  [".foot > *", "stagger"],
+  [".foot-inner > *", "stagger"],
 ];
 
 export function useScrollMotion() {

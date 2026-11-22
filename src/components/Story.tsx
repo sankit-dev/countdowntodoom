@@ -76,8 +76,18 @@ function PosterRow({ ids, posters, onSelect }: { ids: string[]; posters: Record<
   );
 }
 
+const SPOIL_KEY = "rtd.spoilers.ok";
+const spoilersOk = () => { try { return localStorage.getItem(SPOIL_KEY) === "1"; } catch { return false; } };
+
 export function Story({ onSelect }: { onSelect: (id: string | null, travel?: boolean) => void }) {
   const scroller = useRef<HTMLDivElement>(null);
+  // The cards give away endings, so they stay blurred until you say you're fine with that.
+  const [ok, setOk] = useState(spoilersOk);
+  const reveal = () => {
+    setOk(true);
+    try { localStorage.setItem(SPOIL_KEY, "1"); } catch { /* fine, ask again next time */ }
+    track("spoilers_shown");
+  };
   const [active, setActive] = useState(0);
   const posters = usePosters();
 
@@ -106,13 +116,29 @@ export function Story({ onSelect }: { onSelect: (id: string | null, travel?: boo
         <div>
           <h2>The story so far</h2>
         </div>
-        <p className="story-warn">Spoilers for everything up to now, obviously.</p>
       </header>
 
+      <div className={`spoiler${ok ? " ok" : ""}`} role="note">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 2 1 21h22L12 2Zm0 4.2L19.5 19h-15L12 6.2ZM11 10v5h2v-5h-2Zm0 6v2h2v-2h-2Z"/></svg>
+        <div>
+          <b>Spoiler alert</b>
+          <p>{ok
+            ? "These cards give away how every MCU movie and show so far ends."
+            : "These cards give away how every MCU movie and show so far ends. Watching for the first time? Skip to the watch plan and come back after."}</p>
+          {!ok && (
+            <div className="spoiler-actions">
+              <button className="btn btn-primary" onClick={reveal}>Show me the story</button>
+              <a className="btn" href="#planner">Skip to watch plan</a>
+            </div>
+          )}
+        </div>
+      </div>
+
       <div
-        className="deck"
+        className={`deck${ok ? "" : " veiled"}`}
         ref={scroller}
-        tabIndex={0}
+        aria-hidden={!ok}
+        tabIndex={ok ? 0 : -1}
         aria-label="Story cards. Use the arrow keys to move between them."
         onKeyDown={(e) => {
           if (e.key === "ArrowRight") { e.preventDefault(); go(active + 1); }

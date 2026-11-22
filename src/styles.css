@@ -192,7 +192,20 @@ h1, h2, h3, h4, p { margin: 0; }
 .story { padding: clamp(70px, 9vw, 120px) 0 30px; }
 .story-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px; padding: 0 clamp(16px, 3vw, 40px); margin-bottom: 34px; }
 .story-head h2 { font: condensed 800 clamp(40px, 5vw, 64px)/1 var(--display); text-wrap: balance; }
-.story-warn { font: 600 13px/1 var(--body); color: var(--dim); }
+.spoiler { display: flex; gap: 14px; align-items: flex-start; margin: 0 clamp(16px, 3vw, 40px) 22px; max-width: 760px; padding: 16px 18px;
+  border: 1px solid rgba(245, 194, 66, 0.45); background: rgba(245, 194, 66, 0.07); color: var(--tier-recommended); }
+.spoiler > svg { flex: none; margin-top: 1px; }
+.spoiler b { display: block; font: 700 16px/1.2 var(--body); color: var(--tier-recommended); }
+.spoiler p { margin: 6px 0 0; font: 400 15px/1.5 var(--body); color: #e4ddc8; }
+.spoiler-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.spoiler-actions .btn:not(.btn-primary) { color: var(--ink); }
+.spoiler-actions .btn { height: 44px; padding: 0 18px; font-size: 15px; }
+.spoiler.ok { padding: 10px 14px; }
+.spoiler.ok b { display: inline; font-size: 14px; }
+.spoiler.ok p { display: inline; margin-left: 6px; font-size: 14px; }
+/* Blurred until the reader says spoilers are fine. */
+.deck.veiled { filter: blur(14px) saturate(0.6); opacity: 0.6; pointer-events: none; user-select: none; }
+.deck.veiled + .deck-nav { visibility: hidden; }
 .deck { display: flex; align-items: stretch; gap: 22px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px max(16px, calc((100vw - 1100px) / 2)) 26px; scrollbar-width: none; }
 .deck::-webkit-scrollbar { display: none; }
 .card {
@@ -561,15 +574,35 @@ h1, h2, h3, h4, p { margin: 0; }
 @media (max-width: 480px) { .wallet { grid-template-columns: 1fr; justify-items: center; } }
 
 /* ── Footer ──────────────────────────────────────────────────────────────── */
-.foot { display: grid; justify-items: center; gap: 12px; padding: 50px 24px 60px; border-top: 1px solid var(--line); text-align: center; font-size: 13px; color: #a9b4ac; }
-.foot p { max-width: 62ch; }
-.foot-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; }
-.foot-links a { font: 600 13px/1 var(--cond); color: var(--ink); }
-.foot-links a:hover { color: var(--doom); }
-.foot-creator { font-size: 15px; color: var(--ink); }
-.foot-creator a { color: var(--doom); }
-.foot-follow { display: inline-block; margin-left: 6px; padding: 6px 12px; border: 1px solid rgba(141, 255, 106, 0.5); font-weight: 600; }
-.foot-follow:hover { background: var(--doom); color: #06120a; }
+.foot { border-top: 1px solid var(--line); background: var(--bg); padding-block: 48px calc(40px + env(safe-area-inset-bottom, 0px)); }
+.foot-inner { display: grid; gap: 32px; max-width: 960px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); }
+.foot-top { display: grid; gap: 12px; }
+.foot-brand { justify-self: start; }
+.foot-tag { margin: 0; max-width: 46ch; font: 400 17px/1.5 var(--read); color: var(--muted); }
+.foot-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.foot-card { display: grid; align-content: start; gap: 10px; padding: 20px; background: var(--panel); border: 1px solid var(--line); }
+.foot-card h3, .foot-nav h3 { margin: 0; font: 700 15px/1.2 var(--body); color: var(--ink); }
+.foot-card p { margin: 0 0 6px; font: 400 14px/1.5 var(--body); color: #a9b4ac; }
+.foot-nav ul { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 2px 16px; }
+.foot-nav a { display: block; padding: 9px 0; font: 600 15px/1.2 var(--body); color: #c2ccc5; border-bottom: 1px solid var(--line); }
+.foot-nav a::after { content: " →"; color: var(--dim); }
+@media (hover: hover) { .foot-nav a:hover { color: var(--doom); } }
+.foot-legal { display: grid; gap: 8px; padding-top: 20px; border-top: 1px solid var(--line); }
+.foot-legal p { margin: 0; font: 400 12.5px/1.55 var(--body); color: var(--dim); }
+
+/* Glow buttons: the two things we want people to tap in the footer. */
+.glow-btn { --g: var(--doom); display: inline-flex; align-items: center; justify-content: center; gap: 9px; width: 100%; height: 48px; padding: 0 18px;
+  font: 700 15px/1 var(--body); border: 1px solid var(--g); position: relative; isolation: isolate;
+  box-shadow: 0 0 0 0 transparent, 0 0 18px -2px color-mix(in srgb, var(--g) 55%, transparent);
+  animation: glowPulse 2.8s ease-in-out infinite; transition: transform 0.15s, background 0.2s, color 0.2s; }
+.glow-btn:active { transform: scale(0.98); }
+.glow-doom { background: var(--doom); color: #06120a; }
+.glow-x { --g: #e9efe9; background: #f2f5f2; color: #06120a; animation-delay: 1.4s; }
+@media (hover: hover) { .glow-doom:hover { background: #a8ff8c; } .glow-x:hover { background: #fff; } }
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 14px -4px color-mix(in srgb, var(--g) 45%, transparent); }
+  50% { box-shadow: 0 0 26px 2px color-mix(in srgb, var(--g) 60%, transparent); }
+}
 .modal-lede a { color: var(--doom); }
 .drawer-more { display: inline-block; margin-top: 10px; font: 600 13px/1 var(--cond); color: var(--doom); }
 .foot .sigil { color: var(--doom); }
