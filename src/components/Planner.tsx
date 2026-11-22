@@ -1,7 +1,7 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { track } from "../analytics";
 import { daysToDoom } from "../App";
-import { RELEASE, useRegion } from "../release";
+import { RELEASE, useNow, useRegion } from "../release";
 import { BY_ID, LANE_BY_ID, TIER_LABEL, fmtMin, tierOf } from "../data";
 import { buildPlan } from "../planner";
 import { doomReady } from "../doomReady";
@@ -19,14 +19,18 @@ const dayFmt = new Intl.DateTimeFormat(undefined, { weekday: "short", day: "nume
 export function Planner({ watched, onSelect }: Props) {
   const posters = usePosters();
   const [region] = useRegion();
-  const left = daysToDoom(region);
+  const now = useNow();
+  const left = daysToDoom(region, now);
   const ready = useMemo(() => doomReady(watched), [watched]);
   const [sharing, setSharing] = useState(false);
   // You can only plan up to release day: the slider tops out at the days actually left.
   // (After release it still works for catching up later, up to 60 days.)
   const maxDays = left > 0 ? left : 60;
   const [days, setDays] = useState(left > 0 ? left : 14);
-  useEffect(() => { setDays((d) => Math.min(d, maxDays)); }, [maxDays]);
+  // Until you move the slider yourself it follows the days left, so it ticks
+  // down with the countdown. Once you've picked a number it is only capped.
+  const [picked, setPicked] = useState(false);
+  useEffect(() => { setDays((d) => (picked ? Math.min(d, maxDays) : left > 0 ? left : Math.min(d, maxDays))); }, [maxDays, left, picked]);
   const [hours, setHours] = useState(2.5);
   const [includeSeries, setIncludeSeries] = useState(true);
   const [order, setOrder] = useState<"release" | "story">("release");
@@ -57,7 +61,7 @@ export function Planner({ watched, onSelect }: Props) {
       ? "It's tight, so this is the shortest list that still gets you ready."
       : "That's not enough time for even one title. Add a bit more per day.";
 
-  const today = new Date();
+  const today = new Date(now);
   const dateOf = (i: number) => dayFmt.format(new Date(today.getFullYear(), today.getMonth(), today.getDate() + i));
 
   return (
@@ -74,14 +78,14 @@ export function Planner({ watched, onSelect }: Props) {
               <label htmlFor="days">Days you've got</label>
               <output htmlFor="days">{days}</output>
             </div>
-            <input id="days" type="range" min={1} max={maxDays} value={days} onChange={(e) => setDays(+e.target.value)}
+            <input id="days" type="range" min={1} max={maxDays} value={days} onChange={(e) => { setDays(+e.target.value); setPicked(+e.target.value !== left); }}
               disabled={maxDays <= 1}
               style={{ ["--fill" as string]: `${maxDays > 1 ? ((days - 1) / (maxDays - 1)) * 100 : 100}%` }} />
             {left > 0 && (
               <p className="ctl-hint">
                 {days === left ? `That's every day until release on ${RELEASE[region].short}.` : <>
                   Leaves {left - days} spare {left - days === 1 ? "day" : "days"} before release.{" "}
-                  <button type="button" className="use-all" onClick={() => setDays(left)}>Use all {left}</button>
+                  <button type="button" className="use-all" onClick={() => { setDays(left); setPicked(false); }}>Use all {left}</button>
                 </>}
               </p>
             )}

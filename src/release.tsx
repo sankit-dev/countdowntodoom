@@ -54,3 +54,20 @@ export function RegionNote({ className }: { className?: string }) {
     </p>
   );
 }
+
+/**
+ * The current time, refreshed every minute, so anything counted in days
+ * (the nav counter, the planner's slider) moves on by itself at midnight
+ * even if the page stays open. Nothing about the date is fixed in the code.
+ */
+export function useNow(every = 60_000) {
+  const [now, setNow] = useState(Date.now);
+  useEffect(() => {
+    const tick = () => setNow(Date.now());
+    const iv = setInterval(tick, every);
+    // Phones freeze timers in background tabs: catch up as soon as the page is back.
+    document.addEventListener("visibilitychange", tick);
+    return () => { clearInterval(iv); document.removeEventListener("visibilitychange", tick); };
+  }, [every]);
+  return now;
+}

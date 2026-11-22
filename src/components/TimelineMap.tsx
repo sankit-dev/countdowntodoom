@@ -10,6 +10,8 @@ import { RELEASE, useRegion } from "../release";
 /** Experimental poster glow (see src/glow.ts); renders nothing unless ?glow is on. */
 function Glow({ id, src }: { id: string; src?: string }) {
   const c = useGlow(id, src);
+  // Trial for everyone: Iron Man gets a hand-picked suit gradient (hot-rod red into gold).
+  if (id === "iron-man") return <span className="glow glow-suit" aria-hidden="true" />;
   return c ? <span className="glow" style={{ ["--glow" as string]: c }} aria-hidden="true" /> : null;
 }
 

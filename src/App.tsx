@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { track } from "./analytics";
 import { BY_ID, DOOM_ID, TITLES } from "./data";
-import { releaseAt, useRegion } from "./release";
+import { releaseAt, useNow, useRegion } from "./release";
 import { daysUntil } from "./doomReady";
 import { Hero } from "./components/Hero";
 import { TimelineMap } from "./components/TimelineMap";
@@ -25,8 +25,8 @@ const loadWatched = (): Set<string> => {
 };
 
 /** Days you can still use for watching: the release day itself counts as the last one. */
-export const daysToDoom = (region: Parameters<typeof releaseAt>[0]) =>
-  Math.ceil((releaseAt(region) - Date.now()) / 86_400_000);
+export const daysToDoom = (region: Parameters<typeof releaseAt>[0], now = Date.now()) =>
+  Math.ceil((releaseAt(region) - now) / 86_400_000);
 
 export default function App() {
   const [selected, setSelected] = useState<string | null>(null);
@@ -67,7 +67,8 @@ export default function App() {
 
   // Whole days, rounded down like the big countdown, so the two always agree.
   const [region] = useRegion();
-  const d = daysUntil(region);
+  const now = useNow();
+  const d = daysUntil(region, now);
   // The nav's "days left" only shows once the big countdown has scrolled out of view.
   const [pastCountdown, setPastCountdown] = useState(false);
   useEffect(() => {

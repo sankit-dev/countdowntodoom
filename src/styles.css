@@ -336,6 +336,9 @@ h1, h2, h3, h4, p { margin: 0; }
 .tile .glow { position: absolute; z-index: -1; left: 50%; top: 0; width: var(--pw); height: var(--ph); transform: translateX(-50%); pointer-events: none;
   background: var(--glow); box-shadow: 0 0 18px 3px color-mix(in srgb, var(--glow) 75%, transparent), 0 0 40px 8px color-mix(in srgb, var(--glow) 28%, transparent);
   opacity: 0.6; transition: opacity 0.3s, transform 0.3s; animation: fadeIn 0.8s both; }
+/* Iron Man trial: suit colours, red at the top fading down into gold. */
+.tile .glow-suit { --glow: #e0301e; background: linear-gradient(160deg, #e0301e 0%, #f2a51a 100%);
+  box-shadow: -6px -8px 22px 4px rgba(224, 48, 30, 0.75), 6px 10px 24px 4px rgba(242, 165, 26, 0.7), 0 0 46px 10px rgba(235, 100, 25, 0.3); opacity: 0.7; }
 .tile:hover .glow, .tile.sel .glow { opacity: 0.85; transform: translateX(-50%) scale(1.08); }
 .tile.seen .glow { opacity: 0.15; }
 .has-lit .tile:not(.lit) .glow { opacity: 0.1; }
