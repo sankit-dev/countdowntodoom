@@ -98,9 +98,13 @@ h1, h2, h3, h4, p { margin: 0; }
   background: rgba(6, 8, 7, 0.92); border-bottom: 1px solid var(--line);
 }
 .brand { display: flex; align-items: center; gap: 10px; color: var(--doom); }
-.brand-text { display: grid; line-height: 1; color: var(--ink); }
-.brand-text small { font: 600 9px/1 var(--cond); letter-spacing: 0.42em; text-transform: uppercase; color: var(--dim); }
-.brand-text b { font: 800 15px/1 var(--title); text-transform: uppercase; }
+/* Wordmark: both lines in Cinzel. "ROAD TO" is spaced so it ends exactly where
+   DOOMSDAY ends (1.37em measured from the font), making one block like a film logo.
+   Everything is in em, so changing font-size here scales the whole mark. */
+.brand-text { display: inline-grid; justify-items: start; font-size: 19px; line-height: 1; color: var(--ink); text-transform: uppercase; }
+.brand-text small { font: 600 0.5em/1 var(--title); letter-spacing: 1.37em; margin-right: -1.37em; margin-bottom: 0.32em; color: #cfd5d0; white-space: nowrap; }
+.brand-text b { font: 900 1em/1 var(--title); letter-spacing: 0.01em;
+  background: linear-gradient(180deg, #ffffff 0%, #e4e8e4 44%, #9ba39c 56%, #eef1ee 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .nav nav { display: flex; gap: 22px; margin-left: auto; }
 .nav nav a { font: 500 15px/1 var(--body); color: var(--muted); }
 .nav nav a:hover { color: var(--ink); }
@@ -635,7 +639,6 @@ h1, h2, h3, h4, p { margin: 0; }
 }
 @media (max-width: 420px) {
   .nav-count.on { display: none; }
-  .brand-text small { letter-spacing: 0.3em; }
 }
 @media (max-width: 720px) {
   .card-media { aspect-ratio: 2 / 1; min-height: 0; }

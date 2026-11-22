@@ -35,7 +35,7 @@ const CSS = `
 *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--ink);font:400 18px/1.6 "Newsreader",Georgia,serif;-webkit-font-smoothing:antialiased}
 a{color:var(--doom);text-underline-offset:3px}a:hover{color:#c4ffb0}
 .top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:16px clamp(16px,4vw,40px);border-bottom:1px solid var(--line)}
-.brand{font:800 18px/1 "Cinzel",serif;color:var(--ink);text-decoration:none;text-transform:uppercase}.brand small{display:block;font:600 9px/1 "Archivo",sans-serif;letter-spacing:.42em;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
+.brand{display:inline-grid;justify-items:start;font:900 19px/1 "Cinzel",serif;letter-spacing:.01em;color:var(--ink);text-decoration:none;text-transform:uppercase}.brand small{font:600 .5em/1 "Cinzel",serif;letter-spacing:1.37em;margin-right:-1.37em;margin-bottom:.32em;color:#cfd5d0;white-space:nowrap}
 .top nav{display:flex;gap:18px;flex-wrap:wrap}.top nav a{font:500 15px/1 "Archivo",sans-serif;color:var(--muted);text-decoration:none}.top nav a:hover{color:var(--ink)}
 main{max-width:780px;margin:0 auto;padding:48px clamp(16px,4vw,24px) 80px}
 .crumbs{font:500 14px/1.4 "Archivo",sans-serif;color:var(--dim);margin:0 0 18px}.crumbs a{color:var(--dim)}
@@ -81,7 +81,7 @@ function shell(o: { site: string; path: string; title: string; description: stri
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@800&family=Archivo:wdth,wght@62..100,400..800&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;900&family=Archivo:wdth,wght@62..100,400..800&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="/guide.css" />
 <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-NS78CJ3F"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());</script>
