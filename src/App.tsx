@@ -99,8 +99,11 @@ export default function App() {
           <a href="#story">Catch up</a>
           <a href="#planner">Watch plan</a>
           <a href="./countdown/">Countdown</a>
-          <a href="https://x.com/sankitdev" target="_blank" rel="noopener noreferrer" onClick={() => track("follow_x", { from: "nav" })}>@sankitdev</a>
         </nav>
+        <a className="nav-x" href="https://x.com/sankitdev" target="_blank" rel="noopener noreferrer" aria-label="Follow @sankitdev on X" onClick={() => track("follow_x", { from: "nav" })}>
+          <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M17.75 3h3.07l-6.7 7.66L22 21h-6.17l-4.83-6.32L5.47 21H2.4l7.17-8.2L2 3h6.33l4.37 5.77L17.75 3Zm-1.08 16.2h1.7L7.4 4.73H5.58L16.67 19.2Z"/></svg>
+          <span>Follow</span>
+        </a>
         <button className="nav-support" onClick={() => { setSupport(true); track("support_open", { from: "nav" }); }}>Support</button>
         <span className={`nav-count${pastCountdown ? " on" : ""}`} aria-hidden={!pastCountdown}>
           {d > 0 ? (
