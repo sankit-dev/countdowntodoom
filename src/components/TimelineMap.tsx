@@ -272,9 +272,9 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
           <h2>The watch order</h2>
           <p>Start at 1 and go in order. Tap the tick on a poster once you've watched it, or tap the poster for details.</p>
         </div>
-        <div className="seg" role="group" aria-label="How much to show">
+        <div className="seg view-tabs" role="tablist" aria-label="How much to show">
           {VIEWS.map((v) => (
-            <button key={v.tier} className={tier === v.tier ? "on" : ""} onClick={() => { setTier(v.tier); track("map_view", { view: v.tier }); }}>
+            <button key={v.tier} role="tab" aria-selected={tier === v.tier} className={tier === v.tier ? "on" : ""} onClick={() => { setTier(v.tier); track("map_view", { view: v.tier }); }}>
               {v.label} <small>{count(v.tier)}</small>
             </button>
           ))}
@@ -287,8 +287,8 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
           {done === G.list.length ? ". You're ready for Doomsday." : done === 0 ? ". Tick the corner of a poster once you've seen it." : ""}
         </span>
         {watched.size > 0 ? (
-          <button className="btn btn-primary progress-share" onClick={() => { setSharing(true); track("share_card_clicked", { from: "watch_order" }); }}>
-            Share my doom-ready %
+          <button className="progress-share" onClick={() => { setSharing(true); track("share_card_clicked", { from: "watch_order" }); }}>
+            Share my score ↗
           </button>
         ) : <em>{Math.round((done / G.list.length) * 100)}%</em>}
         <div className="progress-bar" role="progressbar" aria-label="Watched in this view" aria-valuemin={0} aria-valuemax={G.list.length} aria-valuenow={done}>
