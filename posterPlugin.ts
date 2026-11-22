@@ -17,15 +17,25 @@ const API = "https://en.wikipedia.org/w/api.php";
 const UA = "RoadToDoomsdayBuild/1.0 (https://countdowntodoom.vercel.app)";
 const WIDTH = 320; // px; tiles show posters at ~96px wide, so this is sharp on 3x phones
 
-async function get(url: string) {
-  const ctl = new AbortController();
-  const timer = setTimeout(() => ctl.abort(), 15_000);
-  try {
-    const r = await fetch(url, { headers: { "User-Agent": UA }, signal: ctl.signal });
-    if (!r.ok) throw new Error(`${r.status} ${url}`);
-    return r;
-  } finally {
-    clearTimeout(timer);
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/** Fetch with a timeout, retrying with back-off when Wikimedia says slow down (429) or hiccups (5xx). */
+async function get(url: string, tries = 4): Promise<Response> {
+  for (let n = 1; ; n++) {
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 15_000);
+    try {
+      const r = await fetch(url, { headers: { "User-Agent": UA }, signal: ctl.signal });
+      if (r.ok) return r;
+      if (n >= tries || (r.status !== 429 && r.status < 500)) throw new Error(`${r.status} ${url}`);
+      const wait = Number(r.headers.get("retry-after")) * 1000 || 1500 * 2 ** (n - 1);
+      await sleep(Math.min(wait, 10_000));
+    } catch (e) {
+      if (n >= tries) throw e;
+      await sleep(1500 * 2 ** (n - 1));
+    } finally {
+      clearTimeout(timer);
+    }
   }
 }
 
@@ -65,16 +75,19 @@ export function posters(): Plugin {
         const urls: Record<string, string> = {};
         for (let i = 0; i < ids.length; i += 40) Object.assign(urls, await lookup(ids.slice(i, i + 40)).catch(() => ({})));
         const todo = Object.entries(urls);
-        // A few at a time, to be polite to Wikimedia.
-        for (let i = 0; i < todo.length; i += 6) {
-          await Promise.all(todo.slice(i, i + 6).map(async ([id, url]) => {
+        // Two at a time with a short pause, to stay under Wikimedia's rate limit.
+        const failed: string[] = [];
+        for (let i = 0; i < todo.length; i += 2) {
+          if (i) await sleep(250);
+          await Promise.all(todo.slice(i, i + 2).map(async ([id, url]) => {
             try {
               const buf = Buffer.from(await (await get(url)).arrayBuffer());
               await writeFile(join(dir, `${id}.webp`), await sharp(buf).resize({ width: WIDTH, withoutEnlargement: true }).webp({ quality: 74 }).toBuffer());
               manifest[id] = `posters/${id}.webp`;
-            } catch { /* leave it to the runtime fallback */ }
+            } catch { failed.push(id); /* left to the runtime fallback */ }
           }));
         }
+        if (failed.length) console.warn(`[posters] not copied: ${failed.join(", ")}`);
       } catch (e) {
         console.warn("[posters] skipped:", (e as Error).message);
       }
