@@ -186,6 +186,7 @@ h1, h2, h3, h4, p { margin: 0; }
 .deck { display: flex; align-items: flex-start; gap: 22px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px max(16px, calc((100vw - 1100px) / 2)) 26px; scrollbar-width: none; }
 .deck::-webkit-scrollbar { display: none; }
 .card {
+  overflow: hidden;
   flex: none; width: min(1040px, 88vw); scroll-snap-align: center;
   display: grid; grid-template-columns: minmax(0, 1fr);
   background: var(--panel); border: 1px solid var(--line);
@@ -212,9 +213,13 @@ h1, h2, h3, h4, p { margin: 0; }
 .card-video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }
 .play { position: absolute; left: 14px; bottom: 14px; z-index: 1; padding: 10px 14px; font: 600 14px/1 var(--body); background: rgba(6, 8, 7, 0.9); border: 1px solid rgba(255, 255, 255, 0.3); transition: background 0.2s, color 0.2s; }
 .play:hover { background: var(--ink); color: #08100b; }
-.card-posters { display: flex; flex-wrap: wrap; gap: 12px; width: 100%; margin-top: 6px; }
-.card-posters button { width: 92px; display: grid; gap: 7px; text-align: left; }
+.card-posters { display: flex; gap: 10px; width: 100%; margin-top: 4px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
+.card-posters::-webkit-scrollbar { display: none; }
+.card-posters button { flex: none; width: 92px; display: grid; gap: 7px; text-align: left; scroll-snap-align: start; }
 .card-posters span { position: relative; aspect-ratio: 2 / 3; overflow: hidden; background: #141a17; outline: 1px solid rgba(255, 255, 255, 0.16); outline-offset: -1px; transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s; }
+.poster-dots { display: flex; gap: 6px; }
+.poster-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, 0.25); }
+.poster-dots i.on { background: var(--doom); }
 .card-posters img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; animation: fadeIn 0.5s both; }
 .card-posters b { font: 500 12px/1.25 var(--body); color: #9aa59d; }
 .card-posters button:hover span { transform: translateY(-4px); box-shadow: 0 0 0 1px #fff; }
@@ -225,7 +230,7 @@ h1, h2, h3, h4, p { margin: 0; }
 .card-n small { font: 500 14px/1 var(--body); margin-left: 4px; }
 .card h3 { font: 400 clamp(30px, 3.4vw, 44px)/1 var(--display); text-wrap: balance; }
 .card p { color: #c9d2cb; font-size: clamp(16px, 1.3vw, 18px); line-height: 1.6; text-wrap: pretty; max-width: 62ch; }
-.card-watch { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; }
+.card-watch { display: grid; gap: 8px; margin-top: 4px; min-width: 0; }
 .card-watch > span { font: 600 13px/1 var(--body); color: var(--dim); margin-right: 4px; }
 .card-watch .chip { --c: var(--doom); }
 .card.on .card-text > * { animation: fadeUp 0.7s both; }
@@ -538,6 +543,14 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 24px; border: 0; bo
   .brand-text small { letter-spacing: 0.3em; }
 }
 @media (max-width: 720px) {
+  .card-media { aspect-ratio: 2 / 1; min-height: 0; }
+  .card-text { gap: 10px; padding: 18px 18px 20px; align-content: start; }
+  .card-n { font-size: 22px; }
+  .card h3 { font-size: 27px; }
+  .card p { font-size: 15px; line-height: 1.5; }
+  .card-posters button { width: 68px; }
+  .card-posters b { font-size: 11px; }
+  .play { padding: 8px 10px; font-size: 13px; left: 10px; bottom: 10px; }
   .deck-nav { gap: 12px; padding: 0 16px; }
   .deck-nav > button { width: 40px; height: 40px; flex: none; }
   .dots { gap: 4px; min-width: 0; }

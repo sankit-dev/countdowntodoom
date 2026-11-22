@@ -38,6 +38,44 @@ function Media({ film, on, poster }: { film: string; on: boolean; poster?: strin
 const cardStyle = (c: (typeof CHAPTERS)[number]) =>
   c.kind === "incursion" ? "card-note" : c.body.length === 1 ? "card-short" : "card-poster-card";
 
+/** The "Watch it in" posters: one swipeable row, with dots when they don't all fit. */
+function PosterRow({ ids, posters, onSelect }: { ids: string[]; posters: Record<string, string>; onSelect: (id: string | null, travel?: boolean) => void }) {
+  const row = useRef<HTMLDivElement>(null);
+  const [overflow, setOverflow] = useState(false);
+  const [at, setAt] = useState(0);
+  useEffect(() => {
+    const el = row.current;
+    if (!el) return;
+    const check = () => setOverflow(el.scrollWidth > el.clientWidth + 4);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  const onScroll = () => {
+    const el = row.current!;
+    const item = el.firstElementChild as HTMLElement | null;
+    if (item) setAt(Math.round(el.scrollLeft / (item.offsetWidth + 10)));
+  };
+  return (
+    <>
+      <div className="card-posters" ref={row} onScroll={onScroll}>
+        {ids.map((id) => (
+          <button key={id} onClick={() => onSelect(id)} title={BY_ID[id].title}>
+            <span><Poster src={BY_ID[id].poster || posters[id]} /></span>
+            <b>{BY_ID[id].title}</b>
+          </button>
+        ))}
+      </div>
+      {overflow && (
+        <div className="poster-dots" aria-hidden="true">
+          {ids.map((id, i) => <i key={id} className={i === Math.min(at, ids.length - 1) ? "on" : ""} />)}
+        </div>
+      )}
+    </>
+  );
+}
+
 export function Story({ onSelect }: { onSelect: (id: string | null, travel?: boolean) => void }) {
   const scroller = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
@@ -91,14 +129,7 @@ export function Story({ onSelect }: { onSelect: (id: string | null, travel?: boo
               {c.body.map((p, k) => <p key={k}>{p}</p>)}
               <div className="card-watch">
                 <span>Watch it in</span>
-                <div className="card-posters">
-                  {c.watch.map((id) => (
-                    <button key={id} onClick={() => onSelect(id)} title={BY_ID[id].title}>
-                      <span><Poster src={BY_ID[id].poster || posters[id]} /></span>
-                      <b>{BY_ID[id].title}</b>
-                    </button>
-                  ))}
-                </div>
+                <PosterRow ids={c.watch} posters={posters} onSelect={onSelect} />
               </div>
             </div>
           </article>
