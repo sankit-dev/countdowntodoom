@@ -3,8 +3,15 @@ import { track } from "../analytics";
 import { BY_ID, DOOM_ID, TIER_LABEL, TITLES, Title, fmtMin, parentsOf, tierOf } from "../data";
 import type { Tier } from "../App";
 import { Poster, usePosters } from "../posters";
+import { useGlow } from "../glow";
 import { doomReady } from "../doomReady";
 import { RELEASE, useRegion } from "../release";
+
+/** Experimental poster glow (see src/glow.ts); renders nothing unless ?glow is on. */
+function Glow({ id, src }: { id: string; src?: string }) {
+  const c = useGlow(id, src);
+  return c ? <span className="glow" style={{ ["--glow" as string]: c }} aria-hidden="true" /> : null;
+}
 
 const ShareCard = lazy(() => import("./ShareCard"));
 
@@ -348,6 +355,7 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
               onMouseLeave={leave}
               onClick={() => onSelect(selected === t.id ? null : t.id)}
             >
+              <Glow id={t.id} src={t.poster || posters[t.id]} />
               <span className="art">
                 <i>{t.year}</i>
                 <em className="num" aria-label={`Watch number ${i + 1}`}>{i + 1}</em>
