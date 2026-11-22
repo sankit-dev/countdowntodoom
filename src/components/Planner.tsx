@@ -1,4 +1,4 @@
-import { Suspense, lazy, useMemo, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { track } from "../analytics";
 import { daysToDoom } from "../App";
 import { RELEASE, useRegion } from "../release";
@@ -22,7 +22,11 @@ export function Planner({ watched, onSelect }: Props) {
   const left = daysToDoom(region);
   const ready = useMemo(() => doomReady(watched), [watched]);
   const [sharing, setSharing] = useState(false);
-  const [days, setDays] = useState(left > 0 ? Math.min(left, 120) : 14);
+  // You can only plan up to release day: the slider tops out at the days actually left.
+  // (After release it still works for catching up later, up to 60 days.)
+  const maxDays = left > 0 ? left : 60;
+  const [days, setDays] = useState(left > 0 ? left : 14);
+  useEffect(() => { setDays((d) => Math.min(d, maxDays)); }, [maxDays]);
   const [hours, setHours] = useState(2.5);
   const [includeSeries, setIncludeSeries] = useState(true);
   const [order, setOrder] = useState<"release" | "story">("release");
@@ -70,10 +74,16 @@ export function Planner({ watched, onSelect }: Props) {
               <label htmlFor="days">Days you've got</label>
               <output htmlFor="days">{days}</output>
             </div>
-            <input id="days" type="range" min={1} max={120} value={days} onChange={(e) => setDays(+e.target.value)}
-              style={{ ["--fill" as string]: `${((days - 1) / 119) * 100}%` }} />
-            {left > 0 && left <= 120 && days !== left && (
-              <button type="button" className="use-all" onClick={() => setDays(left)}>Use all {left} days till release</button>
+            <input id="days" type="range" min={1} max={maxDays} value={days} onChange={(e) => setDays(+e.target.value)}
+              disabled={maxDays <= 1}
+              style={{ ["--fill" as string]: `${maxDays > 1 ? ((days - 1) / (maxDays - 1)) * 100 : 100}%` }} />
+            {left > 0 && (
+              <p className="ctl-hint">
+                {days === left ? `That's every day until release on ${RELEASE[region].short}.` : <>
+                  Leaves {left - days} spare {left - days === 1 ? "day" : "days"} before release.{" "}
+                  <button type="button" className="use-all" onClick={() => setDays(left)}>Use all {left}</button>
+                </>}
+              </p>
             )}
           </div>
           <div className="ctl">
