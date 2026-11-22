@@ -2,10 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { track } from "../analytics";
 
 // The looping throne video behind the hero and the countdown.
-// Only on larger screens (laptop/desktop): phones keep the still image, which
-// saves their data. Also skipped for people who ask for reduced motion.
+// Only on larger screens (laptop/desktop). Phones keep the still image, which
+// saves their data, but still get the same sound: just the audio track, which
+// isn't downloaded until someone taps "Sound". Reduced-motion visitors get the
+// audio-only version too.
 //
-// It always starts muted — browsers block sound until the visitor interacts —
+// It always starts muted (browsers block sound until the visitor interacts)
 // and the "Sound" button turns the audio on.
 const QUERY = "(min-width: 900px) and (prefers-reduced-motion: no-preference)";
 
@@ -13,7 +15,9 @@ export function LoopVideo({ base, className }: { base: string; className: string
   const [want, setWant] = useState(() => typeof window !== "undefined" && window.matchMedia(QUERY).matches);
   const [ready, setReady] = useState(false);
   const [sound, setSound] = useState(false);
-  const ref = useRef<HTMLVideoElement>(null);
+  const video = useRef<HTMLVideoElement>(null);
+  const audio = useRef<HTMLAudioElement>(null);
+  const btn = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const mq = window.matchMedia(QUERY);
@@ -22,47 +26,72 @@ export function LoopVideo({ base, className }: { base: string; className: string
     return () => mq.removeEventListener("change", on);
   }, []);
 
-  // Pause while scrolled out of view (this also stops the sound).
+  // Without the video there's nothing to wait for: show the button straight away.
+  useEffect(() => { if (!want) setReady(true); }, [want]);
+
+  // Pause while scrolled out of view or the tab is hidden (this also stops the sound).
   useEffect(() => {
-    const v = ref.current;
-    if (!v) return;
-    const io = new IntersectionObserver(([e]) => (e.isIntersecting ? v.play().catch(() => {}) : v.pause()));
-    io.observe(v);
-    return () => io.disconnect();
-  }, [want]);
+    const el = want ? video.current : btn.current;
+    if (!el) return;
+    let visible = true;
+    const sync = () => {
+      const on = visible && !document.hidden;
+      if (want) {
+        const v = video.current!;
+        on ? v.play().catch(() => {}) : v.pause();
+      } else {
+        const a = audio.current!;
+        if (!on) a.pause();
+        else if (sound) a.play().catch(() => {});
+      }
+    };
+    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; sync(); });
+    io.observe(el);
+    document.addEventListener("visibilitychange", sync);
+    return () => { io.disconnect(); document.removeEventListener("visibilitychange", sync); };
+  }, [want, sound]);
 
   const toggle = () => {
-    const v = ref.current;
-    if (!v) return;
     const on = !sound;
-    v.muted = !on;
-    v.volume = 0.8;
-    if (on) {
-      if (v.paused) v.play().catch(() => {});
-      track("sound_on");
+    if (want) {
+      const v = video.current;
+      if (!v) return;
+      v.muted = !on;
+      v.volume = 0.8;
+      if (on && v.paused) v.play().catch(() => {});
+    } else {
+      const a = audio.current;
+      if (!a) return;
+      a.volume = 0.8;
+      on ? a.play().catch(() => setSound(false)) : a.pause();
     }
+    if (on) track("sound_on", { mode: want ? "video" : "audio" });
     setSound(on);
   };
 
-  if (!want) return null;
   return (
     <>
-      <video
-        ref={ref}
-        className={`${className}${ready ? " ready" : ""}`}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        poster={`${base}hero.jpg`}
-        onPlaying={() => setReady(true)}
-        aria-hidden="true"
-      >
-        <source src={`${base}doom-loop.webm`} type="video/webm" />
-        <source src={`${base}doom-loop.mp4`} type="video/mp4" />
-      </video>
+      {want ? (
+        <video
+          ref={video}
+          className={`${className}${ready ? " ready" : ""}`}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          poster={`${base}hero.jpg`}
+          onPlaying={() => setReady(true)}
+          aria-hidden="true"
+        >
+          <source src={`${base}doom-loop.webm`} type="video/webm" />
+          <source src={`${base}doom-loop.mp4`} type="video/mp4" />
+        </video>
+      ) : (
+        <audio ref={audio} src={`${base}doom-loop.m4a`} loop preload="none" />
+      )}
       <button
+        ref={btn}
         className={`sound${sound ? " on" : ""}${ready ? " ready" : ""}`}
         onClick={toggle}
         aria-pressed={sound}

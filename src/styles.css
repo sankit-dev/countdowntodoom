@@ -104,7 +104,7 @@ h1, h2, h3, h4, p { margin: 0; }
 .hero {
   position: relative; min-height: min(100svh, 900px); overflow: hidden;
   display: grid; place-items: center; padding: calc(var(--nav-h) + 24px) 20px 64px;
-  text-align: center; isolation: isolate; background: #000;
+  text-align: center; isolation: isolate; background: var(--bg);
 }
 .hero-bg, .hero-vignette { position: absolute; inset: 0; z-index: -1; }
 /* The looping video sits over the still and fades in once it is actually playing. */
@@ -112,15 +112,16 @@ h1, h2, h3, h4, p { margin: 0; }
 .hero-video { filter: brightness(0.58) contrast(1.05); }
 .cd-video { filter: brightness(0.8); }
 .hero-video.ready, .cd-video.ready { opacity: 1; }
-/* Sound toggle for the background video (laptops and desktops only — phones have no video). */
+/* Sound toggle for the background video. Phones have no video but get the same sound. */
 .sound { position: absolute; z-index: 3; left: 22px; bottom: 22px; display: flex; align-items: center; gap: 9px; padding: 10px 14px 10px 12px;
   font: 700 13px/1 var(--body); color: rgba(255, 255, 255, 0.85);
   background: rgba(6, 8, 7, 0.55); border: 1px solid rgba(255, 255, 255, 0.28);
   opacity: 0; transition: opacity 0.8s 0.6s, background 0.2s, color 0.2s, border-color 0.2s; }
 .sound.ready { opacity: 1; }
-.sound:hover { background: rgba(255, 255, 255, 0.9); color: #06120a; }
+.sound:active { transform: scale(0.96); }
+@media (hover: hover) { .sound:hover { background: rgba(255, 255, 255, 0.9); color: #06120a; } }
 .sound.on { color: var(--doom); border-color: rgba(141, 255, 106, 0.6); }
-.sound.on:hover { color: #06120a; background: var(--doom); }
+@media (hover: hover) { .sound.on:hover { color: #06120a; background: var(--doom); } }
 .sound .waves path { animation: wave 1.4s ease-in-out infinite; }
 .sound .waves path:nth-child(2) { animation-delay: 0.2s; }
 @keyframes wave { 50% { opacity: 0.35; } }
@@ -131,7 +132,7 @@ h1, h2, h3, h4, p { margin: 0; }
   filter: brightness(0.62) contrast(1.05);
   animation: bgIn 3.2s ease-out both, bgPush 16s cubic-bezier(0.2, 0.6, 0.2, 1) both;
 }
-.hero-vignette { background: radial-gradient(ellipse at 50% 42%, transparent 0 30%, rgba(0, 0, 0, 0.62) 78%), linear-gradient(rgba(0, 0, 0, 0.5), transparent 22%, transparent 55%, var(--bg) 96%); }
+.hero-vignette { background: radial-gradient(ellipse at 50% 42%, transparent 0 30%, rgba(0, 0, 0, 0.62) 78%), linear-gradient(rgba(0, 0, 0, 0.5), transparent 22%, transparent 55%, var(--bg) 100%); }
 @keyframes bgIn { from { opacity: 0; } }
 @keyframes bgPush { from { transform: scale(1.14); } to { transform: scale(1); } }
 @keyframes rise { from { opacity: 0; transform: translateY(26px); } }
@@ -575,6 +576,7 @@ h1, h2, h3, h4, p { margin: 0; }
   .dots { gap: 4px; min-width: 0; }
   .dots button { width: 14px; }
   .hero { min-height: 0; padding: calc(var(--nav-h) + 40px) 16px 40px; }
+  .hero .sound { left: auto; bottom: auto; right: 12px; top: calc(var(--nav-h) + 10px); padding: 8px 11px 8px 9px; font-size: 12px; }
   .hero-body { gap: 20px; }
   .lede { font-size: 16px; }
   .count { gap: 12px; }
@@ -590,6 +592,17 @@ h1, h2, h3, h4, p { margin: 0; }
   .drawer-head { grid-template-columns: 76px minmax(0, 1fr); gap: 14px; }
   .drawer-poster { width: 76px; }
 }
+
+/* Scroll motion (see src/motion.ts). Only active when JS has set data-motion,
+   so nothing is ever hidden without the script that shows it. */
+:root { --ease-out: cubic-bezier(0.16, 1, 0.3, 1); }
+[data-motion] [data-reveal] { opacity: 0; transform: translateY(28px); transition: opacity 0.9s var(--ease-out), transform 1s var(--ease-out); transition-delay: calc(var(--i, 0) * 70ms); }
+[data-motion] [data-reveal="side"] { transform: translateX(48px); }
+[data-motion] [data-reveal="title"] { transform: translateY(0.5em); clip-path: inset(0 0 100% 0); transition: opacity 0.6s var(--ease-out), transform 1s var(--ease-out), clip-path 1s var(--ease-out); }
+[data-motion] [data-reveal][data-in] { opacity: 1; transform: none; clip-path: inset(0 0 -0.2em 0); }
+/* Hero depth: --hero-p goes 0 -> 1 as the hero scrolls away. */
+.hero-bg, .hero-video { translate: 0 calc(var(--hero-p, 0) * 22%); }
+.hero-body { opacity: clamp(0, (1 - var(--hero-p, 0)) * 2.6, 1); translate: 0 calc(var(--hero-p, 0) * -60px); scale: calc(1 - var(--hero-p, 0) * 0.06); will-change: opacity, translate; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

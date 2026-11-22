@@ -11,6 +11,7 @@ import { Story } from "./components/Story";
 import { Support } from "./components/Support";
 import { Sigil } from "./components/Sigil";
 import { PosterProvider } from "./posters";
+import { useScrollMotion } from "./motion";
 
 export type Tier = "all" | "recommended" | "essential";
 
@@ -33,6 +34,7 @@ export default function App() {
   const [watched, setWatched] = useState<Set<string>>(loadWatched);
   const [tier, setTier] = useState<Tier>("essential");
   const [support, setSupport] = useState(false);
+  useScrollMotion();
 
   useEffect(() => {
     try {
