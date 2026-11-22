@@ -12,6 +12,7 @@ interface Props {
 }
 
 const dayFmt = new Intl.DateTimeFormat(undefined, { weekday: "short", day: "numeric", month: "short" });
+const shortFmt = new Intl.DateTimeFormat(undefined, { weekday: "short", day: "numeric" });
 
 export function Planner({ watched, onSelect }: Props) {
   const posters = usePosters();
@@ -56,7 +57,21 @@ export function Planner({ watched, onSelect }: Props) {
       ? "It's tight, so this is the shortest list that still gets you ready."
       : "That's not enough time for even one title. Add a bit more per day.";
 
+  // Each title sits under the day it starts on.
+  const groups = useMemo(() => {
+    const out: { day: number; items: typeof entries }[] = [];
+    for (const en of entries) {
+      const day = en.parts[0].day;
+      const g = out[out.length - 1];
+      if (g && g.day === day) g.items.push(en);
+      else out.push({ day, items: [en] });
+    }
+    return out;
+  }, [entries]);
+  const pad2 = (d: number) => String(d + 1).padStart(2, "0");
+
   const today = new Date(now);
+  const shortOf = (i: number) => shortFmt.format(new Date(today.getFullYear(), today.getMonth(), today.getDate() + i));
   const dateOf = (i: number) => dayFmt.format(new Date(today.getFullYear(), today.getMonth(), today.getDate() + i));
 
   return (
@@ -122,50 +137,48 @@ export function Planner({ watched, onSelect }: Props) {
           )}
           <p className="verdict">{verdict}</p>
 
-          <ol className="listing">
-            {entries.map((en) => {
-              const t = BY_ID[en.id];
-              const lane = LANE_BY_ID[t.lane];
-              const first = en.parts[0].day, last = en.parts[en.parts.length - 1].day;
-              const multi = en.parts.length > 1;
-              const pad = (d: number) => String(d + 1).padStart(2, "0");
+          {/* Grouped by day: one header per day, then a compact row per title. A long
+              title split across days sits under the day it starts, with its span noted. */}
+          <ol className="days">
+            {groups.map(({ day, items }) => {
+              const mins = plan.days[day].reduce((n, sl) => n + sl.minutes, 0);
               return (
-                <li key={`${en.id}-${first}`} className={`item ${tierOf(t) === "essential" ? "item-big" : "item-small"}`} style={{ ["--c" as string]: lane.color }}>
-                  <button onClick={() => onSelect(t.id)}>
-                    <span className="item-art"><Poster src={t.poster || posters[t.id]} /></span>
-                    <span className="item-body">
-                      <span className="item-day">
-                        <b>{multi ? `Days ${pad(first)} to ${pad(last)}` : `Day ${pad(first)}`}</b>
-                        {multi ? `${dateOf(first)} – ${dateOf(last)}` : dateOf(first)}
-                      </span>
-                      <span className="item-title">{t.title}</span>
-                      <span className="item-meta">
-                        <span>{t.year}</span>
-                        <span>{t.kind === "film" ? "Film" : t.kind === "series" ? "Series" : "Special"}</span>
-                        <span>{fmtMin(t.min)}</span>
-                        <i>{TIER_LABEL[tierOf(t)]}</i>
-                      </span>
-                      {multi && (
-                        <span className="item-split">
-                          Split over {en.parts.length} days: {en.parts.map((p) => `Day ${pad(p.day)} ${fmtMin(p.minutes)}`).join(" · ")}
-                        </span>
-                      )}
-                      <span className="item-why">{t.why}</span>
-                    </span>
-                  </button>
+                <li key={day} className="day">
+                  <div className="day-head">
+                    <small>Day</small>
+                    <b>{pad2(day)}</b>
+                    <span title={dateOf(day)}>{shortOf(day)}</span>
+                    {items.length > 1 && <em>{fmtMin(mins)}</em>}
+                  </div>
+                  <ul className="day-list">
+                    {items.map((en) => {
+                      const t = BY_ID[en.id];
+                      const tier = tierOf(t);
+                      const last = en.parts[en.parts.length - 1].day;
+                      return (
+                        <li key={en.id}>
+                          <button className="row" data-tier={tier} onClick={() => onSelect(t.id)}>
+                            <span className="row-art"><Poster src={t.poster || posters[t.id]} /></span>
+                            <span className="row-body">
+                              <span className="row-title">{t.title}</span>
+                              <span className="row-meta">
+                                {t.kind === "film" ? "Film" : t.kind === "series" ? "Series" : "Special"} · {fmtMin(t.min)}
+                                <i>{TIER_LABEL[tier]}</i>
+                              </span>
+                              {en.parts.length > 1 && <span className="row-split">Spread over days {pad2(day)} to {pad2(last)}</span>}
+                            </span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
                 </li>
               );
             })}
             {plan.picked.length > 0 && (
-              <li className="item item-doom" style={{ ["--c" as string]: "var(--doom)" }}>
-                <div>
-                  <span className="item-art"><Poster src={posters.doomsday} /></span>
-                  <span className="item-body">
-                    <span className="item-day"><b>Then</b>{RELEASE[region].date}</span>
-                    <span className="item-title">Avengers: Doomsday</span>
-                    <span className="item-why">You're ready. Go book your tickets.</span>
-                  </span>
-                </div>
+              <li className="day day-doom">
+                <div className="day-head"><small>Out</small><b>{RELEASE[region].d}</b><span>Dec</span></div>
+                <p className="day-doom-line">Avengers: Doomsday. You're ready, go book your tickets.</p>
               </li>
             )}
           </ol>
