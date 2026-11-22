@@ -225,7 +225,13 @@ export const LANE_BY_ID = Object.fromEntries(LANES.map((l) => [l.id, l])) as Rec
 >;
 
 export const tierOf = (x: Title) => (x.imp >= 7 ? "essential" : x.imp >= 4 ? "recommended" : "deep");
-export const TIER_LABEL = { essential: "Essential", recommended: "Recommended", deep: "Deep cut" } as const;
+export const TIER_LABEL = { essential: "Essential", recommended: "Recommended", deep: "Optional" } as const;
+/** What each tier means, in one line, for people who don't know the jargon. */
+export const TIER_INFO = {
+  essential: "Must watch. Doomsday picks up straight from this.",
+  recommended: "Worth it. You'll get more out of Doomsday, but you won't be lost without it.",
+  deep: "Skip it if you're short on time. Nice extra context, nothing more.",
+} as const;
 
 export const fmtMin = (m: number) => {
   const h = Math.floor(m / 60);

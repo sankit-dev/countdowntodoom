@@ -302,11 +302,14 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
       )}
 
       {/* What the coloured bar under each poster means. */}
-      <ul className="tier-key" aria-label="Colour key">
-        {(["essential", "recommended", "deep"] as const).map((k) => (
-          <li key={k} data-tier={k}><i />{TIER_LABEL[k]}</li>
-        ))}
-      </ul>
+      <div className="tier-key">
+        <ul aria-label="Colour key">
+          {(["essential", "recommended", "deep"] as const).map((k) => (
+            <li key={k} data-tier={k}><i />{TIER_LABEL[k]}</li>
+          ))}
+        </ul>
+        <p>The bar under each poster shows how much it matters for Doomsday, out of 10. Tap a poster to see why.</p>
+      </div>
 
       <div
         className="tree-stage"

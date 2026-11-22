@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { track } from "../analytics";
 import {
-  BY_ID, DOOM_ID, LANE_BY_ID, PHASES, TIER_LABEL, fmtMin, parentsOf, roadToDoom, tierOf, slugOf,
+  BY_ID, DOOM_ID, LANE_BY_ID, PHASES, TIER_INFO, TIER_LABEL, fmtMin, parentsOf, roadToDoom, tierOf, slugOf,
 } from "../data";
 import { PLOT } from "../story";
 import { embedUrl, hasTrailers, searchUrl, useTrailer } from "../tmdb";
@@ -58,9 +58,9 @@ export function Drawer({ id, watched, toggleWatched, onSelect, onClose }: Props)
     <aside className={`drawer${id ? " open" : ""}`} style={{ ["--c" as string]: isDoom ? "var(--doom)" : lane.color }} aria-hidden={!id}>
       <button className="drawer-x" onClick={onClose} aria-label="Close">×</button>
       <div className="drawer-scroll" key={t.id}>
-        <div className="drawer-head">
-          <Poster className="drawer-poster" src={t.poster || posters[t.id]} />
-          <div>
+        <div className="drawer-hero">
+          <Poster className="drawer-hero-img" src={t.poster || posters[t.id]} />
+          <div className="drawer-hero-text">
             <p className="drawer-lane">{isDoom ? "The big one" : lane.name}</p>
             <h3>{t.title}</h3>
           </div>
@@ -80,6 +80,7 @@ export function Drawer({ id, watched, toggleWatched, onSelect, onClose }: Props)
               {Array.from({ length: 10 }, (_, i) => <i key={i} className={i < t.imp ? "on" : ""} />)}
             </div>
             <span>{TIER_LABEL[tierOf(t)]} <small>{t.imp}/10</small></span>
+            <p className="weight-info">{TIER_INFO[tierOf(t)]}</p>
           </div>
         )}
 
