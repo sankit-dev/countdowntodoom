@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useScrollLock } from "../scrollLock";
 import qrcode from "qrcode-generator";
 import { DODO_LINK, WALLETS } from "../support";
 
@@ -35,6 +36,7 @@ export function Support({ open, onClose }: { open: boolean; onClose: () => void 
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
+  useScrollLock(open);
   if (!open) return null;
 
   const copy = async () => {

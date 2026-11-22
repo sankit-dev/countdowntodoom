@@ -1,4 +1,5 @@
 // The share dialog: a preview of the doom-ready card and three ways to share
+import { useScrollLock } from "../scrollLock";
 // it. Loaded only when someone opens it (React.lazy), so it costs nothing on
 // first load.
 import { useEffect, useState } from "react";
@@ -7,6 +8,7 @@ import { useRegion } from "../release";
 
 export default function ShareCard({ ready, onClose }: { ready: DoomReady; onClose: () => void }) {
   const [region] = useRegion();
+  useScrollLock(true);
   const src = cardPath(ready.pct, ready.essentials, region);
   const link = shareUrl(ready, region);
   const [loaded, setLoaded] = useState(false);

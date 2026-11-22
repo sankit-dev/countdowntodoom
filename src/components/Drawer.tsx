@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useScrollLock } from "../scrollLock";
 import { track } from "../analytics";
 import {
   BY_ID, DOOM_ID, LANE_BY_ID, PHASES, TIER_INFO, TIER_LABEL, fmtMin, parentsOf, roadToDoom, tierOf, slugOf,
@@ -39,6 +40,7 @@ export function Drawer({ id, watched, toggleWatched, onSelect, onClose }: Props)
   const posters = usePosters();
   const [shown, setShown] = useState(id);
   useEffect(() => { if (id) setShown(id); }, [id]);
+  useScrollLock(!!id, "phone"); // on phones the panel covers the page, so the page mustn't scroll under it
   const t = shown ? BY_ID[shown] : null;
   if (!t) return <aside className="drawer" aria-hidden="true" />;
 

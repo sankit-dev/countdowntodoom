@@ -695,6 +695,13 @@ h1, h2, h3, h4, p { margin: 0; }
 .hero-bg, .hero-video { translate: 0 calc(var(--hero-p, 0) * 22%); }
 .hero-body { opacity: clamp(0, (1 - var(--hero-p, 0)) * 2.6, 1); translate: 0 calc(var(--hero-p, 0) * -60px); scale: calc(1 - var(--hero-p, 0) * 0.06); will-change: opacity, translate; }
 
+/* Page lock while a panel or dialog is open (src/scrollLock.ts). */
+html[data-lock="all"], html[data-lock="all"] body { overflow: hidden; }
+@media (max-width: 720px) { html[data-lock="phone"], html[data-lock="phone"] body { overflow: hidden; } }
+/* Scrolling inside a panel never spills over to the page when it hits the end. */
+.drawer-scroll, .modal, .modal-box { overscroll-behavior: contain; }
+.drawer-backdrop, .drawer-foot, .drawer-x { touch-action: none; }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition-duration: 0.01ms !important; }
