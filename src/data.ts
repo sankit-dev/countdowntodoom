@@ -126,8 +126,8 @@ export const TITLES: Title[] = [
   // ── Phase Four ───────────────────────────────────────────────────────────
   t("wandavision", "WandaVision", 2021, "series", 4, "multiverse", 350, 4, ["multiverse-of-madness", "agatha", "the-marvels", "visionquest"],
     "Wanda becomes the Scarlet Witch and Monica Rambeau gets her powers in this show."),
-  t("falcon-winter-soldier", "The Falcon and the Winter Soldier", 2021, "series", 4, "cap", 310, 7, ["brave-new-world", "thunderbolts"],
-    "Sam Wilson takes the shield. It also brings in John Walker and Valentina, and that's where the New Avengers stuff starts."),
+  t("falcon-winter-soldier", "The Falcon and the Winter Soldier", 2021, "series", 4, "cap", 310, 6, ["brave-new-world", "thunderbolts"],
+    "This is why Sam Wilson takes the shield, and it's where John Walker and Valentina first show up. Good background, but Brave New World starts with Sam already Captain America and Thunderbolts* brings both of them back, so you won't be lost without it."),
   t("loki-1", "Loki Season 1", 2021, "series", 4, "multiverse", 280, 9, ["loki-2", "quantumania", "no-way-home"],
     "The TVA, variants and the Sacred Timeline all come in here. If you watch only one show before Doomsday, make it this one."),
   t("black-widow", "Black Widow", 2021, "film", 4, "cap", 134, 5, ["hawkeye", "thunderbolts"],
