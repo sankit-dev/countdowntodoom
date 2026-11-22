@@ -1,0 +1,6 @@
+{
+  "redirects": [
+    { "source": "/title/wonder-man", "destination": "/watch-order/", "permanent": true },
+    { "source": "/title/wonder-man/", "destination": "/watch-order/", "permanent": true }
+  ]
+}

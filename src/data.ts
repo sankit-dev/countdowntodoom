@@ -192,14 +192,13 @@ export const TITLES: Title[] = [
   // ── Phase Six ────────────────────────────────────────────────────────────
   t("first-steps", "The Fantastic Four: First Steps", 2025, "film", 6, "multiverse", 115, 10, [DOOM_ID],
     "You meet Marvel's first family in their own universe, and the mid-credits scene is the first time we see Doctor Doom. Very important, watch it."),
-  t("wonder-man", "Wonder Man", 2026, "series", 6, "street", 270, 1, [],
-    "It's a Hollywood satire off to the side of the main story. Watch it if you like, Doomsday doesn't need it."),
   t("born-again-2", "Daredevil: Born Again Season 2", 2026, "series", 6, "street", 400, 2, ["brand-new-day"],
     "It's more of the fight for New York. Good if you liked season 1, but optional."),
   t("brand-new-day", "Spider-Man: Brand New Day", 2026, "film", 6, "street", 135, 8, [DOOM_ID],
     "This is the last movie before Doomsday, with Peter Parker on his own in a world that has forgotten him."),
-  t("visionquest", "VisionQuest", 2026, "series", 6, "multiverse", 360, 3, [],
+  { ...t("visionquest", "VisionQuest", 2026, "series", 6, "multiverse", 360, 3, [],
     "The newest Marvel show before Doomsday, picking Vision's story back up after WandaVision, with Ultron back too. Nice extra, but nothing says Doomsday needs it."),
+    poster: "/posters/visionquest.jpg" }, // our own copy of the official poster
 
   t(DOOM_ID, "Avengers: Doomsday", 2026, "film", 6, "avengers", 0, 10, [],
     "This is the one we're all waiting for. It's out on 17 December 2026 in India and 18 December in the US."),
@@ -216,7 +215,7 @@ export const CHRONO: string[] = [
   "love-and-thunder", "werewolf", "wakanda-forever", "ironheart", "holiday-special",
   "quantumania", "guardians-3", "secret-invasion", "the-marvels", "loki-2", "echo",
   "x-men", "x2", "days-of-future-past", "deadpool-wolverine", "agatha", "born-again-1",
-  "brave-new-world", "thunderbolts", "first-steps", "wonder-man", "born-again-2",
+  "brave-new-world", "thunderbolts", "first-steps", "born-again-2",
   "brand-new-day", "visionquest", DOOM_ID,
 ];
 

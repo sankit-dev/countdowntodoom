@@ -176,7 +176,6 @@ export const PLOT: Record<string, string> = {
   "thunderbolts": "Yelena, Bucky, Red Guardian, Ghost and U.S. Agent get thrown together against the Void, the dark side of a super-powered guy called Bob. By the end they get rebranded as the New Avengers.",
   "ironheart": "Riri Williams, a genius inventor, goes back to Chicago and joins a crew whose leader wears a cloak with a dark source.",
   "first-steps": "On a retro-future Earth in another universe, the Fantastic Four face Galactus, who wants Reed and Sue's unborn son. Doctor Doom shows up in the final scene.",
-  "wonder-man": "Simon Williams is a struggling actor going for the lead in a superhero remake, while hiding that he has powers of his own.",
   "born-again-2": "The fight for New York keeps going, with Daredevil and his friends against Mayor Fisk's city.",
   "brand-new-day": "Peter Parker is on his own now, with nobody knowing who he is, and he's Spider-Man full time in New York. It's the last movie before Doomsday.",
   "visionquest": "Vision, rebuilt after WandaVision, tries to piece together who he really is, and Ultron is back to make it harder. Eight episodes, finished in November 2026.",

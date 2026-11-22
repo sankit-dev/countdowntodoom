@@ -2,7 +2,7 @@
 //   /watch-order/          the full watch order, as an article
 //   /essentials/           what to watch if you are short on time
 //   /story/                the story so far, incl. "what is an incursion"
-//   /title/<slug>/         one page per film or series (59)
+//   /title/<slug>/         one page per film or series (58)
 // They are plain HTML (fast, readable without JavaScript) generated from the
 // same data as the app, and every one links back into the interactive site.
 import {

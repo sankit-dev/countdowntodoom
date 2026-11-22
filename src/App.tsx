@@ -18,7 +18,8 @@ export type Tier = "all" | "recommended" | "essential";
 const STORE = "rtd.watched.v1";
 const loadWatched = (): Set<string> => {
   try {
-    return new Set(JSON.parse(localStorage.getItem(STORE) || "[]"));
+    // Drop anything no longer on the list (titles do get removed, e.g. Wonder Man).
+    return new Set((JSON.parse(localStorage.getItem(STORE) || "[]") as string[]).filter((id) => BY_ID[id]));
   } catch {
     return new Set();
   }

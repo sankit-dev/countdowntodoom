@@ -63,7 +63,6 @@ export const WIKI: Record<string, string> = {
   "thunderbolts": "Thunderbolts*",
   "ironheart": "Ironheart (miniseries)",
   "first-steps": "The Fantastic Four: First Steps",
-  "wonder-man": "Wonder Man (miniseries)",
   "born-again-2": "Daredevil: Born Again season 2",
   "brand-new-day": "Spider-Man: Brand New Day",
   "visionquest": "VisionQuest",
