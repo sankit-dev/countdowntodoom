@@ -68,7 +68,8 @@ const t = (
 ): Title => ({ id, title, year, kind, phase, lane, min, imp, to, why });
 
 // Listed in release order (the mutant legacy films are slotted in where their
-// universe collides with the MCU). This order is the left-to-right order of
+// universe collides with the MCU), except that a show's seasons sit back to back
+// (Loki 1 then 2, Born Again 1 then 2): people watch them as one run. This order is the left-to-right order of
 // the map.
 export const TITLES: Title[] = [
   // ── Phase One ────────────────────────────────────────────────────────────
@@ -130,6 +131,8 @@ export const TITLES: Title[] = [
     "This is why Sam Wilson takes the shield, and it's where John Walker and Valentina first show up. Good background, but Brave New World starts with Sam already Captain America and Thunderbolts* brings both of them back, so you won't be lost without it."),
   t("loki-1", "Loki Season 1", 2021, "series", 4, "multiverse", 280, 9, ["loki-2", "quantumania", "no-way-home"],
     "The TVA, variants and the Sacred Timeline all come in here. If you watch only one show before Doomsday, make it this one."),
+  t("loki-2", "Loki Season 2", 2023, "series", 5, "multiverse", 300, 9, ["deadpool-wolverine", DOOM_ID],
+    "Loki ends up holding every timeline together by hand. He's in Doomsday, so you need to know how he got there."),
   t("black-widow", "Black Widow", 2021, "film", 4, "cap", 134, 5, ["hawkeye", "thunderbolts"],
     "You meet Yelena Belova and Red Guardian, and both of them are in Doomsday."),
   t("shang-chi", "Shang-Chi and the Legend of the Ten Rings", 2021, "film", 4, "wakanda", 132, 5, [DOOM_ID],
@@ -164,8 +167,6 @@ export const TITLES: Title[] = [
     "This wraps up the Guardians' story. You don't need it for Doomsday, but it's one of the best movies in this whole saga."),
   t("secret-invasion", "Secret Invasion", 2023, "series", 5, "cosmic", 270, 1, ["the-marvels"],
     "It's Nick Fury against the Skrulls. Skip it if you're short on time, you won't miss anything for Doomsday."),
-  t("loki-2", "Loki Season 2", 2023, "series", 5, "multiverse", 300, 9, ["deadpool-wolverine", DOOM_ID],
-    "Loki ends up holding every timeline together by hand. He's in Doomsday, so you need to know how he got there."),
   t("the-marvels", "The Marvels", 2023, "film", 5, "cosmic", 105, 5, [DOOM_ID],
     "The ending drops Monica Rambeau in a universe with the X-Men's Beast, and Beast is in Doomsday."),
   t("echo", "Echo", 2024, "series", 5, "street", 200, 1, ["born-again-1"],
@@ -184,6 +185,8 @@ export const TITLES: Title[] = [
     "This is Sam Wilson's first movie as Captain America, and he leads an Avengers team into Doomsday."),
   t("born-again-1", "Daredevil: Born Again Season 1", 2025, "series", 5, "street", 450, 3, ["born-again-2"],
     "It's Matt Murdock against Mayor Fisk. Street level stuff, but it sets the mood for New York."),
+  t("born-again-2", "Daredevil: Born Again Season 2", 2026, "series", 6, "street", 400, 2, ["brand-new-day"],
+    "It's more of the fight for New York. Good if you liked season 1, but optional."),
   t("thunderbolts", "Thunderbolts*", 2025, "film", 5, "cap", 127, 9, ["first-steps", DOOM_ID],
     "Yelena, Bucky, Red Guardian, Ghost, U.S. Agent and Sentry become the New Avengers, and the last scene points straight at the Fantastic Four. Don't skip this one."),
   t("ironheart", "Ironheart", 2025, "series", 5, "wakanda", 280, 2, [],
@@ -192,8 +195,6 @@ export const TITLES: Title[] = [
   // ── Phase Six ────────────────────────────────────────────────────────────
   t("first-steps", "The Fantastic Four: First Steps", 2025, "film", 6, "multiverse", 115, 10, [DOOM_ID],
     "You meet Marvel's first family in their own universe, and the mid-credits scene is the first time we see Doctor Doom. Very important, watch it."),
-  t("born-again-2", "Daredevil: Born Again Season 2", 2026, "series", 6, "street", 400, 2, ["brand-new-day"],
-    "It's more of the fight for New York. Good if you liked season 1, but optional."),
   t("brand-new-day", "Spider-Man: Brand New Day", 2026, "film", 6, "street", 135, 8, [DOOM_ID],
     "This is the last movie before Doomsday, with Peter Parker on his own in a world that has forgotten him."),
   { ...t("visionquest", "VisionQuest", 2026, "series", 6, "multiverse", 360, 3, [],
@@ -209,13 +210,13 @@ export const CHRONO: string[] = [
   "first-avenger", "captain-marvel", "iron-man", "iron-man-2", "incredible-hulk", "thor",
   "avengers", "iron-man-3", "dark-world", "winter-soldier", "guardians", "guardians-2",
   "age-of-ultron", "ant-man", "civil-war", "black-widow", "black-panther", "homecoming",
-  "doctor-strange", "ragnarok", "ant-man-wasp", "infinity-war", "endgame", "loki-1",
+  "doctor-strange", "ragnarok", "ant-man-wasp", "infinity-war", "endgame", "loki-1", "loki-2",
   "wandavision", "falcon-winter-soldier", "shang-chi", "far-from-home", "eternals",
   "no-way-home", "multiverse-of-madness", "hawkeye", "moon-knight", "she-hulk", "ms-marvel",
   "love-and-thunder", "werewolf", "wakanda-forever", "ironheart", "holiday-special",
-  "quantumania", "guardians-3", "secret-invasion", "the-marvels", "loki-2", "echo",
-  "x-men", "x2", "days-of-future-past", "deadpool-wolverine", "agatha", "born-again-1",
-  "brave-new-world", "thunderbolts", "first-steps", "born-again-2",
+  "quantumania", "guardians-3", "secret-invasion", "the-marvels", "echo",
+  "x-men", "x2", "days-of-future-past", "deadpool-wolverine", "agatha", "born-again-1", "born-again-2",
+  "brave-new-world", "thunderbolts", "first-steps",
   "brand-new-day", "visionquest", DOOM_ID,
 ];
 
