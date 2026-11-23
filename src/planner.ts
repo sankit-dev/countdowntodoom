@@ -6,6 +6,8 @@ export interface PlanOptions {
   includeSeries: boolean;
   order: "release" | "story";
   watched: Set<string>;
+  /** Hand-picked titles ("I'll choose"). Plans exactly these, watched or not. */
+  only?: string[];
 }
 
 export interface Slot {
@@ -62,8 +64,10 @@ export function buildPlan(o: PlanOptions): Plan {
   const index = o.order === "story" ? STORY_INDEX : RELEASE_INDEX;
   const sortView = (a: Title, b: Title) => index[a.id] - index[b.id];
 
-  const pool = TITLES.filter(
-    (x) => x.id !== DOOM_ID && !o.watched.has(x.id) && (o.includeSeries || x.kind !== "series")
+  const chosen = o.only ? new Set(o.only) : null;
+  const pool = TITLES.filter((x) =>
+    x.id !== DOOM_ID &&
+    (chosen ? chosen.has(x.id) : !o.watched.has(x.id) && (o.includeSeries || x.kind !== "series"))
   );
 
   // Most important first; among equals, the more recent one (fresher set-up).

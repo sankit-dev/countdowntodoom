@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { daysToDoom } from "../App";
 import { RELEASE, useNow, useRegion } from "../release";
-import { BY_ID, LANE_BY_ID, TIER_LABEL, fmtMin, tierOf } from "../data";
+import { BY_ID, CHRONO, DOOM_ID, LANE_BY_ID, TIER_LABEL, TITLES, fmtMin, tierOf } from "../data";
+import { track } from "../analytics";
 import { buildPlan } from "../planner";
 
 import { Poster, usePosters } from "../posters";
@@ -14,6 +15,19 @@ interface Props {
 const dayFmt = new Intl.DateTimeFormat(undefined, { weekday: "short", day: "numeric", month: "short" });
 const shortFmt = new Intl.DateTimeFormat(undefined, { weekday: "short", day: "numeric" });
 
+// A shared plan arrives as /?plan=id,id&d=6&h=3#planner. Read it once on load.
+const fromLink = (() => {
+  try {
+    const q = new URLSearchParams(location.search);
+    const ids = (q.get("plan") || "").split(",").filter((id) => BY_ID[id] && id !== DOOM_ID);
+    if (!ids.length) return null;
+    const d = Number(q.get("d")), h = Number(q.get("h"));
+    return { ids, days: d > 0 ? d : null, hours: h >= 0.5 && h <= 10 ? Math.round(h * 2) / 2 : null, story: q.get("o") === "story" };
+  } catch { return null; }
+})();
+const MINE = "rtd.myplan";
+const loadMine = (): string[] => { try { return JSON.parse(localStorage.getItem(MINE) || "[]").filter((id: string) => BY_ID[id]); } catch { return []; } };
+
 export function Planner({ watched, onSelect }: Props) {
   const posters = usePosters();
   const [region] = useRegion();
@@ -22,18 +36,41 @@ export function Planner({ watched, onSelect }: Props) {
   // You can only plan up to release day: the slider tops out at the days actually left.
   // (After release it still works for catching up later, up to 60 days.)
   const maxDays = left > 0 ? left : 60;
-  const [days, setDays] = useState(left > 0 ? left : 14);
+  const [days, setDays] = useState(fromLink?.days ? Math.min(fromLink.days, maxDays) : left > 0 ? left : 14);
   // Until you move the slider yourself it follows the days left, so it ticks
   // down with the countdown. Once you've picked a number it is only capped.
-  const [picked, setPicked] = useState(false);
+  const [picked, setPicked] = useState(!!fromLink?.days);
   useEffect(() => { setDays((d) => (picked ? Math.min(d, maxDays) : left > 0 ? left : Math.min(d, maxDays))); }, [maxDays, left, picked]);
-  const [hours, setHours] = useState(2.5);
+  const [hours, setHours] = useState(fromLink?.hours ?? 2.5);
   const [includeSeries, setIncludeSeries] = useState(true);
-  const [order, setOrder] = useState<"release" | "story">("release");
+  const [order, setOrder] = useState<"release" | "story">(fromLink?.story ? "story" : "release");
+  // "Pick for me" (by importance) or "I'll choose" (your own list, e.g. a rewatch).
+  const [mode, setMode] = useState<"auto" | "mine">(fromLink ? "mine" : "auto");
+  const [mine, setMine] = useState<string[]>(() => fromLink?.ids ?? loadMine());
+  useEffect(() => { try { localStorage.setItem(MINE, JSON.stringify(mine)); } catch { /* fine */ } }, [mine]);
+  useEffect(() => { if (fromLink) { track("shared_plan_opened", { titles: fromLink.ids.length }); document.getElementById("planner")?.scrollIntoView(); } }, []);
+  const toggleMine = (id: string) => setMine((m) => (m.includes(id) ? m.filter((x) => x !== id) : [...m, id]));
+  const choices = useMemo(() => {
+    const all = TITLES.filter((t) => t.id !== DOOM_ID);
+    if (order === "release") return all;
+    const ix = Object.fromEntries(CHRONO.map((id, i) => [id, i]));
+    return [...all].sort((a, b) => ix[a.id] - ix[b.id]);
+  }, [order]);
+  const [copied, setCopied] = useState(false);
+  const sharePlan = async () => {
+    const q = new URLSearchParams({ plan: mine.join(","), d: String(days), h: String(hours) });
+    if (order === "story") q.set("o", "story");
+    const url = `${location.origin}${location.pathname}?${q}#planner`;
+    track("plan_shared", { titles: mine.length });
+    try {
+      if (navigator.share) { await navigator.share({ title: "My Doomsday rewatch", text: `My ${mine.length}-title rewatch before Avengers: Doomsday`, url }); return; }
+    } catch { /* cancelled: fall back to copying */ }
+    try { await navigator.clipboard.writeText(url); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch { prompt("Copy this link", url); }
+  };
 
   const plan = useMemo(
-    () => buildPlan({ days, hoursPerDay: hours, includeSeries, order, watched }),
-    [days, hours, includeSeries, order, watched]
+    () => buildPlan({ days, hoursPerDay: hours, includeSeries, order, watched, only: mode === "mine" ? mine : undefined }),
+    [days, hours, includeSeries, order, watched, mode, mine]
   );
 
   const usedDays = plan.days.filter((d) => d.length).length;
@@ -48,8 +85,11 @@ export function Planner({ watched, onSelect }: Props) {
     );
     return out;
   }, [plan]);
-  const verdict =
-    plan.skipped.length === 0
+  const verdict = mode === "mine"
+    ? !mine.length ? "Tick the titles you want in your plan."
+      : plan.skipped.length ? `${plan.skipped.length} of your ${mine.length} picks don't fit. Add a day or more hours.`
+      : `All ${mine.length} fit${usedDays ? ` in ${usedDays} ${usedDays === 1 ? "day" : "days"}` : ""}.`
+    : plan.skipped.length === 0
       ? "You've got time for everything. Nice."
       : plan.essentialsPicked === plan.essentialsTotal
       ? `All ${plan.essentialsTotal} essentials fit, plus some extra good ones.`
@@ -83,6 +123,10 @@ export function Planner({ watched, onSelect }: Props) {
 
       <div className="planner-grid">
         <form className="controls" onSubmit={(e) => e.preventDefault()}>
+          <div className="seg mode-seg" role="group" aria-label="How to choose titles">
+            <button type="button" className={mode === "auto" ? "on" : ""} aria-pressed={mode === "auto"} onClick={() => { setMode("auto"); track("plan_mode", { mode: "auto" }); }}>Pick for me</button>
+            <button type="button" className={mode === "mine" ? "on" : ""} aria-pressed={mode === "mine"} onClick={() => { setMode("mine"); track("plan_mode", { mode: "mine" }); }}>I'll choose</button>
+          </div>
           <div className="ctl">
             <div className="ctl-head">
               <label htmlFor="days">Days you've got</label>
@@ -115,15 +159,45 @@ export function Planner({ watched, onSelect }: Props) {
               <button type="button" className={order === "story" ? "on" : ""} onClick={() => setOrder("story")}>Story order</button>
             </div>
           </div>
-          <label className="ctl ctl-switch" htmlFor="series">
-            <span className="ctl-label">Include shows</span>
-            <input id="series" type="checkbox" role="switch" checked={includeSeries} onChange={(e) => setIncludeSeries(e.target.checked)} />
-          </label>
-          <p className="ctl-note">
-            {watched.size
-              ? `${watched.size} title${watched.size === 1 ? "" : "s"} you've watched ${watched.size === 1 ? "is" : "are"} left out.`
-              : "Anything you tick as watched on the watch order gets left out here."}
-          </p>
+          {mode === "auto" ? (
+            <>
+              <label className="ctl ctl-switch" htmlFor="series">
+                <span className="ctl-label">Include shows</span>
+                <input id="series" type="checkbox" role="switch" checked={includeSeries} onChange={(e) => setIncludeSeries(e.target.checked)} />
+              </label>
+              <p className="ctl-note">
+                {watched.size
+                  ? `${watched.size} title${watched.size === 1 ? "" : "s"} you've watched ${watched.size === 1 ? "is" : "are"} left out.`
+                  : "Anything you tick as watched on the watch order gets left out here."}
+              </p>
+            </>
+          ) : (
+            <div className="ctl picker">
+              <div className="ctl-head">
+                <span className="ctl-label">Your titles</span>
+                <output>{mine.length} picked</output>
+              </div>
+              <div className="picker-quick">
+                <button type="button" onClick={() => setMine(TITLES.filter((t) => t.id !== DOOM_ID && t.imp >= 7).map((t) => t.id))}>All essentials</button>
+                <button type="button" onClick={() => setMine([])} disabled={!mine.length}>Clear</button>
+              </div>
+              <ul className="picker-list">
+                {choices.map((t) => {
+                  const on = mine.includes(t.id);
+                  return (
+                    <li key={t.id}>
+                      <label className={`pick${on ? " on" : ""}`} data-tier={tierOf(t)}>
+                        <input type="checkbox" checked={on} onChange={() => toggleMine(t.id)} />
+                        <span className="pick-art"><Poster src={t.poster || posters[t.id]} /></span>
+                        <span className="pick-body"><b>{t.title}</b><small>{t.year} · {fmtMin(t.min)}<i /></small></span>
+                      </label>
+                    </li>
+                  );
+                })}
+              </ul>
+              <p className="ctl-note">Watched titles are included here, so it works for a rewatch too.</p>
+            </div>
+          )}
         </form>
 
         <div className="results">
@@ -136,6 +210,9 @@ export function Planner({ watched, onSelect }: Props) {
             </p>
           )}
           <p className="verdict">{verdict}</p>
+          {mode === "mine" && mine.length > 0 && (
+            <button type="button" className="glow-btn glow-line share-plan" onClick={sharePlan}>{copied ? "Link copied" : "Share my plan"}</button>
+          )}
 
           {/* Grouped by day: one header per day, then a compact row per title. A long
               title split across days sits under the day it starts, with its span noted. */}

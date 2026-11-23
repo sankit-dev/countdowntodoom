@@ -513,6 +513,25 @@ h1, h2, h3, h4, p { margin: 0; }
 .ctl input[type="range"]::-moz-range-progress { height: 6px; border-radius: 3px; background: var(--doom); }
 .ctl input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -8px; border-radius: 50%; background: var(--ink); border: 3px solid var(--doom); }
 .ctl input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--ink); border: 3px solid var(--doom); }
+.mode-seg { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; padding: 3px; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 999px; background: #0d120f; }
+.seg.mode-seg button { height: 36px; border: 0; border-radius: 999px; font: 600 14px/1 var(--body); color: var(--muted); }
+.seg.mode-seg button.on { background: var(--doom); color: #06120a; }
+/* "I'll choose": a scrolling checklist of every title. */
+.picker-quick { display: flex; gap: 8px; }
+.picker-quick button { height: 32px; padding: 0 12px; border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 999px; font: 600 13px/1 var(--body); color: var(--muted); }
+.picker-quick button:disabled { opacity: 0.4; }
+.picker-list { list-style: none; margin: 0; padding: 0 4px 0 0; max-height: 360px; overflow-y: auto; overscroll-behavior: contain; display: grid; gap: 2px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.pick { display: grid; grid-template-columns: 22px 30px minmax(0, 1fr); align-items: center; gap: 10px; padding: 7px 4px; cursor: pointer; border-radius: 6px; }
+.pick input { width: 18px; height: 18px; margin: 0; accent-color: var(--doom); }
+.pick-art { position: relative; aspect-ratio: 2 / 3; overflow: hidden; background: #141a17; }
+.pick-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.pick-body { display: grid; gap: 3px; min-width: 0; }
+.pick-body b { font: 600 14px/1.2 var(--body); color: var(--muted); }
+.pick-body small { display: flex; align-items: center; gap: 6px; font: 500 12px/1 var(--body); color: var(--dim); }
+.pick-body small i { width: 6px; height: 6px; border-radius: 50%; background: var(--t); }
+.pick.on { background: rgba(141, 255, 106, 0.07); }
+.pick.on .pick-body b { color: var(--ink); }
+.share-plan { width: auto; margin: 0 0 22px; padding: 0 22px; }
 .ctl-seg { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
 .seg.ctl-seg button { padding: 12px 8px; font: 600 15px/1.1 var(--body); }
 /* On/off switch for "Include shows" */
