@@ -175,6 +175,9 @@ h1, h2, h3, h4, p { margin: 0; }
 .region-note { font: 500 15px/1.4 var(--body); color: var(--muted); }
 .region-note b { color: var(--ink); font-weight: 600; }
 .region-note button { margin-left: 4px; font: 500 15px/1.4 var(--body); color: var(--doom); text-decoration: underline; text-underline-offset: 3px; }
+.region-pick { position: relative; display: inline-block; margin-left: 2px; color: var(--doom); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.region-pick select { position: absolute; inset: -6px -4px; width: calc(100% + 8px); opacity: 0; cursor: pointer; font-size: 16px; }
+.region-pick:focus-within { outline: 2px solid var(--doom); outline-offset: 2px; }
 .cd-region { margin-top: -4px; }
 .cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 10px; }
 /* Phones get a single big day count instead of four boxes (see Hero.tsx). */

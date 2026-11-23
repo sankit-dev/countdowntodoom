@@ -12,7 +12,7 @@ function setMeta(html: string, attr: "property" | "name", key: string, value: st
 }
 
 export function withShareTags(html: string, origin: string, pct: number, essentials: number | null, days: number, region: Region = "IN") {
-  const q = `ready=${pct}${essentials === null ? "" : `&e=${essentials}`}${region === "US" ? "&r=us" : ""}`;
+  const q = `ready=${pct}${essentials === null ? "" : `&e=${essentials}`}${region === "IN" ? "" : `&r=${region.toLowerCase()}`}`;
   const image = `${origin}/api/card?${q}`;
   const title = `I'm ${pct}% doom-ready. How ready are you?`;
   const bits = [

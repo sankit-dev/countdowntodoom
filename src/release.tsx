@@ -1,24 +1,39 @@
 // Which release date this visitor counts down to. The dates themselves live in
 // doomReady.ts (shared with the server); this adds detection and a switch.
 import { useEffect, useState } from "react";
-import { RELEASE, Region, releaseAt } from "./doomReady";
+import { RELEASE, Region, regionOf, releaseAt } from "./doomReady";
 
 export { RELEASE, releaseAt };
 export type { Region };
 
 const KEY = "rtd.region";
 
-/** India if the device is set to Indian time, otherwise the US date. A choice made on the site wins. */
+// Time zone → country, used only if the server couldn't tell us (see middleware.ts).
+const TZ: Record<string, string> = {
+  "Asia/Kolkata": "IN", "Asia/Calcutta": "IN", "Europe/London": "GB", "Europe/Paris": "FR", "Europe/Berlin": "DE",
+  "Europe/Rome": "IT", "Europe/Brussels": "BE", "Europe/Vienna": "AT", "Europe/Helsinki": "FI", "Europe/Warsaw": "PL",
+  "Europe/Stockholm": "SE", "Asia/Shanghai": "CN", "America/Sao_Paulo": "BR", "Asia/Tokyo": "JP",
+  "America/Toronto": "CA", "America/Vancouver": "CA", "America/New_York": "US", "America/Chicago": "US",
+  "America/Denver": "US", "America/Los_Angeles": "US", "America/Phoenix": "US", "Pacific/Honolulu": "US",
+};
+
+/**
+ * Which country's release date to count down to:
+ * 1. one picked on the site, 2. the country Vercel saw the visit come from
+ * (a cookie set by middleware.ts), 3. the device's time zone, 4. "anywhere else" (18 Dec).
+ */
 export function detectRegion(): Region {
   try {
     const saved = localStorage.getItem(KEY);
-    if (saved === "IN" || saved === "US") return saved;
+    if (saved && saved in RELEASE) return saved;
   } catch { /* storage blocked */ }
+  const cookie = /(?:^|; )rtd_cc=([A-Za-z]{2})/.exec(document.cookie)?.[1];
+  if (cookie) return regionOf(cookie);
   try {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    if (tz === "Asia/Kolkata" || tz === "Asia/Calcutta") return "IN";
+    if (TZ[tz]) return TZ[tz];
   } catch { /* old browser */ }
-  return "US";
+  return "WW";
 }
 
 // Shared across components so switching in one place updates every countdown.
@@ -39,17 +54,24 @@ export function useRegion(): [Region, (r: Region) => void] {
   return [region, set];
 }
 
-/** "Out 17 Dec in India · Switch to US": the date being counted down to, and a switch. */
+// Countries in the picker: listed ones by name, then "Somewhere else".
+const PICK = Object.entries(RELEASE).filter(([c]) => c !== "WW").sort((a, b) => a[1].name.localeCompare(b[1].name));
+
+/** "Out 16 Dec in France · Change": the date being counted down to, with a country picker. */
 export function RegionNote({ className }: { className?: string }) {
   const [region, setRegion] = useRegion();
-  const other: Region = region === "IN" ? "US" : "IN";
+  const r = RELEASE[region] ?? RELEASE.WW;
   return (
     <p className={`region-note${className ? ` ${className}` : ""}`}>
-      Out <b>{RELEASE[region].short}</b> in {RELEASE[region].label}
+      {region === "WW" ? <>Counting to <b>{r.short}</b>, the US date</> : <>Out <b>{r.short}</b> in {r.label}</>}
       <span aria-hidden="true"> · </span>
-      <button type="button" onClick={() => setRegion(other)} aria-label={`Count down to the ${other === "IN" ? "India" : "US"} date instead`}>
-        Switch to {other === "IN" ? "India" : "US"}
-      </button>
+      <label className="region-pick">
+        <span>Change</span>
+        <select value={region} onChange={(e) => setRegion(e.target.value)} aria-label="Pick your country for its release date">
+          {PICK.map(([code, x]) => <option key={code} value={code}>{x.name} ({x.short})</option>)}
+          <option value="WW">Somewhere else (18 Dec)</option>
+        </select>
+      </label>
     </p>
   );
 }

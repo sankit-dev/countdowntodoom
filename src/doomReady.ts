@@ -40,10 +40,11 @@ export function parseShare(params: URLSearchParams): { pct: number; essentials: 
   const pct = Math.min(100, Number(raw));
   const e = params.get("e");
   const essentials = e !== null && /^\d{1,2}$/.test(e) ? Math.min(ESSENTIALS_TOTAL, Number(e)) : null;
-  return { pct, essentials, region: params.get("r") === "us" ? "US" : "IN" };
+  const r = params.get("r");
+  return { pct, essentials, region: r ? regionOf(r) : "IN" };
 }
 
-const regionParam = (region: Region) => (region === "US" ? "&r=us" : "");
+const regionParam = (region: Region) => (region === "IN" ? "" : `&r=${region.toLowerCase()}`);
 export const shareUrl = (r: DoomReady, region: Region = "IN") => `${SITE_URL}/?ready=${r.pct}&e=${r.essentials}${regionParam(region)}`;
 
 /** Path of the share-card image for these numbers. */
@@ -51,18 +52,43 @@ export const cardPath = (pct: number, essentials: number | null, region: Region 
   `/api/card?ready=${pct}${essentials === null ? "" : `&e=${essentials}`}${regionParam(region)}`;
 
 // ── Release dates ───────────────────────────────────────────────────────────
-// India gets Avengers: Doomsday a day early: 17 Dec 2026 (announced by Marvel
-// India on 27 Oct 2026). Everywhere else counts to 18 Dec, the US date. Other
-// countries' dates still conflict between sources, so they aren't listed.
-export type Region = "IN" | "US";
-export const RELEASE = {
-  IN: { label: "India", date: "17 December 2026", short: "17 Dec", y: 2026, m: 11, d: 17 },
-  US: { label: "the US", date: "18 December 2026", short: "18 Dec", y: 2026, m: 11, d: 18 },
-} as const;
+// Avengers: Doomsday opens on different days around the world. India is 17 Dec
+// (Marvel India, 27 Oct 2026); the US, Canada and Japan are 18 Dec; much of
+// Europe, the UK, China and Brazil are reported as 16 Dec. Fan and listings
+// sources still disagree on some countries, so only those with a consistent
+// date are listed. Anywhere else counts to 18 Dec (the latest), so nobody is
+// told it's out before it is. The site has a "Wrong date?" link for fixes.
+export type Region = string; // ISO country code, or "WW" for "anywhere else"
+type Info = { label: string; name: string; date: string; short: string; y: number; m: number; d: number };
+const day = (label: string, name: string, d: number): Info =>
+  ({ label, name, date: `${d} December 2026`, short: `${d} Dec`, y: 2026, m: 11, d });
+export const RELEASE: Record<string, Info> = {
+  IN: day("India", "India", 17),
+  US: day("the US", "United States", 18),
+  CA: day("Canada", "Canada", 18),
+  JP: day("Japan", "Japan", 18),
+  GB: day("the UK", "United Kingdom", 16),
+  FR: day("France", "France", 16),
+  DE: day("Germany", "Germany", 16),
+  IT: day("Italy", "Italy", 16),
+  BE: day("Belgium", "Belgium", 16),
+  AT: day("Austria", "Austria", 16),
+  FI: day("Finland", "Finland", 16),
+  PL: day("Poland", "Poland", 16),
+  SE: day("Sweden", "Sweden", 16),
+  CN: day("China", "China", 16),
+  BR: day("Brazil", "Brazil", 16),
+  WW: day("most countries", "Somewhere else", 18),
+};
+/** Any code we don't have a date for counts down to 18 Dec. */
+export const regionOf = (code: string | null | undefined): Region => {
+  const c = (code || "").toUpperCase();
+  return c in RELEASE ? c : "WW";
+};
 
 /** Midnight at the start of release day: in IST for India, in the visitor's own time otherwise (UTC on the server). */
 export function releaseAt(region: Region) {
-  const r = RELEASE[region];
+  const r = RELEASE[region] ?? RELEASE.WW;
   return region === "IN" ? Date.UTC(r.y, r.m, r.d - 1, 18, 30) : new Date(r.y, r.m, r.d).getTime();
 }
 
