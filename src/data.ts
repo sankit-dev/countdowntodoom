@@ -125,8 +125,8 @@ export const TITLES: Title[] = [
     "Shows the world after Tony Stark, and it ends with everyone finding out Peter is Spider-Man."),
 
   // ── Phase Four ───────────────────────────────────────────────────────────
-  t("wandavision", "WandaVision", 2021, "series", 4, "multiverse", 350, 4, ["multiverse-of-madness", "agatha", "the-marvels", "visionquest"],
-    "Wanda becomes the Scarlet Witch and Monica Rambeau gets her powers in this show."),
+  t("wandavision", "WandaVision", 2021, "series", 4, "multiverse", 350, 6, ["multiverse-of-madness", "agatha", "the-marvels", "visionquest"],
+    "Wanda becomes the Scarlet Witch here, and the VisionQuest finale teases her back for Doomsday. Multiverse of Madness carries most of her story, but this is where it starts."),
   t("falcon-winter-soldier", "The Falcon and the Winter Soldier", 2021, "series", 4, "cap", 310, 6, ["brave-new-world", "thunderbolts"],
     "This is why Sam Wilson takes the shield, and it's where John Walker and Valentina first show up. Good background, but Brave New World starts with Sam already Captain America and Thunderbolts* brings both of them back, so you won't be lost without it."),
   t("loki-1", "Loki Season 1", 2021, "series", 4, "multiverse", 280, 9, ["loki-2", "quantumania", "no-way-home"],
@@ -139,8 +139,8 @@ export const TITLES: Title[] = [
     "It's Shang-Chi's only movie so far, and he's confirmed for Doomsday. The fight scenes are great too."),
   t("eternals", "Eternals", 2021, "film", 4, "cosmic", 156, 2, ["brave-new-world"],
     "It leaves a giant Celestial in the Indian Ocean, and the fight in Brave New World is over what it's made of. Long movie, so skip it if you need to."),
-  t("hawkeye", "Hawkeye", 2021, "series", 4, "street", 290, 2, ["echo", "born-again-1"],
-    "It has Yelena grieving, Kate Bishop, and the Kingpin coming back. Good Christmas watch but not needed."),
+  t("hawkeye", "Hawkeye", 2021, "series", 4, "street", 290, 6, ["echo", "born-again-1", DOOM_ID],
+    "This is where you meet Kate Bishop, and Marvel has confirmed she's in Doomsday. It also has Yelena grieving and the Kingpin coming back, and it's a great Christmas watch."),
   t("no-way-home", "Spider-Man: No Way Home", 2021, "film", 4, "street", 148, 7, ["multiverse-of-madness", "brand-new-day"],
     "This is where the multiverse properly opens up on screen, and by the end the whole world forgets Peter Parker."),
   t("moon-knight", "Moon Knight", 2022, "series", 4, "multiverse", 290, 1, [],
@@ -197,8 +197,8 @@ export const TITLES: Title[] = [
     "You meet Marvel's first family in their own universe, and the mid-credits scene is the first time we see Doctor Doom. Very important, watch it."),
   t("brand-new-day", "Spider-Man: Brand New Day", 2026, "film", 6, "street", 135, 8, [DOOM_ID],
     "This is the last movie before Doomsday, with Peter Parker on his own in a world that has forgotten him."),
-  { ...t("visionquest", "VisionQuest", 2026, "series", 6, "multiverse", 360, 3, [],
-    "The newest Marvel show before Doomsday, picking Vision's story back up after WandaVision, with Ultron back too. Nice extra, but nothing says Doomsday needs it."),
+  { ...t("visionquest", "VisionQuest", 2026, "series", 6, "multiverse", 360, 7, [DOOM_ID],
+    "The only show with Doctor Doom in it: the finale's post-credits scene has Doom pulling Wanda out of the rubble, straight into Doomsday. Short on time? Watch that scene at least."),
     poster: "/posters/visionquest.jpg" }, // our own copy of the official poster
 
   t(DOOM_ID, "Avengers: Doomsday", 2026, "film", 6, "avengers", 0, 10, [],

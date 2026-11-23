@@ -178,6 +178,6 @@ export const PLOT: Record<string, string> = {
   "first-steps": "On a retro-future Earth in another universe, the Fantastic Four face Galactus, who wants Reed and Sue's unborn son. Doctor Doom shows up in the final scene.",
   "born-again-2": "The fight for New York keeps going, with Daredevil and his friends against Mayor Fisk's city.",
   "brand-new-day": "Peter Parker is on his own now, with nobody knowing who he is, and he's Spider-Man full time in New York. It's the last movie before Doomsday.",
-  "visionquest": "Vision, rebuilt after WandaVision, tries to piece together who he really is, and Ultron is back to make it harder. Eight episodes, finished in November 2026.",
+  "visionquest": "Vision, rebuilt after WandaVision, tries to piece together who he really is, with Ultron back to make it harder. In the finale's post-credits scene a hooded Doctor Doom lifts Wanda out of the rubble, alive.",
   "doomsday": "Not out yet. It's heroes from a bunch of different universes against Doctor Doom.",
 };
