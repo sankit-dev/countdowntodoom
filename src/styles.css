@@ -318,6 +318,25 @@ h1, h2, h3, h4, p { margin: 0; }
 .tree { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
 .tree-stage[hidden] { display: none; }
 
+/* Extras: other Marvel movies, folded away under the watch order. */
+.extras { max-width: 760px; margin: 22px auto 0; padding: 0 clamp(16px, 3vw, 40px); }
+.extras summary { display: flex; align-items: center; gap: 14px; padding: 16px 18px; list-style: none; cursor: pointer; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+.extras summary::-webkit-details-marker { display: none; }
+.extras summary > span { display: grid; gap: 5px; flex: 1; min-width: 0; }
+.extras summary b { font: 700 16px/1.2 var(--body); color: var(--ink); }
+.extras summary small { font: 400 13.5px/1.45 var(--body); color: var(--dim); }
+.extras summary em { flex: none; display: grid; place-items: center; min-width: 34px; height: 34px; padding: 0 8px; border-radius: 999px; font: 700 13px/1 var(--body); font-style: normal; color: var(--muted); background: rgba(255, 255, 255, 0.06); }
+.extras summary::after { content: ""; flex: none; width: 9px; height: 9px; margin: 0 4px; border-right: 2px solid var(--dim); border-bottom: 2px solid var(--dim); transform: rotate(45deg); transition: transform 0.2s; }
+.extras[open] summary::after { transform: rotate(-135deg); }
+.extras-body { display: grid; gap: 22px; padding: 18px 2px 4px; }
+.extras h3 { margin: 0 0 6px; font: 700 13px/1 var(--body); letter-spacing: 0.08em; text-transform: uppercase; color: var(--doom); }
+.extras ul { list-style: none; margin: 0; padding: 0; display: grid; }
+.extra { display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 12px; align-items: start; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.extra-body { display: grid; gap: 4px; min-width: 0; }
+.extra-body b { font: condensed 800 18px/1.15 var(--display); color: var(--ink); }
+.extra-body b small { font: 500 12.5px/1 var(--body); color: var(--dim); margin-left: 4px; }
+.extra-body > span { font: 400 14px/1.45 var(--read); color: #b8c2bb; }
+
 /* List / Map switch above the watch order. */
 .layout-seg { display: flex; gap: 2px; width: fit-content; margin: 0 auto 14px; padding: 3px; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 999px; background: #0d120f; }
 .seg.layout-seg button { min-width: 72px; height: 32px; padding: 0 14px; border: 0; border-radius: 999px; font: 600 13.5px/1 var(--body); color: var(--muted); }

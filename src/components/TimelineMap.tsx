@@ -4,6 +4,7 @@ import { BY_ID, DOOM_ID, TIER_LABEL, TITLES, Title, fmtMin, parentsOf, tierOf } 
 import type { Tier } from "../App";
 import { Poster, usePosters } from "../posters";
 import { useGlow } from "../glow";
+import { Extras } from "./Extras";
 import { doomReady } from "../doomReady";
 import { RELEASE, useRegion } from "../release";
 
@@ -472,6 +473,8 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
           <button className="wide tool-reset" onClick={() => fit(false)}>Reset</button>
         </div>
       </div>
+
+      <Extras />
 
       {card && !selected && (
         <aside className={`hover-card${card.flip ? " flip" : ""}`} style={{ left: card.x, top: card.y }} aria-hidden="true">

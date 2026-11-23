@@ -1,6 +1,8 @@
 // Shared by the site (src/posters.tsx) and the build step that copies posters
 // onto the site (posterPlugin in vite.config.ts).
 
+import { EXTRA_WIKI } from "./extras";
+
 /** Title id → Wikipedia article name. */
 export const WIKI: Record<string, string> = {
   "iron-man": "Iron Man (2008 film)",
@@ -62,4 +64,5 @@ export const WIKI: Record<string, string> = {
   "brand-new-day": "Spider-Man: Brand New Day",
   "visionquest": "VisionQuest",
   "doomsday": "Avengers: Doomsday",
+  ...EXTRA_WIKI,
 };
