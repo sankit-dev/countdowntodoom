@@ -331,7 +331,7 @@ export function TimelineMap({ selected, focus, onSelect, watched, toggleWatched,
       </div>
       {sharing && (
         <Suspense fallback={null}>
-          <ShareCard ready={doomReady(watched)} onClose={() => setSharing(false)} />
+          <ShareCard ready={doomReady(watched)} watched={watched} tier={tier} onClose={() => setSharing(false)} />
         </Suspense>
       )}
 

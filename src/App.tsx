@@ -190,7 +190,7 @@ export default function App() {
       <Support open={support} onClose={() => setSupport(false)} />
       {sharing && (
         <Suspense fallback={null}>
-          <ShareCard ready={ready} onClose={() => setSharing(false)} />
+          <ShareCard ready={ready} watched={watched} tier={tier} onClose={() => setSharing(false)} />
         </Suspense>
       )}
     </PosterProvider>

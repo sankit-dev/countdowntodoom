@@ -1,7 +1,7 @@
 // GET /?ready=82&e=12 (rewritten here by vercel.json) → the normal homepage,
 // with its link-preview tags pointing at that person's doom-ready card.
 // Visitors get the usual site; X, WhatsApp and Reddit see the card.
-import { ESSENTIALS_TOTAL, RELEASE, Region, daysLeft, parseShare } from "../src/doomReady.js";
+import { RELEASE, Shared, TIER_TOTAL, TIER_WORDS, daysLeft, parseShare, shareQuery } from "../src/doomReady.js";
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
@@ -11,12 +11,13 @@ function setMeta(html: string, attr: "property" | "name", key: string, value: st
   return html.replace(re, `$1${esc(value)}$2`);
 }
 
-export function withShareTags(html: string, origin: string, pct: number, essentials: number | null, days: number, region: Region = "IN") {
-  const q = `ready=${pct}${essentials === null ? "" : `&e=${essentials}`}${region === "IN" ? "" : `&r=${region.toLowerCase()}`}`;
+export function withShareTags(html: string, origin: string, share: Shared, days: number) {
+  const { pct, count, tier, region } = share;
+  const q = shareQuery(share);
   const image = `${origin}/api/card?${q}`;
   const title = `I'm ${pct}% doom-ready. How ready are you?`;
   const bits = [
-    essentials === null ? null : `${essentials}/${ESSENTIALS_TOTAL} essentials watched`,
+    count === null ? null : `${count}/${TIER_TOTAL[tier]} ${TIER_WORDS[tier]}`,
     `${days} ${days === 1 ? "day" : "days"} to Avengers: Doomsday (out ${RELEASE[region].short} in ${RELEASE[region].label})`,
   ].filter(Boolean);
   const description = `${bits.join(" and ")}. See how ready you are and get a watch plan.`;
@@ -39,7 +40,7 @@ export async function GET(req: Request) {
   const page = await fetch(`${url.origin}/index.html`);
   const html = await page.text();
   const share = parseShare(url.searchParams);
-  const body = share ? withShareTags(html, url.origin, share.pct, share.essentials, daysLeft(share.region), share.region) : html;
+  const body = share ? withShareTags(html, url.origin, share, daysLeft(share.region)) : html;
   return new Response(body, {
     status: page.status,
     headers: {

@@ -63,7 +63,7 @@ export const backdrop = (origin: string) => [
 ];
 
 /** The doom-ready card. */
-export function readyCard(origin: string, pct: number, essentials: number | null, essentialsTotal: number, days: number, releaseLine = "Out 17 Dec in India, 18 Dec in the US"): Node {
+export function readyCard(origin: string, pct: number, essentials: number | null, essentialsTotal: number, words: string, days: number, releaseLine = "Out 17 Dec in India, 18 Dec in the US"): Node {
   const stat = (big: string, label: string) =>
     h("div", { flexDirection: "column", marginRight: 64 },
       h("div", { fontFamily: "Archivo Condensed", fontWeight: 800, fontSize: 64, lineHeight: 0.9, color: C.ink }, big),
@@ -79,7 +79,7 @@ export function readyCard(origin: string, pct: number, essentials: number | null
       h("div", { width: 520, height: 10, marginTop: 18, backgroundColor: C.line },
         h("div", { width: `${Math.max(1.5, pct)}%`, height: 10, backgroundColor: C.doom })),
       h("div", { marginTop: 28 },
-        ...(essentials === null ? [] : [stat(`${essentials}/${essentialsTotal}`, "essentials watched")]),
+        ...(essentials === null ? [] : [stat(`${essentials}/${essentialsTotal}`, words)]),
         stat(String(days), days === 1 ? "day to Doomsday" : "days to Doomsday"))),
     footer(releaseLine));
 }
